@@ -160,7 +160,7 @@ def calcular_resultado(df_inscricoes):
     4. Processar Anexo II com vagas liberadas
     """
     if df_inscricoes.empty:
-        return pd.DataFrame()
+        return pd.DataFrame(), {}, {}
     
     # Criar cópia e ordenar por antiguidade
     df = df_inscricoes.copy()
@@ -613,16 +613,7 @@ def main():
                 lambda x: x.strftime("%d/%m/%Y") if x else ""
             )
             
-            # Colorir status
-            def highlight_status(row):
-                if row["status"] == "APROVADO":
-                    return ["background-color: #d4edda"] * len(row)
-                elif row["status"] == "DESCLASSIFICADO":
-                    return ["background-color: #f8d7da"] * len(row)
-                elif row["status"] == "NÃO OBTEVE VAGA":
-                    return ["background-color: #fff3cd"] * len(row)
-                return [""] * len(row)
-            
+            # Preparar DataFrame para exibição (renomear ANTES de aplicar estilo)
             df_exibir = df_resultado[[
                 "posicao_antiguidade", "nome", "matricula", "data_admissao_fmt",
                 "status", "resultado", "vaga_obtida", "observacao"
@@ -636,6 +627,16 @@ def main():
                 "vaga_obtida": "Vaga Obtida",
                 "observacao": "Observação"
             })
+            
+            # Função para colorir status (usando nomes das colunas APÓS rename)
+            def highlight_status(row):
+                if row["Status"] == "APROVADO":
+                    return ["background-color: #d4edda"] * len(row)
+                elif row["Status"] == "DESCLASSIFICADO":
+                    return ["background-color: #f8d7da"] * len(row)
+                elif row["Status"] == "NÃO OBTEVE VAGA":
+                    return ["background-color: #fff3cd"] * len(row)
+                return [""] * len(row)
             
             st.dataframe(
                 df_exibir.style.apply(highlight_status, axis=1),
