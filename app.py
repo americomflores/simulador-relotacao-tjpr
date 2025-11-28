@@ -813,7 +813,7 @@ def main():
     # =========================================================================
     with tab6:
         st.header("🗺️ Inscritos por Região Administrativa Judiciária (RAJ)")
-        st.info("Análise dos candidatos **APROVADOS** por região de **ORIGEM** (lotação atual). Criada pela Resolução nº 409/2024 do TJPR.")
+        st.info("Análise dos candidatos **APROVADOS** por região de **ORIGEM** (lotação atual). RAJs criadas pela Resolução nº 441/2024 do TJPR.")
         
         if df_inscricoes.empty:
             st.warning("Nenhum servidor inscrito ainda.")
