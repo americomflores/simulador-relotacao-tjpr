@@ -226,13 +226,14 @@ ANEXO_I = {
     "A1-215": {"comarca": "Tibagi", "unidade": "JUÍZO ÚNICO", "quantidade": 3},
     "A1-216": {"comarca": "Toledo", "unidade": "3ª VARA CÍVEL E DA FAZENDA PÚBLICA", "quantidade": 1},
     "A1-217": {"comarca": "Toledo", "unidade": "VARA DE FAMÍLIA E SUCESSÕES", "quantidade": 1},
-    "A1-218": {"comarca": "Tomazina", "unidade": "JUÍZO ÚNICO", "quantidade": 3},
+    "A1-218": {"comarca": "Tomazina", "unidade": "JUÍZO ÚNICO", "quantidade": 2},
     "A1-219": {"comarca": "Ubiratã", "unidade": "JUÍZO ÚNICO", "quantidade": 1},
     "A1-220": {"comarca": "Umuarama", "unidade": "1ª VARA CRIMINAL", "quantidade": 2},
     "A1-221": {"comarca": "Umuarama", "unidade": "VARA DE FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE, ACIDENTES DO TRABALHO, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL", "quantidade": 1},
     "A1-222": {"comarca": "União da Vitória", "unidade": "2ª VARA CÍVEL E DA FAZENDA PÚBLICA", "quantidade": 1},
     "A1-223": {"comarca": "União da Vitória", "unidade": "2ª VARA CRIMINAL", "quantidade": 2},
     "A1-224": {"comarca": "Wenceslau Braz", "unidade": "JUÍZO ÚNICO", "quantidade": 2},
+    "A1-225": {"comarca": "Cambé", "unidade": "1ª VARA CÍVEL E DA FAZENDA PÚBLICA", "quantidade": 1},
 }
 
 # =============================================================================
@@ -370,7 +371,7 @@ ANEXO_II = {
     "A2-127": {"comarca": "Curitiba", "unidade": "3ª VARA CRIMINAL"},
     "A2-128": {"comarca": "Curitiba", "unidade": "4ª VARA CRIMINAL"},
     "A2-129": {"comarca": "Curitiba", "unidade": "CENTRAL DE GARANTIAS ESPECIALIZADA"},
-    "A2-130": {"comarca": "Curitiba", "unidade": "1ª VARA DESCENTRALIZADA DO PINHEIRINHO"},
+    "A2-130": {"comarca": "Curitiba", "unidade": "SECRETARIA UNIFICADA DA 1ª E 2ª VARAS DESCENTRALIZADAS DO PINHEIRINHO"},
     "A2-131": {"comarca": "Curitiba", "unidade": "7ª VARA CRIMINAL"},
     "A2-132": {"comarca": "Curitiba", "unidade": "8ª VARA CRIMINAL"},
     "A2-133": {"comarca": "Curitiba", "unidade": "9ª VARA CRIMINAL"},
@@ -389,13 +390,13 @@ ANEXO_II = {
     "A2-146": {"comarca": "Curitiba", "unidade": "5º JUIZADO ESPECIAL CÍVEL E CRIMINAL"},
     "A2-147": {"comarca": "Curitiba", "unidade": "6º JUIZADO ESPECIAL CÍVEL E CRIMINAL"},
     "A2-148": {"comarca": "Curitiba", "unidade": "8º JUIZADO ESPECIAL CÍVEL E CRIMINAL"},
-    "A2-149": {"comarca": "Curitiba", "unidade": "1ª VARA DESCENTRALIZADA DO BAIRRO NOVO (SÍTIO CERCADO)"},
-    "A2-150": {"comarca": "Curitiba", "unidade": "1ª VARA DESCENTRALIZADA DO BOQUEIRÃO"},
+    "A2-149": {"comarca": "Curitiba", "unidade": "SECRETARIA UNIFICADA DA 1ª E 2ª VARAS DESCENTRALIZADAS DO BAIRRO NOVO (SÍTIO CERCADO)"},
+    "A2-150": {"comarca": "Curitiba", "unidade": "SECRETARIA UNIFICADA DA 1ª E 2ª VARAS DESCENTRALIZADAS DO BOQUEIRÃO"},
     "A2-151": {"comarca": "Curitiba", "unidade": "11º JUIZADO ESPECIAL CÍVEL E CRIMINAL"},
-    "A2-152": {"comarca": "Curitiba", "unidade": "1ª VARA DESCENTRALIZADA DE SANTA FELICIDADE"},
+    "A2-152": {"comarca": "Curitiba", "unidade": "SECRETARIA UNIFICADA DA 1ª E 2ª VARAS DESCENTRALIZADAS DE SANTA FELICIDADE"},
     "A2-153": {"comarca": "Curitiba", "unidade": "13º JUIZADO ESPECIAL CÍVEL E CRIMINAL"},
     "A2-154": {"comarca": "Curitiba", "unidade": "14º JUIZADO ESPECIAL CÍVEL E CRIMINAL"},
-    "A2-155": {"comarca": "Curitiba", "unidade": "1ª VARA DESCENTRALIZADA DA CIDADE INDUSTRIAL"},
+    "A2-155": {"comarca": "Curitiba", "unidade": "SECRETARIA UNIFICADA DA 1ª E 2ª VARAS DESCENTRALIZADAS DA CIDADE INDUSTRIAL"},
     "A2-156": {"comarca": "Curitiba", "unidade": "SECRETARIA ESPECIALIZADA EM MOVIMENTAÇÕES PROCESSUAIS DAS EXECUÇÕES PENAIS, MEDIDAS ALTERNATIVAS E CORREGEDORIA DOS PRESÍDIOS"},
     "A2-157": {"comarca": "Curitiba", "unidade": "SECRETARIA ESPECIALIZADA DE MOVIMENTAÇÃO PROCESSUAL DA FAZENDA PÚBLICA"},
     "A2-158": {"comarca": "Curitiba", "unidade": "SECRETARIA ESPECIALIZADA EM MOVIMENTAÇÕES PROCESSUAIS DOS JUIZADOS ESPECIAIS DA FAZENDA PÚBLICA"},
@@ -830,6 +831,7 @@ ANEXO_II = {
     "A2-587": {"comarca": "Uraí", "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM"},
     "A2-588": {"comarca": "Wenceslau Braz", "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM"},
     "A2-589": {"comarca": "Xambrê", "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM"},
+    "A2-590": {"comarca": "Cambé", "unidade": "1ª VARA CÍVEL E DA FAZENDA PÚBLICA"},
 }
 
 # Total de vagas do Anexo I
