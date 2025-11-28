@@ -639,10 +639,11 @@ def calcular_resultado(df_inscricoes):
                         df.at[idx, "status_origem_final"] = dados_origem_final["status"]
                         
                         # Determinar se precisa designação na origem
-                        if dados_origem_final["status"] == "SUPERAVITÁRIA":
-                            df.at[idx, "designacao_origem"] = "NÃO"
-                        else:
+                        # Conforme item 3.14 do Edital: designação apenas se a saída OCASIONAR DÉFICIT
+                        if dados_origem_final["status"] == "DEFICITÁRIA":
                             df.at[idx, "designacao_origem"] = "SIM"
+                        else:
+                            df.at[idx, "designacao_origem"] = "NÃO"
                     
                     # Liberar vaga no Anexo II
                     if lotacao_origem in vagas_anexo2:
@@ -687,10 +688,11 @@ def calcular_resultado(df_inscricoes):
                         df.at[idx, "status_origem_final"] = dados_origem_final["status"]
                         
                         # Determinar se precisa designação na origem
-                        if dados_origem_final["status"] == "SUPERAVITÁRIA":
-                            df.at[idx, "designacao_origem"] = "NÃO"
-                        else:
+                        # Conforme item 3.14 do Edital: designação apenas se a saída OCASIONAR DÉFICIT
+                        if dados_origem_final["status"] == "DEFICITÁRIA":
                             df.at[idx, "designacao_origem"] = "SIM"
+                        else:
+                            df.at[idx, "designacao_origem"] = "NÃO"
                     
                     # Liberar vaga no Anexo II
                     if lotacao_origem in vagas_anexo2:
@@ -905,7 +907,7 @@ def main():
                     index=lotacao_default
                 )
                 
-                opcoes_a1 = ["(Não escolheu)"] + [f"{k} - {v['comarca']} - {v['unidade']} ({v['quantidade']} vagas)" for k, v in ANEXO_I.items()]
+                opcoes_a1 = ["(não escolheu)"] + [f"{k} - {v['comarca']} - {v['unidade']} ({v['quantidade']} vagas)" for k, v in ANEXO_I.items()]
                 
                 escolha_a1_default = 0
                 if inscricao_existente and inscricao_existente.get("escolha_anexo1"):
@@ -921,7 +923,7 @@ def main():
                     index=escolha_a1_default
                 )
                 
-                opcoes_a2 = ["(Não escolheu)"] + [f"{k} - {v['comarca']} - {v['unidade']}" for k, v in ANEXO_II.items()]
+                opcoes_a2 = ["(não escolheu)"] + [f"{k} - {v['comarca']} - {v['unidade']}" for k, v in ANEXO_II.items()]
                 
                 escolha_a2_default = 0
                 if inscricao_existente and inscricao_existente.get("escolha_anexo2"):
@@ -944,8 +946,8 @@ def main():
                         st.error("Preencha todos os campos obrigatórios!")
                     else:
                         codigo_lotacao = lotacao_atual.split(" - ")[0] if lotacao_atual else ""
-                        codigo_escolha_a1 = escolha_a1.split(" - ")[0] if escolha_a1 != "(Não escolheu)" else ""
-                        codigo_escolha_a2 = escolha_a2.split(" - ")[0] if escolha_a2 != "(Não escolheu)" else ""
+                        codigo_escolha_a1 = escolha_a1.split(" - ")[0] if escolha_a1 != "(não escolheu)" else ""
+                        codigo_escolha_a2 = escolha_a2.split(" - ")[0] if escolha_a2 != "(não escolheu)" else ""
                         
                         dados = {
                             "nome": nome,
@@ -994,6 +996,10 @@ def main():
             2. Quem consegue vaga no Anexo I, libera sua lotação atual
             3. As vagas liberadas ficam disponíveis para o **Anexo II**
             4. O mais antigo sempre tem prioridade
+            
+            **Designação na Origem (item 3.14):**
+            - Se sua saída **ocasionar déficit** na origem, você será designado para continuar lá até substituição
+            - Se sua saída **não ocasionar déficit**, você pode ir imediatamente para a nova unidade
             """)
     
     # =========================================================================
@@ -1083,14 +1089,23 @@ def main():
             # Explicação sobre Designação na Origem
             with st.expander("ℹ️ O que significa 'Designação na Origem'?"):
                 st.markdown("""
-                **Baseado nos itens 3.14, 3.15 e 3.16 do Edital:**
+                **Baseado no item 3.14 do Edital:**
+                
+                > "O deferimento de pedido de relotação que **ocasionar déficit** de técnico judiciário na unidade de origem 
+                > implicará **designação** do servidor relotado para continuar prestando serviços na unidade de origem, 
+                > até a substituição por outro servidor."
                 
                 | Designação | Significado |
                 |------------|-------------|
-                | **NÃO** | O servidor sai de unidade **SUPERAVITÁRIA**. Pode ir embora imediatamente para a nova unidade. Relotação definitiva! ✅ |
-                | **SIM** | O servidor sai de unidade **EQUILIBRADA ou DEFICITÁRIA**. A saída cria/aumenta déficit. O servidor é oficialmente relotado, MAS fica designado para continuar trabalhando na unidade antiga até: (1) um concursado tomar posse lá, OU (2) outro servidor ser relotado para lá. ⚠️ |
+                | **NÃO** | A saída do servidor **não ocasiona déficit**. A unidade fica SUPERAVITÁRIA ou EQUILIBRADA após a saída. O servidor pode ir embora imediatamente! ✅ |
+                | **SIM** | A saída do servidor **ocasiona ou agrava déficit**. A unidade fica DEFICITÁRIA após a saída. O servidor é relotado oficialmente, MAS fica designado para continuar trabalhando na origem até substituição. ⚠️ |
                 
                 **⚠️ ATENÇÃO (item 3.15):** Se não vier substituição até o prazo de vigência do concurso, a relotação é **tornada sem efeito** e o servidor **retorna à unidade de lotação originária**.
+                
+                **Resumo:**
+                - 🟢 Origem fica **SUPERAVITÁRIA** após saída → Designação = NÃO
+                - 🟡 Origem fica **EQUILIBRADA** após saída → Designação = NÃO  
+                - 🔴 Origem fica **DEFICITÁRIA** após saída → Designação = SIM
                 """)
             
             st.subheader("📊 Resultado por Ordem de Antiguidade")
@@ -1133,7 +1148,11 @@ def main():
             
             # Legenda de cores
             st.markdown("""
-            **Legenda:** 🟢 Aprovado sem restrição | 🟡 Aprovado com designação na origem | 🔴 Desclassificado | ⚪ Não obteve vaga
+            **Legenda:** 
+            - 🟢 Aprovado (designação = NÃO) - pode sair imediatamente
+            - 🟡 Aprovado (designação = SIM) - fica na origem até substituição
+            - 🔴 Desclassificado (estágio probatório)
+            - ⚪ Não obteve vaga
             """)
             
             st.divider()
@@ -1290,18 +1309,18 @@ def main():
         with st.expander("ℹ️ Como interpretar os dados"):
             st.markdown("""
             **Colunas:**
-            - **Lotação Real**: Total de servidores atualmente lotados (Efetivos + Sem Vínculo + Cedidos/Requisitados)
-            - **Lotação Paradigma**: Mínimo de servidores necessários segundo a Resolução CNJ 219/2016
+            - **Lotação Real (LR)**: Total de servidores atualmente lotados na unidade
+            - **Lotação Paradigma (LP)**: Mínimo de servidores necessários segundo a Resolução CNJ 219/2016
             - **Diferença**: Lotação Real - Lotação Paradigma
             
             **Status:**
-            - 🟢 **SUPERAVITÁRIA**: Mais servidores que o necessário. Servidor pode sair sem restrição.
-            - 🟡 **EQUILIBRADA**: Exatamente o necessário. Saída gera déficit.
-            - 🔴 **DEFICITÁRIA**: Menos servidores que o necessário. Saída agrava déficit.
+            - 🟢 **SUPERAVITÁRIA**: Mais servidores que o necessário (diferença > 0)
+            - 🟡 **EQUILIBRADA**: Exatamente o necessário (diferença = 0)
+            - 🔴 **DEFICITÁRIA**: Menos servidores que o necessário (diferença < 0)
             
-            **Impacto na Relotação (itens 3.14 a 3.16 do Edital):**
-            - Servidores de unidades **SUPERAVITÁRIAS** são relotados imediatamente.
-            - Servidores de unidades **EQUILIBRADAS ou DEFICITÁRIAS** ficam designados na origem até substituição.
+            **Impacto na Relotação (item 3.14 do Edital):**
+            - Se a saída do servidor **ocasionar déficit** na origem (unidade fica DEFICITÁRIA) → servidor fica **designado** para continuar na origem até substituição
+            - Se a saída **não ocasionar déficit** (unidade fica EQUILIBRADA ou SUPERAVITÁRIA) → servidor pode sair **imediatamente**
             """)
         
         # Métricas gerais
