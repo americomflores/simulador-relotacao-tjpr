@@ -905,7 +905,7 @@ def main():
                     index=lotacao_default
                 )
                 
-                opcoes_a1 = ["(Não escolher)"] + [f"{k} - {v['comarca']} - {v['unidade']} ({v['quantidade']} vagas)" for k, v in ANEXO_I.items()]
+                opcoes_a1 = ["(Não escolheu)"] + [f"{k} - {v['comarca']} - {v['unidade']} ({v['quantidade']} vagas)" for k, v in ANEXO_I.items()]
                 
                 escolha_a1_default = 0
                 if inscricao_existente and inscricao_existente.get("escolha_anexo1"):
@@ -921,7 +921,7 @@ def main():
                     index=escolha_a1_default
                 )
                 
-                opcoes_a2 = ["(Não escolher)"] + [f"{k} - {v['comarca']} - {v['unidade']}" for k, v in ANEXO_II.items()]
+                opcoes_a2 = ["(Não escolheu)"] + [f"{k} - {v['comarca']} - {v['unidade']}" for k, v in ANEXO_II.items()]
                 
                 escolha_a2_default = 0
                 if inscricao_existente and inscricao_existente.get("escolha_anexo2"):
@@ -944,8 +944,8 @@ def main():
                         st.error("Preencha todos os campos obrigatórios!")
                     else:
                         codigo_lotacao = lotacao_atual.split(" - ")[0] if lotacao_atual else ""
-                        codigo_escolha_a1 = escolha_a1.split(" - ")[0] if escolha_a1 != "(Não escolher)" else ""
-                        codigo_escolha_a2 = escolha_a2.split(" - ")[0] if escolha_a2 != "(Não escolher)" else ""
+                        codigo_escolha_a1 = escolha_a1.split(" - ")[0] if escolha_a1 != "(Não escolheu)" else ""
+                        codigo_escolha_a2 = escolha_a2.split(" - ")[0] if escolha_a2 != "(Não escolheu)" else ""
                         
                         dados = {
                             "nome": nome,
