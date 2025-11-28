@@ -7,6 +7,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, date
 from data import ANEXO_I, ANEXO_II
+from lotacao_data import LOTACAO_POR_CODIGO, LOTACAO_COMPLETA
 import gspread
 from google.oauth2.service_account import Credentials
 import json
@@ -145,7 +146,6 @@ AUTH_CODES = {
 # FUNÇÕES DE AUTENTICAÇÃO
 # =============================================================================
 
-
 def formatar_telefone_display(telefone):
     """Formata telefone para exibição: (XX) XXXXX-XXXX"""
     numeros = re.sub(r'\D', '', telefone)
@@ -164,14 +164,10 @@ def on_telefone_change():
     """Callback para formatar telefone em tempo real"""
     if "telefone_raw" in st.session_state:
         raw = st.session_state.telefone_raw
-        # Extrair apenas números
         numeros = re.sub(r'\D', '', raw)
-        # Limitar a 11 dígitos
         numeros = numeros[:11]
-        # Formatar
         st.session_state.telefone_formatado = formatar_telefone_display(numeros)
         st.session_state.telefone_numeros = numeros
-
 
 def limpar_telefone(telefone):
     """Remove tudo que não for número do telefone"""
@@ -193,7 +189,6 @@ def tela_login():
     
     st.divider()
     
-    # Inicializar session state para telefone
     if "telefone_formatado" not in st.session_state:
         st.session_state.telefone_formatado = ""
     if "telefone_numeros" not in st.session_state:
@@ -205,7 +200,6 @@ def tela_login():
         st.subheader("🔐 Acesso Restrito")
         st.info("Este simulador é exclusivo para membros autorizados. Informe seu telefone e código de acesso.")
         
-        # Campo de telefone com formatação automática
         telefone_input = st.text_input(
             "📱 Telefone com DDD:",
             value=st.session_state.telefone_formatado,
@@ -409,6 +403,49 @@ def obter_raj_da_comarca(comarca):
 
 
 # =============================================================================
+# FUNÇÕES DE LOTAÇÃO PARADIGMA
+# =============================================================================
+
+def obter_status_lotacao(codigo_unidade):
+    """Retorna o status de lotação de uma unidade (SUPERAVITÁRIA, EQUILIBRADA, DEFICITÁRIA)"""
+    if codigo_unidade in LOTACAO_POR_CODIGO:
+        return LOTACAO_POR_CODIGO[codigo_unidade]["status"]
+    return "NÃO IDENTIFICADA"
+
+def obter_dados_lotacao(codigo_unidade):
+    """Retorna todos os dados de lotação de uma unidade"""
+    if codigo_unidade in LOTACAO_POR_CODIGO:
+        return LOTACAO_POR_CODIGO[codigo_unidade]
+    return None
+
+def calcular_lotacao_dinamica(codigo_unidade, ajuste=0):
+    """
+    Calcula a lotação considerando ajustes dinâmicos.
+    ajuste: número de servidores a adicionar (+) ou remover (-)
+    """
+    dados = obter_dados_lotacao(codigo_unidade)
+    if not dados:
+        return None
+    
+    nova_lotacao_real = dados["lotacao_real"] + ajuste
+    nova_diferenca = nova_lotacao_real - dados["lotacao_paradigma"]
+    
+    if nova_diferenca > 0:
+        novo_status = "SUPERAVITÁRIA"
+    elif nova_diferenca == 0:
+        novo_status = "EQUILIBRADA"
+    else:
+        novo_status = "DEFICITÁRIA"
+    
+    return {
+        "lotacao_real": nova_lotacao_real,
+        "lotacao_paradigma": dados["lotacao_paradigma"],
+        "diferenca": nova_diferenca,
+        "status": novo_status
+    }
+
+
+# =============================================================================
 # CONEXÃO GOOGLE SHEETS
 # =============================================================================
 
@@ -519,7 +556,7 @@ def buscar_inscricao(sheet, matricula):
 
 
 # =============================================================================
-# LÓGICA DE SIMULAÇÃO
+# LÓGICA DE SIMULAÇÃO COM LOTAÇÃO DINÂMICA
 # =============================================================================
 
 def verificar_estagio_probatorio(data_admissao):
@@ -531,14 +568,11 @@ def verificar_estagio_probatorio(data_admissao):
 
 def calcular_resultado(df_inscricoes):
     """
-    Calcula o resultado da simulação seguindo a lógica:
-    1. Ordenar por antiguidade (data_admissao mais antiga primeiro)
-    2. Marcar desclassificados por estágio probatório
-    3. Processar Anexo I primeiro
-    4. Processar Anexo II com vagas liberadas
+    Calcula o resultado da simulação com lotação dinâmica.
+    Inclui cálculo de "Designação na Origem" baseado no status da unidade.
     """
     if df_inscricoes.empty:
-        return pd.DataFrame(), {}, {}
+        return pd.DataFrame(), {}, {}, {}
     
     df = df_inscricoes.copy()
     df = df.sort_values("data_admissao", ascending=True).reset_index(drop=True)
@@ -548,16 +582,26 @@ def calcular_resultado(df_inscricoes):
     df["resultado"] = ""
     df["vaga_obtida"] = ""
     df["observacao"] = ""
+    df["designacao_origem"] = ""
+    df["status_origem_inicial"] = ""
+    df["status_origem_final"] = ""
     
+    # Marcar desclassificados por estágio probatório
     for idx, row in df.iterrows():
         if verificar_estagio_probatorio(row["data_admissao"]):
             df.at[idx, "status"] = "DESCLASSIFICADO"
             df.at[idx, "resultado"] = "Estágio Probatório"
             df.at[idx, "observacao"] = f"Admitido após {DATA_LIMITE_ESTAGIO.strftime('%d/%m/%Y')}"
+            df.at[idx, "designacao_origem"] = "-"
     
+    # Controle de vagas Anexo I
     vagas_anexo1 = {}
     for codigo, info in ANEXO_I.items():
         vagas_anexo1[codigo] = info["quantidade"]
+    
+    # Controle dinâmico de lotação das unidades
+    # Começar com os valores originais e ajustar conforme movimentações
+    ajustes_lotacao = {}  # codigo_unidade -> ajuste acumulado
     
     vagas_anexo2 = {}
     servidores_para_anexo2 = []
@@ -568,6 +612,13 @@ def calcular_resultado(df_inscricoes):
             continue
         
         escolha_a1 = row["escolha_anexo1"]
+        lotacao_origem = row["lotacao_atual"]
+        
+        # Registrar status inicial da origem
+        if lotacao_origem:
+            dados_origem = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao.get(lotacao_origem, 0))
+            if dados_origem:
+                df.at[idx, "status_origem_inicial"] = dados_origem["status"]
         
         if escolha_a1 and escolha_a1 in vagas_anexo1:
             if vagas_anexo1[escolha_a1] > 0:
@@ -576,12 +627,27 @@ def calcular_resultado(df_inscricoes):
                 df.at[idx, "resultado"] = "ANEXO I"
                 df.at[idx, "vaga_obtida"] = f"{ANEXO_I[escolha_a1]['comarca']} - {ANEXO_I[escolha_a1]['unidade']}"
                 
-                lotacao = row["lotacao_atual"]
-                if lotacao:
-                    if lotacao in vagas_anexo2:
-                        vagas_anexo2[lotacao] += 1
+                # Atualizar ajustes de lotação
+                if lotacao_origem:
+                    # Servidor sai da origem (-1)
+                    ajustes_lotacao[lotacao_origem] = ajustes_lotacao.get(lotacao_origem, 0) - 1
+                    
+                    # Calcular status final da origem após saída
+                    dados_origem_final = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao[lotacao_origem])
+                    if dados_origem_final:
+                        df.at[idx, "status_origem_final"] = dados_origem_final["status"]
+                        
+                        # Determinar se precisa designação na origem
+                        if dados_origem_final["status"] == "SUPERAVITÁRIA":
+                            df.at[idx, "designacao_origem"] = "NÃO"
+                        else:
+                            df.at[idx, "designacao_origem"] = "SIM"
+                    
+                    # Liberar vaga no Anexo II
+                    if lotacao_origem in vagas_anexo2:
+                        vagas_anexo2[lotacao_origem] += 1
                     else:
-                        vagas_anexo2[lotacao] = 1
+                        vagas_anexo2[lotacao_origem] = 1
             else:
                 servidores_para_anexo2.append(idx)
         elif escolha_a1:
@@ -594,6 +660,13 @@ def calcular_resultado(df_inscricoes):
     for idx in servidores_para_anexo2:
         row = df.loc[idx]
         escolha_a2 = row["escolha_anexo2"]
+        lotacao_origem = row["lotacao_atual"]
+        
+        # Registrar status inicial da origem (se ainda não registrado)
+        if lotacao_origem and not df.at[idx, "status_origem_inicial"]:
+            dados_origem = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao.get(lotacao_origem, 0))
+            if dados_origem:
+                df.at[idx, "status_origem_inicial"] = dados_origem["status"]
         
         if escolha_a2 and escolha_a2 in vagas_anexo2:
             if vagas_anexo2[escolha_a2] > 0:
@@ -602,30 +675,51 @@ def calcular_resultado(df_inscricoes):
                 df.at[idx, "resultado"] = "ANEXO II"
                 df.at[idx, "vaga_obtida"] = f"{ANEXO_II[escolha_a2]['comarca']} - {ANEXO_II[escolha_a2]['unidade']}"
                 
-                lotacao = row["lotacao_atual"]
-                if lotacao and lotacao != escolha_a2:
-                    if lotacao in vagas_anexo2:
-                        vagas_anexo2[lotacao] += 1
+                # Atualizar ajustes de lotação
+                if lotacao_origem and lotacao_origem != escolha_a2:
+                    # Servidor sai da origem (-1)
+                    ajustes_lotacao[lotacao_origem] = ajustes_lotacao.get(lotacao_origem, 0) - 1
+                    
+                    # Calcular status final da origem após saída
+                    dados_origem_final = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao[lotacao_origem])
+                    if dados_origem_final:
+                        df.at[idx, "status_origem_final"] = dados_origem_final["status"]
+                        
+                        # Determinar se precisa designação na origem
+                        if dados_origem_final["status"] == "SUPERAVITÁRIA":
+                            df.at[idx, "designacao_origem"] = "NÃO"
+                        else:
+                            df.at[idx, "designacao_origem"] = "SIM"
+                    
+                    # Liberar vaga no Anexo II
+                    if lotacao_origem in vagas_anexo2:
+                        vagas_anexo2[lotacao_origem] += 1
                     else:
-                        vagas_anexo2[lotacao] = 1
+                        vagas_anexo2[lotacao_origem] = 1
+                else:
+                    df.at[idx, "designacao_origem"] = "-"
             else:
                 df.at[idx, "status"] = "NÃO OBTEVE VAGA"
                 df.at[idx, "resultado"] = "Sem vaga"
                 df.at[idx, "observacao"] = "Vaga do Anexo II não disponível"
+                df.at[idx, "designacao_origem"] = "-"
         elif escolha_a2 and escolha_a2 in ANEXO_II:
             df.at[idx, "status"] = "NÃO OBTEVE VAGA"
             df.at[idx, "resultado"] = "Sem vaga"
             df.at[idx, "observacao"] = "Vaga do Anexo II não foi liberada"
+            df.at[idx, "designacao_origem"] = "-"
         elif escolha_a2:
             df.at[idx, "status"] = "NÃO OBTEVE VAGA"
             df.at[idx, "resultado"] = "Sem vaga"
             df.at[idx, "observacao"] = "Código Anexo II inválido"
+            df.at[idx, "designacao_origem"] = "-"
         else:
             df.at[idx, "status"] = "NÃO OBTEVE VAGA"
             df.at[idx, "resultado"] = "Sem vaga"
             df.at[idx, "observacao"] = "Não escolheu Anexo II"
+            df.at[idx, "designacao_origem"] = "-"
     
-    return df, vagas_anexo1, vagas_anexo2
+    return df, vagas_anexo1, vagas_anexo2, ajustes_lotacao
 
 
 # =============================================================================
@@ -647,14 +741,15 @@ def main():
     sheet = conectar_sheets()
     df_inscricoes = carregar_inscricoes(sheet)
     
-    # Criar abas (agora com 6 abas)
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    # Criar abas (agora com 7 abas)
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
         "📋 Vagas Anexo I", 
         "📋 Vagas Anexo II", 
         "✍️ Inscrição",
         "👥 Servidores Inscritos", 
         "🏆 Resultado",
-        "🗺️ Inscritos por RAJ"
+        "🗺️ Inscritos por RAJ",
+        "📈 Lotação das Unidades"
     ])
     
     # =========================================================================
@@ -698,10 +793,13 @@ def main():
         
         dados_a2 = []
         for codigo, info in ANEXO_II.items():
+            # Adicionar status de lotação
+            status_lot = obter_status_lotacao(codigo)
             dados_a2.append({
                 "Código": codigo,
                 "Comarca": info["comarca"],
-                "Unidade Judiciária": info["unidade"]
+                "Unidade Judiciária": info["unidade"],
+                "Status Lotação": status_lot
             })
         
         df_a2 = pd.DataFrame(dados_a2)
@@ -712,12 +810,33 @@ def main():
         if filtro_comarca_a2 != "Todas":
             df_a2 = df_a2[df_a2["Comarca"] == filtro_comarca_a2]
         
+        # Filtro por status de lotação
+        filtro_status = st.selectbox("Filtrar por status de lotação:", 
+                                      ["Todos", "SUPERAVITÁRIA", "EQUILIBRADA", "DEFICITÁRIA", "NÃO IDENTIFICADA"],
+                                      key="filtro_status_a2")
+        if filtro_status != "Todos":
+            df_a2 = df_a2[df_a2["Status Lotação"] == filtro_status]
+        
         busca_a2 = st.text_input("🔍 Buscar:", key="busca_a2", placeholder="Digite parte do nome da comarca ou unidade...")
         if busca_a2:
             mask = df_a2.apply(lambda x: busca_a2.lower() in x["Comarca"].lower() or busca_a2.lower() in x["Unidade Judiciária"].lower(), axis=1)
             df_a2 = df_a2[mask]
         
-        st.dataframe(df_a2, use_container_width=True, hide_index=True)
+        # Colorir por status
+        def color_status(val):
+            if val == "SUPERAVITÁRIA":
+                return "background-color: #d4edda"
+            elif val == "EQUILIBRADA":
+                return "background-color: #fff3cd"
+            elif val == "DEFICITÁRIA":
+                return "background-color: #f8d7da"
+            return ""
+        
+        st.dataframe(
+            df_a2.style.applymap(color_status, subset=["Status Lotação"]),
+            use_container_width=True, 
+            hide_index=True
+        )
         st.caption(f"Total: {len(df_a2)} unidades")
     
     # =========================================================================
@@ -898,6 +1017,9 @@ def main():
                 lambda x: "⚠️ SIM" if x and x > DATA_LIMITE_ESTAGIO else "Não"
             )
             
+            # Adicionar status de lotação da origem
+            df_display["status_origem"] = df_display["lotacao_atual"].apply(obter_status_lotacao)
+            
             df_display["lotacao_desc"] = df_display["lotacao_atual"].apply(
                 lambda x: f"{ANEXO_II[x]['comarca']} - {ANEXO_II[x]['unidade']}" if x in ANEXO_II else x
             )
@@ -911,13 +1033,14 @@ def main():
             st.dataframe(
                 df_display[[
                     "posicao", "nome", "matricula", "data_admissao_fmt", 
-                    "estagio_probatorio", "lotacao_desc", "escolha_a1_desc", "escolha_a2_desc"
+                    "estagio_probatorio", "status_origem", "lotacao_desc", "escolha_a1_desc", "escolha_a2_desc"
                 ]].rename(columns={
                     "posicao": "Pos.",
                     "nome": "Nome",
                     "matricula": "Matrícula",
                     "data_admissao_fmt": "Data Admissão",
                     "estagio_probatorio": "Est. Probatório",
+                    "status_origem": "Status Origem",
                     "lotacao_desc": "Lotação Atual",
                     "escolha_a1_desc": "Escolha Anexo I",
                     "escolha_a2_desc": "Escolha Anexo II"
@@ -937,7 +1060,7 @@ def main():
         if df_inscricoes.empty:
             st.info("Nenhum servidor inscrito ainda. O resultado aparecerá quando houver inscrições.")
         else:
-            df_resultado, vagas_restantes_a1, vagas_disponiveis_a2 = calcular_resultado(df_inscricoes)
+            df_resultado, vagas_restantes_a1, vagas_disponiveis_a2, ajustes_lotacao = calcular_resultado(df_inscricoes)
             
             col1, col2, col3, col4 = st.columns(4)
             
@@ -945,14 +1068,29 @@ def main():
             aprovados_a1 = len(df_resultado[df_resultado["resultado"] == "ANEXO I"])
             aprovados_a2 = len(df_resultado[df_resultado["resultado"] == "ANEXO II"])
             desclass = len(df_resultado[df_resultado["status"] == "DESCLASSIFICADO"])
-            sem_vaga = len(df_resultado[df_resultado["resultado"] == "Sem vaga"])
+            
+            # Contar designações na origem
+            com_designacao = len(df_resultado[df_resultado["designacao_origem"] == "SIM"])
             
             col1.metric("Total Inscritos", total)
-            col2.metric("Aprovados Anexo I", aprovados_a1, delta=None)
-            col3.metric("Aprovados Anexo II", aprovados_a2, delta=None)
-            col4.metric("Desclassificados", desclass, delta=None, delta_color="inverse")
+            col2.metric("Aprovados Anexo I", aprovados_a1)
+            col3.metric("Aprovados Anexo II", aprovados_a2)
+            col4.metric("Com Designação na Origem", com_designacao, help="Aprovados que precisarão aguardar substituição")
             
             st.divider()
+            
+            # Explicação sobre Designação na Origem
+            with st.expander("ℹ️ O que significa 'Designação na Origem'?"):
+                st.markdown("""
+                **Baseado nos itens 3.14, 3.15 e 3.16 do Edital:**
+                
+                | Designação | Significado |
+                |------------|-------------|
+                | **NÃO** | O servidor sai de unidade **SUPERAVITÁRIA**. Pode ir embora imediatamente para a nova unidade. Relotação definitiva! ✅ |
+                | **SIM** | O servidor sai de unidade **EQUILIBRADA ou DEFICITÁRIA**. A saída cria/aumenta déficit. O servidor é oficialmente relotado, MAS fica designado para continuar trabalhando na unidade antiga até: (1) um concursado tomar posse lá, OU (2) outro servidor ser relotado para lá. ⚠️ |
+                
+                **⚠️ ATENÇÃO (item 3.15):** Se não vier substituição até o prazo de vigência do concurso, a relotação é **tornada sem efeito** e o servidor **retorna à unidade de lotação originária**.
+                """)
             
             st.subheader("📊 Resultado por Ordem de Antiguidade")
             
@@ -962,7 +1100,7 @@ def main():
             
             df_exibir = df_resultado[[
                 "posicao_antiguidade", "nome", "matricula", "data_admissao_fmt",
-                "status", "resultado", "vaga_obtida", "observacao"
+                "status", "resultado", "vaga_obtida", "designacao_origem", "observacao"
             ]].rename(columns={
                 "posicao_antiguidade": "Pos.",
                 "nome": "Nome",
@@ -971,16 +1109,19 @@ def main():
                 "status": "Status",
                 "resultado": "Resultado",
                 "vaga_obtida": "Vaga Obtida",
+                "designacao_origem": "Designação Origem",
                 "observacao": "Observação"
             })
             
             def highlight_status(row):
                 if row["Status"] == "APROVADO":
-                    return ["background-color: #d4edda"] * len(row)
+                    if row["Designação Origem"] == "SIM":
+                        return ["background-color: #fff3cd"] * len(row)  # Amarelo - aprovado com ressalva
+                    return ["background-color: #d4edda"] * len(row)  # Verde
                 elif row["Status"] == "DESCLASSIFICADO":
-                    return ["background-color: #f8d7da"] * len(row)
+                    return ["background-color: #f8d7da"] * len(row)  # Vermelho
                 elif row["Status"] == "NÃO OBTEVE VAGA":
-                    return ["background-color: #fff3cd"] * len(row)
+                    return ["background-color: #e2e3e5"] * len(row)  # Cinza
                 return [""] * len(row)
             
             st.dataframe(
@@ -988,6 +1129,11 @@ def main():
                 use_container_width=True,
                 hide_index=True
             )
+            
+            # Legenda de cores
+            st.markdown("""
+            **Legenda:** 🟢 Aprovado sem restrição | 🟡 Aprovado com designação na origem | 🔴 Desclassificado | ⚪ Não obteve vaga
+            """)
             
             st.divider()
             
@@ -1037,16 +1183,12 @@ def main():
         if df_inscricoes.empty:
             st.warning("Nenhum servidor inscrito ainda.")
         else:
-            # Calcular resultado para filtrar apenas aprovados
-            df_resultado, _, _ = calcular_resultado(df_inscricoes)
-            
-            # Filtrar apenas aprovados
+            df_resultado, _, _, _ = calcular_resultado(df_inscricoes)
             df_aprovados = df_resultado[df_resultado["status"] == "APROVADO"].copy()
             
             if df_aprovados.empty:
                 st.warning("Nenhum candidato aprovado ainda para análise por RAJ.")
             else:
-                # Adicionar comarca de origem e RAJ
                 def get_comarca_origem(codigo_lotacao):
                     if codigo_lotacao and codigo_lotacao in ANEXO_II:
                         return ANEXO_II[codigo_lotacao]["comarca"]
@@ -1055,15 +1197,12 @@ def main():
                 df_aprovados["comarca_origem"] = df_aprovados["lotacao_atual"].apply(get_comarca_origem)
                 df_aprovados["raj_origem"] = df_aprovados["comarca_origem"].apply(obter_raj_da_comarca)
                 
-                # Contar por RAJ
                 contagem_raj = df_aprovados["raj_origem"].value_counts().reset_index()
                 contagem_raj.columns = ["RAJ", "Quantidade de Aprovados"]
                 contagem_raj = contagem_raj.sort_values("RAJ").reset_index(drop=True)
                 
-                # Métricas resumidas
                 st.subheader("📊 Resumo por RAJ")
                 
-                # Criar colunas para métricas
                 cols = st.columns(5)
                 for i, (_, row) in enumerate(contagem_raj.iterrows()):
                     col_idx = i % 5
@@ -1074,7 +1213,6 @@ def main():
                 
                 st.divider()
                 
-                # Tabela de contagem com descrição das comarcas
                 st.subheader("📋 Detalhamento por RAJ")
                 
                 dados_raj_detalhado = []
@@ -1105,10 +1243,8 @@ def main():
                 
                 st.divider()
                 
-                # Lista detalhada de aprovados por RAJ
                 st.subheader("👥 Lista de Aprovados por RAJ")
                 
-                # Seletor de RAJ
                 rajs_com_aprovados = sorted(df_aprovados["raj_origem"].unique())
                 raj_selecionada = st.selectbox(
                     "Selecione uma RAJ para ver os aprovados:",
@@ -1120,18 +1256,13 @@ def main():
                 else:
                     df_filtrado = df_aprovados[df_aprovados["raj_origem"] == raj_selecionada].copy()
                 
-                # Formatar para exibição
                 df_filtrado["data_admissao_fmt"] = df_filtrado["data_admissao"].apply(
                     lambda x: x.strftime("%d/%m/%Y") if x else ""
                 )
                 
-                df_filtrado["lotacao_desc"] = df_filtrado["lotacao_atual"].apply(
-                    lambda x: f"{ANEXO_II[x]['comarca']} - {ANEXO_II[x]['unidade']}" if x in ANEXO_II else x
-                )
-                
                 df_exibir_raj = df_filtrado[[
                     "posicao_antiguidade", "nome", "matricula", "data_admissao_fmt",
-                    "comarca_origem", "raj_origem", "resultado", "vaga_obtida"
+                    "comarca_origem", "raj_origem", "resultado", "vaga_obtida", "designacao_origem"
                 ]].rename(columns={
                     "posicao_antiguidade": "Pos. Antiguidade",
                     "nome": "Nome",
@@ -1140,16 +1271,117 @@ def main():
                     "comarca_origem": "Comarca Origem",
                     "raj_origem": "RAJ Origem",
                     "resultado": "Resultado",
-                    "vaga_obtida": "Vaga Obtida"
+                    "vaga_obtida": "Vaga Obtida",
+                    "designacao_origem": "Designação Origem"
                 })
                 
-                st.dataframe(
-                    df_exibir_raj,
-                    use_container_width=True,
-                    hide_index=True
-                )
-                
+                st.dataframe(df_exibir_raj, use_container_width=True, hide_index=True)
                 st.caption(f"Total de aprovados exibidos: {len(df_filtrado)}")
+    
+    # =========================================================================
+    # ABA 7: LOTAÇÃO DAS UNIDADES
+    # =========================================================================
+    with tab7:
+        st.header("📈 Lotação das Unidades Judiciárias")
+        st.info("Dados da Tabela de Lotação de Pessoal (TLP) - 1º Semestre 2025. Fonte: Resolução CNJ 219/2016.")
+        
+        # Explicação
+        with st.expander("ℹ️ Como interpretar os dados"):
+            st.markdown("""
+            **Colunas:**
+            - **Lotação Real**: Total de servidores atualmente lotados (Efetivos + Sem Vínculo + Cedidos/Requisitados)
+            - **Lotação Paradigma**: Mínimo de servidores necessários segundo a Resolução CNJ 219/2016
+            - **Diferença**: Lotação Real - Lotação Paradigma
+            
+            **Status:**
+            - 🟢 **SUPERAVITÁRIA**: Mais servidores que o necessário. Servidor pode sair sem restrição.
+            - 🟡 **EQUILIBRADA**: Exatamente o necessário. Saída gera déficit.
+            - 🔴 **DEFICITÁRIA**: Menos servidores que o necessário. Saída agrava déficit.
+            
+            **Impacto na Relotação (itens 3.14 a 3.16 do Edital):**
+            - Servidores de unidades **SUPERAVITÁRIAS** são relotados imediatamente.
+            - Servidores de unidades **EQUILIBRADAS ou DEFICITÁRIAS** ficam designados na origem até substituição.
+            """)
+        
+        # Métricas gerais
+        col1, col2, col3, col4 = st.columns(4)
+        
+        total_unidades = len(LOTACAO_COMPLETA)
+        superavit = len([u for u in LOTACAO_COMPLETA if u["status"] == "SUPERAVITÁRIA"])
+        equilibrada = len([u for u in LOTACAO_COMPLETA if u["status"] == "EQUILIBRADA"])
+        deficit = len([u for u in LOTACAO_COMPLETA if u["status"] == "DEFICITÁRIA"])
+        
+        col1.metric("Total de Unidades", total_unidades)
+        col2.metric("Superavitárias", superavit, delta=None)
+        col3.metric("Equilibradas", equilibrada, delta=None)
+        col4.metric("Deficitárias", deficit, delta=None, delta_color="inverse")
+        
+        st.divider()
+        
+        # Filtros
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            comarcas_lot = sorted(set([u["comarca"] for u in LOTACAO_COMPLETA]))
+            filtro_comarca_lot = st.selectbox("Filtrar por comarca:", ["Todas"] + comarcas_lot, key="filtro_comarca_lot")
+        
+        with col2:
+            filtro_status_lot = st.selectbox("Filtrar por status:", 
+                                              ["Todos", "SUPERAVITÁRIA", "EQUILIBRADA", "DEFICITÁRIA"],
+                                              key="filtro_status_lot")
+        
+        busca_lot = st.text_input("🔍 Buscar:", key="busca_lot", placeholder="Digite parte do nome da comarca ou unidade...")
+        
+        # Preparar dados
+        dados_lot = []
+        for u in LOTACAO_COMPLETA:
+            # Aplicar filtros
+            if filtro_comarca_lot != "Todas" and u["comarca"] != filtro_comarca_lot:
+                continue
+            if filtro_status_lot != "Todos" and u["status"] != filtro_status_lot:
+                continue
+            if busca_lot:
+                if busca_lot.lower() not in u["comarca"].lower() and busca_lot.lower() not in u["unidade"].lower():
+                    continue
+            
+            dados_lot.append({
+                "Comarca": u["comarca"],
+                "Unidade Judiciária": u["unidade"],
+                "Lotação Real": u["lotacao_real"],
+                "Lotação Paradigma": u["lotacao_paradigma"],
+                "Diferença": u["diferenca"],
+                "Status": u["status"]
+            })
+        
+        df_lot = pd.DataFrame(dados_lot)
+        
+        if not df_lot.empty:
+            def color_status_lot(val):
+                if val == "SUPERAVITÁRIA":
+                    return "background-color: #d4edda"
+                elif val == "EQUILIBRADA":
+                    return "background-color: #fff3cd"
+                elif val == "DEFICITÁRIA":
+                    return "background-color: #f8d7da"
+                return ""
+            
+            def color_diferenca(val):
+                if val > 0:
+                    return "color: green; font-weight: bold"
+                elif val < 0:
+                    return "color: red; font-weight: bold"
+                return ""
+            
+            st.dataframe(
+                df_lot.style.applymap(color_status_lot, subset=["Status"])
+                           .applymap(color_diferenca, subset=["Diferença"]),
+                use_container_width=True,
+                hide_index=True
+            )
+            
+            st.caption(f"Exibindo {len(df_lot)} de {total_unidades} unidades")
+        else:
+            st.warning("Nenhuma unidade encontrada com os filtros selecionados.")
 
 
 # =============================================================================
@@ -1169,11 +1401,9 @@ def footer():
 # =============================================================================
 
 if __name__ == "__main__":
-    # Inicializar session state
     if "autenticado" not in st.session_state:
         st.session_state.autenticado = False
     
-    # Verificar autenticação
     if not st.session_state.autenticado:
         tela_login()
     else:
