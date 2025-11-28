@@ -1284,7 +1284,7 @@ def main():
     # =========================================================================
     with tab7:
         st.header("📈 Lotação das Unidades Judiciárias")
-        st.info("Dados da Tabela de Lotação de Pessoal (TLP) - 1º Semestre 2025. Fonte: Resolução CNJ 219/2016.")
+        st.info("Dados da Tabela de Lotação de Pessoal (TLP) - 2º Semestre 2025. Fonte: BI do TJPR.")
         
         # Explicação
         with st.expander("ℹ️ Como interpretar os dados"):
