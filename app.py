@@ -145,6 +145,34 @@ AUTH_CODES = {
 # FUNÇÕES DE AUTENTICAÇÃO
 # =============================================================================
 
+
+def formatar_telefone_display(telefone):
+    """Formata telefone para exibição: (XX) XXXXX-XXXX"""
+    numeros = re.sub(r'\D', '', telefone)
+    if len(numeros) == 0:
+        return ""
+    elif len(numeros) <= 2:
+        return f"({numeros}"
+    elif len(numeros) <= 7:
+        return f"({numeros[:2]}) {numeros[2:]}"
+    elif len(numeros) <= 11:
+        return f"({numeros[:2]}) {numeros[2:7]}-{numeros[7:]}"
+    else:
+        return f"({numeros[:2]}) {numeros[2:7]}-{numeros[7:11]}"
+
+def on_telefone_change():
+    """Callback para formatar telefone em tempo real"""
+    if "telefone_raw" in st.session_state:
+        raw = st.session_state.telefone_raw
+        # Extrair apenas números
+        numeros = re.sub(r'\D', '', raw)
+        # Limitar a 11 dígitos
+        numeros = numeros[:11]
+        # Formatar
+        st.session_state.telefone_formatado = formatar_telefone_display(numeros)
+        st.session_state.telefone_numeros = numeros
+
+
 def limpar_telefone(telefone):
     """Remove tudo que não for número do telefone"""
     return re.sub(r'\D', '', telefone)
@@ -165,39 +193,50 @@ def tela_login():
     
     st.divider()
     
+    # Inicializar session state para telefone
+    if "telefone_formatado" not in st.session_state:
+        st.session_state.telefone_formatado = ""
+    if "telefone_numeros" not in st.session_state:
+        st.session_state.telefone_numeros = ""
+    
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
         st.subheader("🔐 Acesso Restrito")
         st.info("Este simulador é exclusivo para membros autorizados. Informe seu telefone e código de acesso.")
         
-        with st.form("login_form"):
-            telefone = st.text_input(
-                "📱 Telefone com DDD:",
-                placeholder="(41) 99999-9999",
-                help="Digite seu número com DDD, ex: (41) 99999-9999"
-            )
-            
-            codigo = st.text_input(
-                "🔑 Código de Acesso:",
-                placeholder="TJPR-XXXXXX",
-                help="Código enviado por WhatsApp, ex: TJPR-A1B2C3"
-            )
-            
-            submitted = st.form_submit_button("🚀 Entrar", use_container_width=True)
-            
-            if submitted:
-                if not telefone or not codigo:
-                    st.error("Preencha o telefone e o código!")
-                elif verificar_login(telefone, codigo):
-                    st.session_state.autenticado = True
-                    st.session_state.telefone_usuario = limpar_telefone(telefone)
-                    st.rerun()
-                else:
-                    st.error("❌ Telefone ou código inválido!")
+        # Campo de telefone com formatação automática
+        telefone_input = st.text_input(
+            "📱 Telefone com DDD:",
+            value=st.session_state.telefone_formatado,
+            placeholder="(41) 99999-9999",
+            help="Digite seu número com DDD",
+            key="telefone_raw",
+            on_change=on_telefone_change
+        )
+        
+        codigo = st.text_input(
+            "🔑 Código de Acesso:",
+            placeholder="TJPR-XXXXXX",
+            help="Código enviado por WhatsApp, ex: TJPR-A1B2C3"
+        )
+        
+        if st.button("🚀 Entrar", use_container_width=True):
+            telefone_numeros = st.session_state.telefone_numeros
+            if not telefone_numeros or not codigo:
+                st.error("Preencha o telefone e o código!")
+            elif len(telefone_numeros) < 10:
+                st.error("Telefone inválido! Digite DDD + número.")
+            elif verificar_login(telefone_numeros, codigo):
+                st.session_state.autenticado = True
+                st.session_state.telefone_usuario = telefone_numeros
+                st.rerun()
+            else:
+                st.error("❌ Telefone ou código inválido!")
         
         st.divider()
         st.caption("Não recebeu seu código? Entre em contato com o administrador do grupo.")
+
 
 # =============================================================================
 # REGIÕES ADMINISTRATIVAS JUDICIÁRIAS (RAJs)
