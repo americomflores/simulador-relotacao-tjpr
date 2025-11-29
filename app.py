@@ -13,6 +13,7 @@ from google.oauth2.service_account import Credentials
 import json
 import re
 from io import BytesIO
+import unicodedata
 
 # =============================================================================
 # CONFIGURAÇÃO
@@ -976,6 +977,207 @@ def is_admin():
     return False
 
 
+def normalizar_nome(nome):
+    """
+    Normaliza um nome para comparação:
+    - Remove acentos
+    - Converte para minúsculas
+    - Remove espaços extras
+    """
+    if not nome:
+        return ""
+    # Remove acentos
+    nome_normalizado = unicodedata.normalize('NFD', nome)
+    nome_normalizado = ''.join(c for c in nome_normalizado if unicodedata.category(c) != 'Mn')
+    # Converte para minúsculas e remove espaços extras
+    nome_normalizado = ' '.join(nome_normalizado.lower().split())
+    return nome_normalizado
+
+
+def tentar_match_anexo2(vaga_csv):
+    """
+    Tenta encontrar correspondência entre o nome da vaga no CSV e o Anexo II.
+    Retorna (codigo, score) ou (None, 0) se não encontrar.
+    """
+    if not vaga_csv:
+        return None, 0
+    
+    vaga_normalizada = normalizar_nome(vaga_csv)
+    
+    melhor_match = None
+    melhor_score = 0
+    
+    for codigo, info in ANEXO_II.items():
+        # Normalizar nome da unidade do Anexo II
+        unidade_normalizada = normalizar_nome(info['unidade'])
+        comarca_normalizada = normalizar_nome(info['comarca'])
+        
+        # Verificar se a comarca está no nome da vaga
+        comarca_match = comarca_normalizada in vaga_normalizada
+        
+        # Calcular similaridade simples
+        palavras_unidade = set(unidade_normalizada.split())
+        palavras_vaga = set(vaga_normalizada.split())
+        
+        # Remover palavras comuns
+        palavras_comuns = {'de', 'da', 'do', 'das', 'dos', 'e', 'a', 'o', 'secretaria'}
+        palavras_unidade = palavras_unidade - palavras_comuns
+        palavras_vaga = palavras_vaga - palavras_comuns
+        
+        if not palavras_unidade:
+            continue
+        
+        # Calcular intersecção
+        intersecao = palavras_unidade & palavras_vaga
+        score = len(intersecao) / len(palavras_unidade)
+        
+        # Boost se comarca bate
+        if comarca_match:
+            score += 0.3
+        
+        if score > melhor_score:
+            melhor_score = score
+            melhor_match = codigo
+    
+    # Só retorna se tiver pelo menos 50% de match
+    if melhor_score >= 0.5:
+        return melhor_match, melhor_score
+    
+    return None, 0
+
+
+def processar_csv_edital(uploaded_file):
+    """
+    Processa o CSV do edital oficial e retorna DataFrame tratado.
+    """
+    try:
+        # Ler CSV com separador ;
+        df = pd.read_csv(uploaded_file, sep=';', encoding='utf-8-sig')
+        
+        # Renomear colunas
+        df.columns = ['tipo', 'servidor', 'vaga', 'processo', 'data', 'situacao']
+        
+        # Limpar espaços
+        df['servidor'] = df['servidor'].str.strip()
+        df['vaga'] = df['vaga'].str.strip()
+        df['situacao'] = df['situacao'].str.strip()
+        
+        # Adicionar coluna de nome normalizado
+        df['servidor_normalizado'] = df['servidor'].apply(normalizar_nome)
+        
+        return df
+    except Exception as e:
+        st.error(f"Erro ao processar CSV: {e}")
+        return None
+
+
+def comparar_edital_simulador(df_csv, df_inscricoes):
+    """
+    Compara os dados do CSV oficial com as inscrições do simulador.
+    Retorna dicionário com resultados da comparação.
+    """
+    resultados = {
+        'coincidentes': [],      # Estão nos dois
+        'faltam_simulador': [],  # Estão no CSV mas não no simulador
+        'remover_simulador': [], # Estão no simulador mas não no CSV (finalizados)
+        'csv_finalizados': [],   # Lista de servidores com inscrição finalizada no CSV
+        'csv_nao_finalizados': [] # Lista de servidores que só têm cancelado/não concluída
+    }
+    
+    # 1. Filtrar apenas inscrições finalizadas do CSV
+    df_finalizados = df_csv[df_csv['situacao'] == 'Finalizado'].copy()
+    
+    # 2. Pegar lista única de servidores com inscrição finalizada
+    servidores_finalizados = df_finalizados.groupby('servidor_normalizado').agg({
+        'servidor': 'first',
+        'vaga': lambda x: list(x.unique()),
+        'processo': lambda x: list(x.unique()),
+        'data': 'max'
+    }).reset_index()
+    
+    resultados['csv_finalizados'] = servidores_finalizados.to_dict('records')
+    
+    # 3. Servidores que só têm inscrições não finalizadas
+    servidores_todos = set(df_csv['servidor_normalizado'].unique())
+    servidores_ok = set(df_finalizados['servidor_normalizado'].unique())
+    servidores_problema = servidores_todos - servidores_ok
+    
+    for nome_norm in servidores_problema:
+        registros = df_csv[df_csv['servidor_normalizado'] == nome_norm]
+        nome_original = registros['servidor'].iloc[0]
+        situacoes = registros['situacao'].unique().tolist()
+        resultados['csv_nao_finalizados'].append({
+            'nome': nome_original,
+            'nome_normalizado': nome_norm,
+            'situacoes': situacoes
+        })
+    
+    # 4. Criar set de nomes normalizados do simulador
+    if not df_inscricoes.empty:
+        df_inscricoes['nome_normalizado'] = df_inscricoes['nome'].apply(normalizar_nome)
+        nomes_simulador = set(df_inscricoes['nome_normalizado'].unique())
+        nomes_simulador_dict = dict(zip(df_inscricoes['nome_normalizado'], df_inscricoes['nome']))
+        matriculas_dict = dict(zip(df_inscricoes['nome_normalizado'], df_inscricoes['matricula']))
+    else:
+        nomes_simulador = set()
+        nomes_simulador_dict = {}
+        matriculas_dict = {}
+    
+    nomes_csv_finalizados = set(servidores_finalizados['servidor_normalizado'].unique())
+    
+    # 5. Comparar
+    # Coincidentes
+    coincidentes = nomes_csv_finalizados & nomes_simulador
+    for nome_norm in coincidentes:
+        servidor_csv = servidores_finalizados[servidores_finalizados['servidor_normalizado'] == nome_norm].iloc[0]
+        resultados['coincidentes'].append({
+            'nome_csv': servidor_csv['servidor'],
+            'nome_simulador': nomes_simulador_dict.get(nome_norm, ''),
+            'matricula': matriculas_dict.get(nome_norm, ''),
+            'vagas_csv': servidor_csv['vaga']
+        })
+    
+    # Faltam no simulador
+    faltam = nomes_csv_finalizados - nomes_simulador
+    for nome_norm in faltam:
+        servidor_csv = servidores_finalizados[servidores_finalizados['servidor_normalizado'] == nome_norm].iloc[0]
+        
+        # Tentar fazer match com Anexo II
+        vagas_match = []
+        for vaga in servidor_csv['vaga']:
+            codigo, score = tentar_match_anexo2(vaga)
+            vagas_match.append({
+                'vaga_csv': vaga,
+                'codigo_anexo2': codigo,
+                'score': score,
+                'unidade_anexo2': f"{ANEXO_II[codigo]['comarca']} - {ANEXO_II[codigo]['unidade']}" if codigo else None
+            })
+        
+        resultados['faltam_simulador'].append({
+            'nome': servidor_csv['servidor'],
+            'nome_normalizado': nome_norm,
+            'vagas': vagas_match,
+            'data': servidor_csv['data']
+        })
+    
+    # Remover do simulador (estão no simulador mas não finalizaram no CSV)
+    remover = nomes_simulador - nomes_csv_finalizados
+    for nome_norm in remover:
+        # Verificar se está no CSV mas não finalizou
+        if nome_norm in servidores_todos:
+            motivo = "Inscrição NÃO FINALIZADA no edital oficial"
+        else:
+            motivo = "NÃO ENCONTRADO no edital oficial"
+        
+        resultados['remover_simulador'].append({
+            'nome': nomes_simulador_dict.get(nome_norm, ''),
+            'matricula': matriculas_dict.get(nome_norm, ''),
+            'motivo': motivo
+        })
+    
+    return resultados
+
+
 def painel_administrador(sheet, df_inscricoes):
     """Exibe o painel de administração completo."""
     
@@ -1012,12 +1214,13 @@ def painel_administrador(sheet, df_inscricoes):
     st.divider()
     
     # Abas do painel admin
-    admin_tab1, admin_tab2, admin_tab3, admin_tab4, admin_tab5, admin_tab6 = st.tabs([
+    admin_tab1, admin_tab2, admin_tab3, admin_tab4, admin_tab5, admin_tab6, admin_tab7 = st.tabs([
         "📊 Visão Geral",
         "👥 Usuários",
         "📝 Inscrições",
         "📋 Logs",
         "📥 Exportar",
+        "📤 Comparar Edital",
         "⚙️ Configurações"
     ])
     
@@ -1522,9 +1725,206 @@ def painel_administrador(sheet, df_inscricoes):
                 st.error(f"Erro ao gerar relatório: {e}")
     
     # =========================================================================
-    # ABA ADMIN 6: CONFIGURAÇÕES
+    # ABA ADMIN 6: COMPARAR EDITAL OFICIAL
     # =========================================================================
     with admin_tab6:
+        st.header("📤 Comparar com Edital Oficial")
+        st.info("""
+        **Instruções:**
+        1. Exporte a lista de inscrições do site oficial do TJPR em formato CSV
+        2. Faça upload do arquivo aqui
+        3. O sistema irá comparar com as inscrições do simulador
+        
+        ⚠️ **Atenção:** O CSV oficial não diferencia Anexo I de Anexo II, então a revisão das escolhas deve ser manual.
+        """)
+        
+        uploaded_file = st.file_uploader(
+            "📁 Carregar CSV do Edital Oficial",
+            type=['csv'],
+            help="Arquivo CSV exportado do site do TJPR com a lista de inscrições"
+        )
+        
+        if uploaded_file is not None:
+            # Processar CSV
+            df_csv = processar_csv_edital(uploaded_file)
+            
+            if df_csv is not None:
+                st.success(f"✅ Arquivo carregado: {len(df_csv)} registros encontrados")
+                
+                # Mostrar preview do CSV
+                with st.expander("📋 Visualizar dados do CSV"):
+                    st.dataframe(df_csv[['servidor', 'vaga', 'situacao', 'data']].head(20), 
+                                use_container_width=True, hide_index=True)
+                
+                st.divider()
+                
+                # Comparar
+                if st.button("🔄 Comparar com Simulador", use_container_width=True, type="primary"):
+                    with st.spinner("Comparando dados..."):
+                        resultados = comparar_edital_simulador(df_csv, df_inscricoes)
+                    
+                    # Métricas
+                    col1, col2, col3, col4 = st.columns(4)
+                    
+                    col1.metric(
+                        "✅ Coincidentes", 
+                        len(resultados['coincidentes']),
+                        help="Servidores que estão no edital oficial E no simulador"
+                    )
+                    col2.metric(
+                        "⚠️ Faltam no Simulador", 
+                        len(resultados['faltam_simulador']),
+                        help="Servidores finalizados no edital que NÃO estão no simulador"
+                    )
+                    col3.metric(
+                        "❌ Revisar/Remover", 
+                        len(resultados['remover_simulador']),
+                        help="Servidores no simulador que não finalizaram no edital"
+                    )
+                    col4.metric(
+                        "🚫 Não Finalizaram",
+                        len(resultados['csv_nao_finalizados']),
+                        help="Servidores com inscrições apenas canceladas ou não concluídas"
+                    )
+                    
+                    st.divider()
+                    
+                    # ========= FALTAM NO SIMULADOR =========
+                    if resultados['faltam_simulador']:
+                        st.subheader(f"⚠️ Servidores que FALTAM no Simulador ({len(resultados['faltam_simulador'])})")
+                        st.warning("Estes servidores finalizaram inscrição no edital oficial mas NÃO estão no simulador.")
+                        
+                        dados_faltam = []
+                        for item in resultados['faltam_simulador']:
+                            # Pegar a primeira vaga com melhor match
+                            vagas_str = []
+                            codigos_str = []
+                            for v in item['vagas']:
+                                vagas_str.append(v['vaga_csv'][:60] + "..." if len(v['vaga_csv']) > 60 else v['vaga_csv'])
+                                if v['codigo_anexo2']:
+                                    codigos_str.append(f"{v['codigo_anexo2']} ({v['score']*100:.0f}%)")
+                                else:
+                                    codigos_str.append("❓ Não identificado")
+                            
+                            dados_faltam.append({
+                                "Nome": item['nome'],
+                                "Vagas Pretendidas (CSV)": " | ".join(vagas_str),
+                                "Código Anexo II (tentativa)": " | ".join(codigos_str),
+                                "Última Data": item['data']
+                            })
+                        
+                        st.dataframe(
+                            pd.DataFrame(dados_faltam),
+                            use_container_width=True,
+                            hide_index=True,
+                            height=min(400, len(dados_faltam) * 35 + 40)
+                        )
+                    else:
+                        st.success("✅ Todos os servidores do edital oficial já estão no simulador!")
+                    
+                    st.divider()
+                    
+                    # ========= REMOVER DO SIMULADOR =========
+                    if resultados['remover_simulador']:
+                        st.subheader(f"❌ Servidores para REVISAR/REMOVER do Simulador ({len(resultados['remover_simulador'])})")
+                        st.error("Estes servidores estão no simulador mas NÃO finalizaram inscrição no edital oficial.")
+                        
+                        dados_remover = []
+                        for item in resultados['remover_simulador']:
+                            dados_remover.append({
+                                "Nome (Simulador)": item['nome'],
+                                "Matrícula": item['matricula'],
+                                "Motivo": item['motivo']
+                            })
+                        
+                        st.dataframe(
+                            pd.DataFrame(dados_remover),
+                            use_container_width=True,
+                            hide_index=True
+                        )
+                    else:
+                        st.success("✅ Todos os servidores do simulador finalizaram inscrição no edital oficial!")
+                    
+                    st.divider()
+                    
+                    # ========= COINCIDENTES =========
+                    with st.expander(f"✅ Servidores Coincidentes ({len(resultados['coincidentes'])})"):
+                        if resultados['coincidentes']:
+                            dados_coinc = []
+                            for item in resultados['coincidentes']:
+                                dados_coinc.append({
+                                    "Nome (CSV)": item['nome_csv'],
+                                    "Nome (Simulador)": item['nome_simulador'],
+                                    "Matrícula": item['matricula'],
+                                    "Qtd Vagas CSV": len(item['vagas_csv'])
+                                })
+                            
+                            st.dataframe(
+                                pd.DataFrame(dados_coinc),
+                                use_container_width=True,
+                                hide_index=True
+                            )
+                        else:
+                            st.info("Nenhum servidor coincidente encontrado.")
+                    
+                    # ========= NÃO FINALIZADOS =========
+                    with st.expander(f"🚫 Servidores que NÃO Finalizaram no Edital ({len(resultados['csv_nao_finalizados'])})"):
+                        if resultados['csv_nao_finalizados']:
+                            st.caption("Servidores que tentaram se inscrever mas só têm registros 'Cancelado' ou 'Não concluída'")
+                            
+                            dados_nao_fin = []
+                            for item in resultados['csv_nao_finalizados']:
+                                dados_nao_fin.append({
+                                    "Nome": item['nome'],
+                                    "Situações": ", ".join(item['situacoes'])
+                                })
+                            
+                            st.dataframe(
+                                pd.DataFrame(dados_nao_fin),
+                                use_container_width=True,
+                                hide_index=True
+                            )
+                        else:
+                            st.info("Todos os servidores do CSV finalizaram suas inscrições.")
+                    
+                    st.divider()
+                    
+                    # Resumo final
+                    st.markdown("### 📊 Resumo da Comparação")
+                    
+                    total_edital = len(resultados['csv_finalizados'])
+                    total_simulador = len(df_inscricoes) if not df_inscricoes.empty else 0
+                    
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.markdown(f"""
+                        **Edital Oficial:**
+                        - Total de inscrições finalizadas: **{total_edital}**
+                        - Servidores únicos: **{len(set([r['servidor_normalizado'] for r in resultados['csv_finalizados']]))}**
+                        """)
+                    
+                    with col2:
+                        st.markdown(f"""
+                        **Simulador:**
+                        - Total de inscrições: **{total_simulador}**
+                        - Coincidentes com edital: **{len(resultados['coincidentes'])}**
+                        """)
+                    
+                    if len(resultados['faltam_simulador']) > 0 or len(resultados['remover_simulador']) > 0:
+                        st.warning(f"""
+                        ⚠️ **Ação necessária:**
+                        - Adicionar {len(resultados['faltam_simulador'])} servidor(es) ao simulador
+                        - Revisar/remover {len(resultados['remover_simulador'])} servidor(es) do simulador
+                        """)
+                    else:
+                        st.success("✅ Simulador está sincronizado com o edital oficial!")
+        else:
+            st.info("👆 Faça upload do arquivo CSV para iniciar a comparação.")
+    
+    # =========================================================================
+    # ABA ADMIN 7: CONFIGURAÇÕES
+    # =========================================================================
+    with admin_tab7:
         st.header("⚙️ Configurações do Sistema")
         
         st.warning("⚠️ Alterações nas configurações requerem edição do código fonte.")
