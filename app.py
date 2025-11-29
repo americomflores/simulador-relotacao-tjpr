@@ -4,7 +4,6 @@ Edital nº 4/2025 - Técnico Judiciário
 """
 
 import streamlit as st
-import streamlit.components.v1 as components
 import pandas as pd
 from datetime import datetime, date
 from data import ANEXO_I, ANEXO_II
@@ -15,6 +14,7 @@ import json
 import re
 from io import BytesIO
 import unicodedata
+import extra_streamlit_components as stx
 
 # =============================================================================
 # CONFIGURAÇÃO
@@ -253,6 +253,11 @@ def get_usuario_logado():
         return formatar_telefone_display(st.session_state.telefone_usuario)
     return "Desconhecido"
 
+def get_cookie_manager():
+    """Retorna o gerenciador de cookies (singleton)"""
+    return stx.CookieManager(key="tjpr_cookies")
+
+
 def tela_login():
     """Exibe a tela de login"""
     st.title("⚖️ Simulador de Relotação - TJPR")
@@ -273,40 +278,13 @@ def tela_login():
         st.subheader("🔐 Acesso Restrito")
         st.info("Este simulador é exclusivo para membros autorizados. Informe seu telefone e código de acesso.")
         
-        # Inicializar session state para código lembrado
-        if "codigo_lembrado" not in st.session_state:
-            st.session_state.codigo_lembrado = ""
-        if "telefone_lembrado" not in st.session_state:
-            st.session_state.telefone_lembrado = ""
+        # Gerenciador de cookies
+        cookie_manager = get_cookie_manager()
         
-        # JavaScript para ler/salvar no localStorage do navegador
-        # Só executa uma vez para ler os valores salvos
-        if "lembrar_carregado" not in st.session_state:
-            st.session_state.lembrar_carregado = True
-            # Injetar script para ler localStorage
-            st.components.v1.html("""
-                <script>
-                    // Ler dados salvos do localStorage
-                    const telefone = localStorage.getItem('tjpr_telefone') || '';
-                    const codigo = localStorage.getItem('tjpr_codigo') || '';
-                    
-                    // Enviar para o Streamlit via query params (hack)
-                    if (telefone || codigo) {
-                        const url = new URL(window.parent.location.href);
-                        if (telefone) url.searchParams.set('tel', telefone);
-                        if (codigo) url.searchParams.set('cod', codigo);
-                        // Só redireciona se ainda não tem os params
-                        if (!window.parent.location.href.includes('tel=') && (telefone || codigo)) {
-                            window.parent.location.href = url.toString();
-                        }
-                    }
-                </script>
-            """, height=0)
-        
-        # Ler query params se existirem
-        params = st.query_params
-        telefone_salvo = params.get("tel", "")
-        codigo_salvo = params.get("cod", "")
+        # Ler cookies salvos
+        telefone_salvo = cookie_manager.get("tjpr_tel") or ""
+        codigo_salvo = cookie_manager.get("tjpr_cod") or ""
+        tem_dados_salvos = bool(telefone_salvo or codigo_salvo)
         
         telefone_input = st.text_input(
             "📱 Telefone com DDD:",
@@ -329,11 +307,16 @@ def tela_login():
             value=codigo_salvo,
             placeholder="TJPR-XXXXXX",
             help="Código enviado por WhatsApp, ex: TJPR-A1B2C3",
-            key="codigo_login"
+            key="codigo_login",
+            type="password" if codigo_salvo else "default"
         )
         
         # Checkbox para lembrar credenciais
-        lembrar = st.checkbox("🔒 Lembrar meus dados neste navegador", value=bool(telefone_salvo or codigo_salvo))
+        lembrar = st.checkbox(
+            "🔒 Lembrar meus dados neste navegador", 
+            value=tem_dados_salvos,
+            help="Seus dados serão salvos em cookies no seu navegador."
+        )
         
         col_btn1, col_btn2 = st.columns([3, 1])
         
@@ -348,41 +331,28 @@ def tela_login():
                     st.session_state.autenticado = True
                     st.session_state.telefone_usuario = telefone_numeros
                     
-                    # Salvar no localStorage se marcou "lembrar"
+                    # Salvar em cookies se marcou "lembrar"
                     if lembrar:
-                        st.components.v1.html(f"""
-                            <script>
-                                localStorage.setItem('tjpr_telefone', '{telefone_numeros}');
-                                localStorage.setItem('tjpr_codigo', '{codigo}');
-                            </script>
-                        """, height=0)
+                        cookie_manager.set("tjpr_tel", telefone_numeros, key="set_tel")
+                        cookie_manager.set("tjpr_cod", codigo, key="set_cod")
                     else:
-                        # Limpar localStorage
-                        st.components.v1.html("""
-                            <script>
-                                localStorage.removeItem('tjpr_telefone');
-                                localStorage.removeItem('tjpr_codigo');
-                            </script>
-                        """, height=0)
+                        # Limpar cookies
+                        cookie_manager.delete("tjpr_tel", key="del_tel")
+                        cookie_manager.delete("tjpr_cod", key="del_cod")
                     
                     st.rerun()
                 else:
                     st.error("❌ Telefone ou código inválido!")
         
         with col_btn2:
-            if telefone_salvo or codigo_salvo:
+            if tem_dados_salvos:
                 if st.button("🗑️", help="Limpar dados salvos"):
-                    st.components.v1.html("""
-                        <script>
-                            localStorage.removeItem('tjpr_telefone');
-                            localStorage.removeItem('tjpr_codigo');
-                            // Limpar query params
-                            const url = new URL(window.parent.location.href);
-                            url.searchParams.delete('tel');
-                            url.searchParams.delete('cod');
-                            window.parent.location.href = url.toString();
-                        </script>
-                    """, height=0)
+                    cookie_manager.delete("tjpr_tel", key="clear_tel")
+                    cookie_manager.delete("tjpr_cod", key="clear_cod")
+                    st.rerun()
+        
+        if tem_dados_salvos:
+            st.success("✅ Dados carregados dos cookies!")
         
         st.divider()
         st.caption("Não recebeu seu código? Entre em contato pelo WhatsApp: **(41) 99781-3606**")
