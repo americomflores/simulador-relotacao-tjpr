@@ -85,6 +85,18 @@ st.markdown("""
 DATA_LIMITE_ESTAGIO = date(2022, 11, 26)
 
 # =============================================================================
+# ADMINISTRADORES DO SISTEMA
+# =============================================================================
+
+# Telefones com acesso ao painel administrativo
+ADMIN_TELEFONES = [
+    "41997813606",  # Admin principal
+]
+
+# Senha de acesso ao painel admin (além do telefone)
+ADMIN_SENHA = "TJPR-F4F1X5"
+
+# =============================================================================
 # CÓDIGOS DE AUTENTICAÇÃO
 # =============================================================================
 
@@ -908,6 +920,676 @@ def gerar_excel_resultado(df_resultado):
     return output.getvalue()
 
 
+def gerar_excel_inscricoes(df_inscricoes):
+    """
+    Gera um arquivo Excel com todas as inscrições.
+    """
+    output = BytesIO()
+    
+    df_export = df_inscricoes.copy()
+    
+    # Formatar data
+    if "data_admissao" in df_export.columns:
+        df_export["data_admissao"] = df_export["data_admissao"].apply(
+            lambda x: x.strftime("%d/%m/%Y") if x else ""
+        )
+    
+    # Adicionar descrições das unidades
+    df_export["lotacao_desc"] = df_export["lotacao_atual"].apply(
+        lambda x: f"{ANEXO_II[x]['comarca']} - {ANEXO_II[x]['unidade']}" if x in ANEXO_II else x
+    )
+    df_export["escolha_a1_desc"] = df_export["escolha_anexo1"].apply(
+        lambda x: f"{ANEXO_I[x]['comarca']} - {ANEXO_I[x]['unidade']}" if x and x in ANEXO_I else "-"
+    )
+    df_export["escolha_a2_desc"] = df_export["escolha_anexo2"].apply(
+        lambda x: f"{ANEXO_II[x]['comarca']} - {ANEXO_II[x]['unidade']}" if x and x in ANEXO_II else "-"
+    )
+    
+    # Criar Excel com pandas
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df_export.to_excel(writer, sheet_name='Inscrições', index=False)
+    
+    output.seek(0)
+    return output.getvalue()
+
+
+def gerar_excel_logs(df_inscricoes):
+    """
+    Gera um arquivo Excel com logs de alterações.
+    """
+    output = BytesIO()
+    
+    colunas_log = ["nome", "matricula", "registrado_por", "alterado_por", "data_alteracao", "data_inscricao"]
+    df_export = df_inscricoes[[c for c in colunas_log if c in df_inscricoes.columns]].copy()
+    
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df_export.to_excel(writer, sheet_name='Logs de Alterações', index=False)
+    
+    output.seek(0)
+    return output.getvalue()
+
+
+def is_admin():
+    """Verifica se o usuário logado é administrador."""
+    if "telefone_usuario" in st.session_state and st.session_state.telefone_usuario:
+        return st.session_state.telefone_usuario in ADMIN_TELEFONES
+    return False
+
+
+def painel_administrador(sheet, df_inscricoes):
+    """Exibe o painel de administração completo."""
+    
+    st.title("🔐 Painel Administrativo")
+    st.caption("Acesso restrito a administradores do sistema")
+    
+    # Verificar senha de admin
+    if "admin_autenticado" not in st.session_state:
+        st.session_state.admin_autenticado = False
+    
+    if not st.session_state.admin_autenticado:
+        st.warning("⚠️ Digite a senha de administrador para acessar este painel.")
+        
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            senha_admin = st.text_input("Senha de Administrador:", type="password", key="senha_admin_input")
+            
+            if st.button("🔓 Acessar Painel Admin", use_container_width=True):
+                if senha_admin == ADMIN_SENHA:
+                    st.session_state.admin_autenticado = True
+                    st.rerun()
+                else:
+                    st.error("❌ Senha incorreta!")
+        return
+    
+    # Botão de sair do painel admin
+    col1, col2 = st.columns([4, 1])
+    with col2:
+        if st.button("🔒 Sair do Admin", use_container_width=True):
+            st.session_state.admin_autenticado = False
+            st.session_state.modo_admin = False
+            st.rerun()
+    
+    st.divider()
+    
+    # Abas do painel admin
+    admin_tab1, admin_tab2, admin_tab3, admin_tab4, admin_tab5, admin_tab6 = st.tabs([
+        "📊 Visão Geral",
+        "👥 Usuários",
+        "📝 Inscrições",
+        "📋 Logs",
+        "📥 Exportar",
+        "⚙️ Configurações"
+    ])
+    
+    # =========================================================================
+    # ABA ADMIN 1: VISÃO GERAL
+    # =========================================================================
+    with admin_tab1:
+        st.header("📊 Visão Geral do Sistema")
+        
+        # Métricas principais
+        col1, col2, col3, col4 = st.columns(4)
+        
+        total_usuarios = len(AUTH_CODES)
+        total_inscricoes = len(df_inscricoes)
+        
+        # Calcular usuários ativos (que fizeram login - aproximação pelos registros)
+        usuarios_ativos = set()
+        if not df_inscricoes.empty and "registrado_por" in df_inscricoes.columns:
+            usuarios_ativos.update(df_inscricoes["registrado_por"].dropna().unique())
+            if "alterado_por" in df_inscricoes.columns:
+                usuarios_ativos.update(df_inscricoes["alterado_por"].dropna().unique())
+        usuarios_ativos = len([u for u in usuarios_ativos if u and u != "Desconhecido"])
+        
+        col1.metric("👥 Usuários Cadastrados", total_usuarios)
+        col2.metric("✅ Usuários Ativos", usuarios_ativos, help="Usuários que registraram/alteraram inscrições")
+        col3.metric("📝 Total de Inscrições", total_inscricoes)
+        col4.metric("🔐 Administradores", len(ADMIN_TELEFONES))
+        
+        st.divider()
+        
+        # Resultados da simulação
+        if not df_inscricoes.empty:
+            df_resultado, _, _, _ = calcular_resultado(df_inscricoes)
+            
+            st.subheader("🏆 Resumo dos Resultados")
+            
+            col1, col2, col3, col4, col5 = st.columns(5)
+            
+            aprovados = len(df_resultado[df_resultado["status"] == "APROVADO"])
+            anexo1 = len(df_resultado[df_resultado["resultado"] == "ANEXO I"])
+            anexo2 = len(df_resultado[df_resultado["resultado"] == "ANEXO II"])
+            desclass = len(df_resultado[df_resultado["status"] == "DESCLASSIFICADO"])
+            sem_vaga = len(df_resultado[df_resultado["status"] == "NÃO OBTEVE VAGA"])
+            
+            col1.metric("✅ Aprovados", aprovados, f"{100*aprovados/total_inscricoes:.1f}%" if total_inscricoes > 0 else "0%")
+            col2.metric("📋 Anexo I", anexo1)
+            col3.metric("📋 Anexo II", anexo2)
+            col4.metric("❌ Desclassificados", desclass)
+            col5.metric("⚪ Sem Vaga", sem_vaga)
+            
+            # Designação na origem
+            st.divider()
+            st.subheader("📍 Designação na Origem")
+            
+            com_designacao = len(df_resultado[df_resultado["designacao_origem"] == "SIM"])
+            sem_designacao = len(df_resultado[df_resultado["designacao_origem"] == "NÃO"])
+            
+            col1, col2, col3 = st.columns(3)
+            col1.metric("✅ Pode ir imediatamente", sem_designacao)
+            col2.metric("⚠️ Fica designado na origem", com_designacao)
+            col3.metric("📊 Taxa de designação", f"{100*com_designacao/aprovados:.1f}%" if aprovados > 0 else "0%")
+        
+        else:
+            st.info("Nenhuma inscrição registrada ainda.")
+        
+        # Últimas atividades
+        st.divider()
+        st.subheader("🕐 Últimas Atividades")
+        
+        if not df_inscricoes.empty and "data_alteracao" in df_inscricoes.columns:
+            df_atividades = df_inscricoes[["nome", "matricula", "alterado_por", "data_alteracao"]].copy()
+            df_atividades = df_atividades.dropna(subset=["data_alteracao"])
+            df_atividades = df_atividades.sort_values("data_alteracao", ascending=False).head(10)
+            
+            if not df_atividades.empty:
+                st.dataframe(
+                    df_atividades.rename(columns={
+                        "nome": "Servidor",
+                        "matricula": "Matrícula",
+                        "alterado_por": "Alterado Por",
+                        "data_alteracao": "Data/Hora"
+                    }),
+                    use_container_width=True,
+                    hide_index=True
+                )
+            else:
+                st.info("Nenhuma atividade recente registrada.")
+        else:
+            st.info("Nenhuma atividade recente registrada.")
+    
+    # =========================================================================
+    # ABA ADMIN 2: USUÁRIOS
+    # =========================================================================
+    with admin_tab2:
+        st.header("👥 Gestão de Usuários")
+        
+        # Lista de usuários cadastrados
+        st.subheader("📋 Usuários com Acesso ao Sistema")
+        
+        dados_usuarios = []
+        for telefone, codigo in AUTH_CODES.items():
+            telefone_fmt = formatar_telefone_display(telefone)
+            is_adm = "✅ Sim" if telefone in ADMIN_TELEFONES else "Não"
+            
+            # Verificar se tem inscrições
+            inscricoes_usuario = 0
+            if not df_inscricoes.empty and "registrado_por" in df_inscricoes.columns:
+                inscricoes_usuario = len(df_inscricoes[df_inscricoes["registrado_por"] == telefone_fmt])
+            
+            dados_usuarios.append({
+                "Telefone": telefone_fmt,
+                "Código": codigo,
+                "Admin": is_adm,
+                "Inscrições Registradas": inscricoes_usuario
+            })
+        
+        df_usuarios = pd.DataFrame(dados_usuarios)
+        
+        # Filtros
+        col1, col2 = st.columns(2)
+        with col1:
+            busca_usuario = st.text_input("🔍 Buscar por telefone:", key="busca_usuario_admin")
+        with col2:
+            filtro_admin = st.selectbox("Filtrar:", ["Todos", "Apenas Admins", "Apenas Usuários"], key="filtro_admin")
+        
+        df_filtrado = df_usuarios.copy()
+        
+        if busca_usuario:
+            df_filtrado = df_filtrado[df_filtrado["Telefone"].str.contains(busca_usuario, case=False)]
+        
+        if filtro_admin == "Apenas Admins":
+            df_filtrado = df_filtrado[df_filtrado["Admin"] == "✅ Sim"]
+        elif filtro_admin == "Apenas Usuários":
+            df_filtrado = df_filtrado[df_filtrado["Admin"] == "Não"]
+        
+        st.dataframe(df_filtrado, use_container_width=True, hide_index=True)
+        st.caption(f"Total: {len(df_filtrado)} usuários")
+        
+        st.divider()
+        
+        # Estatísticas de uso
+        st.subheader("📊 Estatísticas de Uso")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("**Usuários que registraram inscrições:**")
+            if not df_inscricoes.empty and "registrado_por" in df_inscricoes.columns:
+                contagem = df_inscricoes["registrado_por"].value_counts().head(10)
+                if not contagem.empty:
+                    df_contagem = pd.DataFrame({
+                        "Usuário": contagem.index,
+                        "Inscrições": contagem.values
+                    })
+                    st.dataframe(df_contagem, use_container_width=True, hide_index=True)
+                else:
+                    st.info("Nenhum dado disponível.")
+            else:
+                st.info("Nenhum dado disponível.")
+        
+        with col2:
+            st.markdown("**Usuários que mais alteraram:**")
+            if not df_inscricoes.empty and "alterado_por" in df_inscricoes.columns:
+                contagem = df_inscricoes["alterado_por"].value_counts().head(10)
+                if not contagem.empty:
+                    df_contagem = pd.DataFrame({
+                        "Usuário": contagem.index,
+                        "Alterações": contagem.values
+                    })
+                    st.dataframe(df_contagem, use_container_width=True, hide_index=True)
+                else:
+                    st.info("Nenhum dado disponível.")
+            else:
+                st.info("Nenhum dado disponível.")
+    
+    # =========================================================================
+    # ABA ADMIN 3: INSCRIÇÕES
+    # =========================================================================
+    with admin_tab3:
+        st.header("📝 Gestão de Inscrições")
+        
+        if df_inscricoes.empty:
+            st.info("Nenhuma inscrição registrada ainda.")
+        else:
+            # Filtros
+            col1, col2, col3 = st.columns(3)
+            
+            with col1:
+                busca_inscricao = st.text_input("🔍 Buscar por nome ou matrícula:", key="busca_inscricao_admin")
+            
+            with col2:
+                # Filtro por status (precisa calcular resultado)
+                df_resultado, _, _, _ = calcular_resultado(df_inscricoes)
+                filtro_status = st.selectbox("Status:", ["Todos", "APROVADO", "DESCLASSIFICADO", "NÃO OBTEVE VAGA"], key="filtro_status_admin")
+            
+            with col3:
+                filtro_designacao = st.selectbox("Designação:", ["Todos", "SIM", "NÃO"], key="filtro_designacao_admin")
+            
+            # Aplicar filtros
+            df_view = df_resultado.copy()
+            
+            if busca_inscricao:
+                mask = df_view.apply(
+                    lambda x: busca_inscricao.lower() in str(x["nome"]).lower() or 
+                              busca_inscricao.lower() in str(x["matricula"]).lower(), 
+                    axis=1
+                )
+                df_view = df_view[mask]
+            
+            if filtro_status != "Todos":
+                df_view = df_view[df_view["status"] == filtro_status]
+            
+            if filtro_designacao != "Todos":
+                df_view = df_view[df_view["designacao_origem"] == filtro_designacao]
+            
+            # Formatar data
+            df_view["data_admissao_fmt"] = df_view["data_admissao"].apply(
+                lambda x: x.strftime("%d/%m/%Y") if x else ""
+            )
+            
+            # Adicionar descrição das lotações
+            df_view["lotacao_desc"] = df_view["lotacao_atual"].apply(
+                lambda x: f"{ANEXO_II[x]['comarca']} - {ANEXO_II[x]['unidade'][:30]}..." if x in ANEXO_II else x
+            )
+            
+            # Exibir tabela
+            st.dataframe(
+                df_view[[
+                    "posicao_antiguidade", "nome", "matricula", "data_admissao_fmt",
+                    "lotacao_desc", "status", "resultado", "designacao_origem"
+                ]].rename(columns={
+                    "posicao_antiguidade": "Pos.",
+                    "nome": "Nome",
+                    "matricula": "Matrícula",
+                    "data_admissao_fmt": "Admissão",
+                    "lotacao_desc": "Lotação Atual",
+                    "status": "Status",
+                    "resultado": "Resultado",
+                    "designacao_origem": "Designação"
+                }),
+                use_container_width=True,
+                hide_index=True,
+                height=500
+            )
+            
+            st.caption(f"Exibindo: {len(df_view)} de {len(df_resultado)} inscrições")
+            
+            st.divider()
+            
+            # Detalhes de uma inscrição específica
+            st.subheader("🔍 Detalhes de Inscrição")
+            
+            matricula_detalhe = st.text_input("Digite a matrícula para ver detalhes:", key="matricula_detalhe_admin")
+            
+            if matricula_detalhe:
+                inscricao = df_inscricoes[df_inscricoes["matricula"].astype(str) == str(matricula_detalhe)]
+                
+                if inscricao.empty:
+                    st.error("Matrícula não encontrada.")
+                else:
+                    inscricao = inscricao.iloc[0]
+                    resultado = df_resultado[df_resultado["matricula"].astype(str) == str(matricula_detalhe)].iloc[0]
+                    
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        st.markdown("**Dados Pessoais:**")
+                        st.markdown(f"- **Nome:** {inscricao['nome']}")
+                        st.markdown(f"- **Matrícula:** {inscricao['matricula']}")
+                        st.markdown(f"- **Data Admissão:** {inscricao['data_admissao'].strftime('%d/%m/%Y') if inscricao['data_admissao'] else '-'}")
+                        st.markdown(f"- **Posição por Antiguidade:** {resultado['posicao_antiguidade']}º")
+                        
+                        lotacao = inscricao['lotacao_atual']
+                        if lotacao in ANEXO_II:
+                            st.markdown(f"- **Lotação:** {ANEXO_II[lotacao]['comarca']} - {ANEXO_II[lotacao]['unidade']}")
+                        else:
+                            st.markdown(f"- **Lotação:** {lotacao}")
+                    
+                    with col2:
+                        st.markdown("**Escolhas e Resultado:**")
+                        
+                        escolha_a1 = inscricao.get('escolha_anexo1', '')
+                        if escolha_a1 and escolha_a1 in ANEXO_I:
+                            st.markdown(f"- **Anexo I:** {ANEXO_I[escolha_a1]['comarca']} - {ANEXO_I[escolha_a1]['unidade']}")
+                        else:
+                            st.markdown("- **Anexo I:** Não escolheu")
+                        
+                        escolha_a2 = inscricao.get('escolha_anexo2', '')
+                        if escolha_a2 and escolha_a2 in ANEXO_II:
+                            st.markdown(f"- **Anexo II:** {ANEXO_II[escolha_a2]['comarca']} - {ANEXO_II[escolha_a2]['unidade']}")
+                        else:
+                            st.markdown("- **Anexo II:** Não escolheu")
+                        
+                        st.markdown(f"- **Status:** {resultado['status']}")
+                        st.markdown(f"- **Resultado:** {resultado['resultado']}")
+                        st.markdown(f"- **Vaga Obtida:** {resultado['vaga_obtida']}")
+                        st.markdown(f"- **Designação Origem:** {resultado['designacao_origem']}")
+                    
+                    # Logs
+                    st.markdown("**Logs de Registro:**")
+                    col1, col2, col3 = st.columns(3)
+                    col1.markdown(f"- **Registrado por:** {inscricao.get('registrado_por', '-')}")
+                    col2.markdown(f"- **Última alteração por:** {inscricao.get('alterado_por', '-')}")
+                    col3.markdown(f"- **Data alteração:** {inscricao.get('data_alteracao', '-')}")
+    
+    # =========================================================================
+    # ABA ADMIN 4: LOGS
+    # =========================================================================
+    with admin_tab4:
+        st.header("📋 Logs de Atividades")
+        
+        if df_inscricoes.empty:
+            st.info("Nenhum log disponível.")
+        else:
+            # Verificar se tem colunas de log
+            tem_logs = all(col in df_inscricoes.columns for col in ["registrado_por", "alterado_por", "data_alteracao"])
+            
+            if not tem_logs:
+                st.warning("⚠️ As colunas de log não existem nas inscrições antigas. Novos registros terão logs.")
+            else:
+                # Filtros de log
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    busca_log = st.text_input("🔍 Buscar por usuário ou servidor:", key="busca_log_admin")
+                
+                with col2:
+                    ordenar_por = st.selectbox("Ordenar por:", ["Mais recentes", "Mais antigos", "Por usuário"], key="ordenar_log")
+                
+                # Preparar dados de log
+                df_logs = df_inscricoes[["nome", "matricula", "registrado_por", "alterado_por", "data_alteracao", "data_inscricao"]].copy()
+                
+                # Aplicar filtro
+                if busca_log:
+                    mask = df_logs.apply(
+                        lambda x: busca_log.lower() in str(x["nome"]).lower() or 
+                                  busca_log.lower() in str(x["registrado_por"]).lower() or
+                                  busca_log.lower() in str(x["alterado_por"]).lower(), 
+                        axis=1
+                    )
+                    df_logs = df_logs[mask]
+                
+                # Ordenar
+                if ordenar_por == "Mais recentes":
+                    df_logs = df_logs.sort_values("data_alteracao", ascending=False, na_position='last')
+                elif ordenar_por == "Mais antigos":
+                    df_logs = df_logs.sort_values("data_alteracao", ascending=True, na_position='last')
+                else:
+                    df_logs = df_logs.sort_values("alterado_por", ascending=True, na_position='last')
+                
+                # Exibir
+                st.dataframe(
+                    df_logs.rename(columns={
+                        "nome": "Servidor",
+                        "matricula": "Matrícula",
+                        "registrado_por": "Registrado Por",
+                        "alterado_por": "Alterado Por",
+                        "data_alteracao": "Data Alteração",
+                        "data_inscricao": "Data Inscrição"
+                    }),
+                    use_container_width=True,
+                    hide_index=True,
+                    height=500
+                )
+                
+                st.caption(f"Total: {len(df_logs)} registros")
+                
+                st.divider()
+                
+                # Análise de atividade por usuário
+                st.subheader("📊 Atividade por Usuário")
+                
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.markdown("**Registros criados por usuário:**")
+                    if "registrado_por" in df_inscricoes.columns:
+                        registros = df_inscricoes["registrado_por"].value_counts()
+                        st.dataframe(
+                            pd.DataFrame({"Usuário": registros.index, "Registros": registros.values}),
+                            use_container_width=True,
+                            hide_index=True
+                        )
+                
+                with col2:
+                    st.markdown("**Alterações por usuário:**")
+                    if "alterado_por" in df_inscricoes.columns:
+                        alteracoes = df_inscricoes["alterado_por"].value_counts()
+                        st.dataframe(
+                            pd.DataFrame({"Usuário": alteracoes.index, "Alterações": alteracoes.values}),
+                            use_container_width=True,
+                            hide_index=True
+                        )
+    
+    # =========================================================================
+    # ABA ADMIN 5: EXPORTAR
+    # =========================================================================
+    with admin_tab5:
+        st.header("📥 Exportar Dados")
+        
+        st.info("⚠️ Atenção: Estes arquivos contêm dados sensíveis. Utilize com responsabilidade.")
+        
+        if df_inscricoes.empty:
+            st.warning("Nenhum dado para exportar.")
+        else:
+            col1, col2, col3 = st.columns(3)
+            
+            with col1:
+                st.subheader("📝 Inscrições")
+                st.markdown("Todas as inscrições com dados completos.")
+                
+                try:
+                    excel_inscricoes = gerar_excel_inscricoes(df_inscricoes)
+                    st.download_button(
+                        label="📥 Baixar Inscrições",
+                        data=excel_inscricoes,
+                        file_name=f"inscricoes_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        use_container_width=True
+                    )
+                except Exception as e:
+                    st.error(f"Erro: {e}")
+            
+            with col2:
+                st.subheader("🏆 Resultados")
+                st.markdown("Resultado da simulação completo.")
+                
+                try:
+                    df_resultado, _, _, _ = calcular_resultado(df_inscricoes)
+                    excel_resultado = gerar_excel_resultado(df_resultado)
+                    st.download_button(
+                        label="📥 Baixar Resultados",
+                        data=excel_resultado,
+                        file_name=f"resultados_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        use_container_width=True
+                    )
+                except Exception as e:
+                    st.error(f"Erro: {e}")
+            
+            with col3:
+                st.subheader("📋 Logs")
+                st.markdown("Histórico de registros e alterações.")
+                
+                try:
+                    excel_logs = gerar_excel_logs(df_inscricoes)
+                    st.download_button(
+                        label="📥 Baixar Logs",
+                        data=excel_logs,
+                        file_name=f"logs_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        use_container_width=True
+                    )
+                except Exception as e:
+                    st.error(f"Erro: {e}")
+            
+            st.divider()
+            
+            # Exportar tudo em um arquivo
+            st.subheader("📦 Exportar Tudo")
+            st.markdown("Arquivo Excel com todas as abas (Inscrições, Resultados, Logs).")
+            
+            try:
+                output = BytesIO()
+                df_resultado, _, _, _ = calcular_resultado(df_inscricoes)
+                
+                with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                    # Aba de inscrições
+                    df_export_insc = df_inscricoes.copy()
+                    if "data_admissao" in df_export_insc.columns:
+                        df_export_insc["data_admissao"] = df_export_insc["data_admissao"].apply(
+                            lambda x: x.strftime("%d/%m/%Y") if x else ""
+                        )
+                    df_export_insc.to_excel(writer, sheet_name='Inscrições', index=False)
+                    
+                    # Aba de resultados
+                    df_export_res = df_resultado[[
+                        "posicao_antiguidade", "nome", "matricula", "data_admissao",
+                        "status", "resultado", "vaga_obtida", "designacao_origem", "observacao"
+                    ]].copy()
+                    df_export_res["data_admissao"] = df_export_res["data_admissao"].apply(
+                        lambda x: x.strftime("%d/%m/%Y") if x else ""
+                    )
+                    df_export_res.to_excel(writer, sheet_name='Resultados', index=False)
+                    
+                    # Aba de logs
+                    colunas_log = ["nome", "matricula", "registrado_por", "alterado_por", "data_alteracao"]
+                    df_export_log = df_inscricoes[[c for c in colunas_log if c in df_inscricoes.columns]].copy()
+                    df_export_log.to_excel(writer, sheet_name='Logs', index=False)
+                
+                output.seek(0)
+                
+                st.download_button(
+                    label="📥 Baixar Relatório Completo",
+                    data=output.getvalue(),
+                    file_name=f"relatorio_completo_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    use_container_width=True,
+                    type="primary"
+                )
+            except Exception as e:
+                st.error(f"Erro ao gerar relatório: {e}")
+    
+    # =========================================================================
+    # ABA ADMIN 6: CONFIGURAÇÕES
+    # =========================================================================
+    with admin_tab6:
+        st.header("⚙️ Configurações do Sistema")
+        
+        st.warning("⚠️ Alterações nas configurações requerem edição do código fonte.")
+        
+        # Informações do sistema
+        st.subheader("ℹ️ Informações do Sistema")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("**Configurações Atuais:**")
+            st.markdown(f"- **Total de usuários:** {len(AUTH_CODES)}")
+            st.markdown(f"- **Administradores:** {len(ADMIN_TELEFONES)}")
+            st.markdown(f"- **Data limite estágio probatório:** {DATA_LIMITE_ESTAGIO.strftime('%d/%m/%Y')}")
+            st.markdown(f"- **Total vagas Anexo I:** {sum(v['quantidade'] for v in ANEXO_I.values())}")
+            st.markdown(f"- **Total unidades Anexo II:** {len(ANEXO_II)}")
+        
+        with col2:
+            st.markdown("**Dados de Lotação:**")
+            st.markdown(f"- **Unidades mapeadas:** {len(LOTACAO_COMPLETA)}")
+            superavit = len([u for u in LOTACAO_COMPLETA if u["status"] == "SUPERAVITÁRIA"])
+            equilibrada = len([u for u in LOTACAO_COMPLETA if u["status"] == "EQUILIBRADA"])
+            deficit = len([u for u in LOTACAO_COMPLETA if u["status"] == "DEFICITÁRIA"])
+            st.markdown(f"- **Superavitárias:** {superavit}")
+            st.markdown(f"- **Equilibradas:** {equilibrada}")
+            st.markdown(f"- **Deficitárias:** {deficit}")
+        
+        st.divider()
+        
+        # Lista de admins
+        st.subheader("🔐 Administradores")
+        
+        for tel in ADMIN_TELEFONES:
+            st.markdown(f"- {formatar_telefone_display(tel)}")
+        
+        st.divider()
+        
+        # Códigos de acesso
+        st.subheader("🔑 Códigos de Acesso")
+        
+        with st.expander("Ver todos os códigos de acesso"):
+            dados_codigos = []
+            for tel, cod in AUTH_CODES.items():
+                dados_codigos.append({
+                    "Telefone": formatar_telefone_display(tel),
+                    "Código": cod
+                })
+            
+            st.dataframe(pd.DataFrame(dados_codigos), use_container_width=True, hide_index=True, height=400)
+        
+        st.divider()
+        
+        # Ações administrativas
+        st.subheader("🛠️ Ações Administrativas")
+        
+        st.markdown("Para realizar ações administrativas avançadas, edite o código-fonte:")
+        st.markdown("""
+        - **Adicionar usuário:** Incluir no dicionário `AUTH_CODES`
+        - **Remover usuário:** Remover do dicionário `AUTH_CODES`
+        - **Adicionar admin:** Incluir na lista `ADMIN_TELEFONES`
+        - **Alterar senha admin:** Modificar variável `ADMIN_SENHA`
+        - **Atualizar dados de lotação:** Editar `lotacao_data.py`
+        """)
+
+
 # =============================================================================
 # INTERFACE PRINCIPAL
 # =============================================================================
@@ -916,18 +1598,44 @@ def main():
     st.title("⚖️ Simulador de Relotação - TJPR")
     st.caption("Edital nº 4/2025 - Técnico Judiciário")
     
+    # Verificar se está no modo admin
+    if "modo_admin" not in st.session_state:
+        st.session_state.modo_admin = False
+    
     # Botão de logout no sidebar
     with st.sidebar:
         telefone_display = get_usuario_logado()
         st.success(f"✅ Conectado")
         st.caption(f"📱 {telefone_display}")
+        
+        # Botão de admin (só aparece para admins)
+        if is_admin():
+            st.divider()
+            if st.session_state.modo_admin:
+                if st.button("📊 Voltar ao Simulador", use_container_width=True):
+                    st.session_state.modo_admin = False
+                    st.rerun()
+            else:
+                if st.button("🔐 Painel Admin", use_container_width=True, type="primary"):
+                    st.session_state.modo_admin = True
+                    st.rerun()
+            st.divider()
+        
         if st.button("🚪 Sair", use_container_width=True):
             st.session_state.autenticado = False
             st.session_state.telefone_usuario = None
+            st.session_state.modo_admin = False
+            st.session_state.admin_autenticado = False
             st.rerun()
     
+    # Conectar ao Google Sheets
     sheet = conectar_sheets()
     df_inscricoes = carregar_inscricoes(sheet)
+    
+    # Se está no modo admin, mostrar painel admin
+    if st.session_state.modo_admin and is_admin():
+        painel_administrador(sheet, df_inscricoes)
+        return
     
     # Criar abas (agora com 10 abas)
     tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs([
@@ -1458,31 +2166,14 @@ def main():
                 hide_index=True
             )
             
-            # Legenda de cores e botão de exportação
-            col_leg1, col_leg2 = st.columns([3, 1])
-            
-            with col_leg1:
-                st.markdown("""
-                **Legenda:** 
-                - 🟢 Aprovado (designação = NÃO) - pode sair imediatamente
-                - 🟡 Aprovado (designação = SIM) - fica na origem até substituição
-                - 🔴 Desclassificado (estágio probatório)
-                - ⚪ Não obteve vaga
-                """)
-            
-            with col_leg2:
-                # Botão de exportar para Excel
-                try:
-                    excel_data = gerar_excel_resultado(df_resultado)
-                    st.download_button(
-                        label="📥 Exportar Excel",
-                        data=excel_data,
-                        file_name=f"resultado_simulacao_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
-                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        use_container_width=True
-                    )
-                except Exception as e:
-                    st.error(f"Erro ao gerar Excel: {e}")
+            # Legenda de cores
+            st.markdown("""
+            **Legenda:** 
+            - 🟢 Aprovado (designação = NÃO) - pode sair imediatamente
+            - 🟡 Aprovado (designação = SIM) - fica na origem até substituição
+            - 🔴 Desclassificado (estágio probatório)
+            - ⚪ Não obteve vaga
+            """)
             
             st.divider()
             
