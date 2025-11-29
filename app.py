@@ -710,6 +710,10 @@ def calcular_resultado(df_inscricoes):
     """
     Calcula o resultado da simulação com lotação dinâmica.
     Inclui cálculo de "Designação na Origem" baseado no status da unidade.
+    
+    Implementa item 3.11 do Edital:
+    "Se, durante a análise do Anexo II, for possível o deferimento em ambas as unidades,
+    será concedido o deferimento para a unidade originalmente indicada no Anexo I."
     """
     if df_inscricoes.empty:
         return pd.DataFrame(), {}, {}, {}
@@ -725,6 +729,20 @@ def calcular_resultado(df_inscricoes):
     df["designacao_origem"] = ""
     df["status_origem_inicial"] = ""
     df["status_origem_final"] = ""
+    
+    # Criar mapeamento de Anexo I para Anexo II (mesma unidade, códigos diferentes)
+    mapeamento_a1_para_a2 = {}
+    for codigo_a1, info_a1 in ANEXO_I.items():
+        comarca_a1 = info_a1['comarca'].strip().lower()
+        unidade_a1 = info_a1['unidade'].strip().lower()
+        
+        for codigo_a2, info_a2 in ANEXO_II.items():
+            comarca_a2 = info_a2['comarca'].strip().lower()
+            unidade_a2 = info_a2['unidade'].strip().lower()
+            
+            if comarca_a1 == comarca_a2 and unidade_a1 == unidade_a2:
+                mapeamento_a1_para_a2[codigo_a1] = codigo_a2
+                break
     
     # Marcar desclassificados por estágio probatório
     for idx, row in df.iterrows():
@@ -798,9 +816,12 @@ def calcular_resultado(df_inscricoes):
             servidores_para_anexo2.append(idx)
     
     # FASE 2: Processar Anexo II
+    # Conforme item 3.11: se possível deferimento em ambas as unidades (A1 e A2),
+    # será concedido deferimento para a unidade originalmente indicada no Anexo I
     for idx in servidores_para_anexo2:
         row = df.loc[idx]
-        escolha_a2 = row["escolha_anexo2"]
+        escolha_a1 = row["escolha_anexo1"]  # Escolha original do Anexo I
+        escolha_a2 = row["escolha_anexo2"]  # Escolha do Anexo II
         lotacao_origem = row["lotacao_atual"]
         
         # Registrar status inicial da origem (se ainda não registrado)
@@ -809,56 +830,78 @@ def calcular_resultado(df_inscricoes):
             if dados_origem:
                 df.at[idx, "status_origem_inicial"] = dados_origem["status"]
         
-        if escolha_a2 and escolha_a2 in vagas_anexo2:
-            if vagas_anexo2[escolha_a2] > 0:
-                vagas_anexo2[escolha_a2] -= 1
-                df.at[idx, "status"] = "APROVADO"
-                df.at[idx, "resultado"] = "ANEXO II"
-                df.at[idx, "vaga_obtida"] = f"{ANEXO_II[escolha_a2]['comarca']} - {ANEXO_II[escolha_a2]['unidade']}"
+        # Mapear escolha A1 para código A2 (mesma unidade)
+        codigo_a1_no_a2 = mapeamento_a1_para_a2.get(escolha_a1) if escolha_a1 else None
+        
+        # Verificar disponibilidade das vagas
+        vaga_a1_disponivel = codigo_a1_no_a2 and codigo_a1_no_a2 in vagas_anexo2 and vagas_anexo2[codigo_a1_no_a2] > 0
+        vaga_a2_disponivel = escolha_a2 and escolha_a2 in vagas_anexo2 and vagas_anexo2[escolha_a2] > 0
+        
+        # Determinar qual vaga conceder (prioridade para A1 conforme item 3.11)
+        vaga_escolhida = None
+        origem_vaga = None  # "A1" ou "A2"
+        
+        if vaga_a1_disponivel and vaga_a2_disponivel:
+            # Ambas disponíveis: prioridade para A1 (item 3.11)
+            vaga_escolhida = codigo_a1_no_a2
+            origem_vaga = "ANEXO I (via A2)"
+        elif vaga_a1_disponivel:
+            # Apenas A1 disponível
+            vaga_escolhida = codigo_a1_no_a2
+            origem_vaga = "ANEXO I (via A2)"
+        elif vaga_a2_disponivel:
+            # Apenas A2 disponível
+            vaga_escolhida = escolha_a2
+            origem_vaga = "ANEXO II"
+        
+        if vaga_escolhida:
+            vagas_anexo2[vaga_escolhida] -= 1
+            df.at[idx, "status"] = "APROVADO"
+            df.at[idx, "resultado"] = origem_vaga
+            df.at[idx, "vaga_obtida"] = f"{ANEXO_II[vaga_escolhida]['comarca']} - {ANEXO_II[vaga_escolhida]['unidade']}"
+            
+            # Atualizar ajustes de lotação
+            if lotacao_origem and lotacao_origem != vaga_escolhida:
+                # Servidor sai da origem (-1)
+                ajustes_lotacao[lotacao_origem] = ajustes_lotacao.get(lotacao_origem, 0) - 1
                 
-                # Atualizar ajustes de lotação
-                if lotacao_origem and lotacao_origem != escolha_a2:
-                    # Servidor sai da origem (-1)
-                    ajustes_lotacao[lotacao_origem] = ajustes_lotacao.get(lotacao_origem, 0) - 1
+                # Calcular status final da origem após saída
+                dados_origem_final = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao[lotacao_origem])
+                if dados_origem_final:
+                    df.at[idx, "status_origem_final"] = dados_origem_final["status"]
                     
-                    # Calcular status final da origem após saída
-                    dados_origem_final = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao[lotacao_origem])
-                    if dados_origem_final:
-                        df.at[idx, "status_origem_final"] = dados_origem_final["status"]
-                        
-                        # Determinar se precisa designação na origem
-                        # Conforme item 3.14 do Edital: designação apenas se a saída OCASIONAR DÉFICIT
-                        if dados_origem_final["status"] == "DEFICITÁRIA":
-                            df.at[idx, "designacao_origem"] = "SIM"
-                        else:
-                            df.at[idx, "designacao_origem"] = "NÃO"
-                    
-                    # Liberar vaga no Anexo II
-                    if lotacao_origem in vagas_anexo2:
-                        vagas_anexo2[lotacao_origem] += 1
+                    # Determinar se precisa designação na origem
+                    # Conforme item 3.14 do Edital: designação apenas se a saída OCASIONAR DÉFICIT
+                    if dados_origem_final["status"] == "DEFICITÁRIA":
+                        df.at[idx, "designacao_origem"] = "SIM"
                     else:
-                        vagas_anexo2[lotacao_origem] = 1
+                        df.at[idx, "designacao_origem"] = "NÃO"
+                
+                # Liberar vaga no Anexo II
+                if lotacao_origem in vagas_anexo2:
+                    vagas_anexo2[lotacao_origem] += 1
                 else:
-                    df.at[idx, "designacao_origem"] = "-"
+                    vagas_anexo2[lotacao_origem] = 1
             else:
-                df.at[idx, "status"] = "NÃO OBTEVE VAGA"
-                df.at[idx, "resultado"] = "Sem vaga"
-                df.at[idx, "observacao"] = "Vaga do Anexo II não disponível"
                 df.at[idx, "designacao_origem"] = "-"
-        elif escolha_a2 and escolha_a2 in ANEXO_II:
-            df.at[idx, "status"] = "NÃO OBTEVE VAGA"
-            df.at[idx, "resultado"] = "Sem vaga"
-            df.at[idx, "observacao"] = "Vaga do Anexo II não foi liberada"
-            df.at[idx, "designacao_origem"] = "-"
-        elif escolha_a2:
-            df.at[idx, "status"] = "NÃO OBTEVE VAGA"
-            df.at[idx, "resultado"] = "Sem vaga"
-            df.at[idx, "observacao"] = "Código Anexo II inválido"
-            df.at[idx, "designacao_origem"] = "-"
         else:
+            # Nenhuma vaga disponível
             df.at[idx, "status"] = "NÃO OBTEVE VAGA"
             df.at[idx, "resultado"] = "Sem vaga"
-            df.at[idx, "observacao"] = "Não escolheu Anexo II"
+            
+            # Determinar motivo
+            if escolha_a1 and escolha_a2:
+                df.at[idx, "observacao"] = "Vagas do Anexo I e II não disponíveis"
+            elif escolha_a1:
+                df.at[idx, "observacao"] = "Vaga do Anexo I não foi liberada no Anexo II"
+            elif escolha_a2:
+                if escolha_a2 in ANEXO_II:
+                    df.at[idx, "observacao"] = "Vaga do Anexo II não foi liberada"
+                else:
+                    df.at[idx, "observacao"] = "Código Anexo II inválido"
+            else:
+                df.at[idx, "observacao"] = "Não escolheu nenhuma vaga"
+            
             df.at[idx, "designacao_origem"] = "-"
     
     return df, vagas_anexo1, vagas_anexo2, ajustes_lotacao
@@ -1322,13 +1365,14 @@ def painel_administrador(sheet, df_inscricoes):
             col1, col2, col3, col4, col5 = st.columns(5)
             
             aprovados = len(df_resultado[df_resultado["status"] == "APROVADO"])
-            anexo1 = len(df_resultado[df_resultado["resultado"] == "ANEXO I"])
+            # Incluir "ANEXO I" e "ANEXO I (via A2)" na contagem de Anexo I
+            anexo1 = len(df_resultado[df_resultado["resultado"].str.startswith("ANEXO I", na=False)])
             anexo2 = len(df_resultado[df_resultado["resultado"] == "ANEXO II"])
             desclass = len(df_resultado[df_resultado["status"] == "DESCLASSIFICADO"])
             sem_vaga = len(df_resultado[df_resultado["status"] == "NÃO OBTEVE VAGA"])
             
             col1.metric("✅ Aprovados", aprovados, f"{100*aprovados/total_inscricoes:.1f}%" if total_inscricoes > 0 else "0%")
-            col2.metric("📋 Anexo I", anexo1)
+            col2.metric("📋 Anexo I", anexo1, help="Inclui aprovados direto no Anexo I e via item 3.11")
             col3.metric("📋 Anexo II", anexo2)
             col4.metric("❌ Desclassificados", desclass)
             col5.metric("⚪ Sem Vaga", sem_vaga)
@@ -2426,7 +2470,8 @@ def main():
             col1, col2, col3, col4 = st.columns(4)
             
             total = len(df_resultado)
-            aprovados_a1 = len(df_resultado[df_resultado["resultado"] == "ANEXO I"])
+            # Incluir "ANEXO I" e "ANEXO I (via A2)" na contagem
+            aprovados_a1 = len(df_resultado[df_resultado["resultado"].str.startswith("ANEXO I", na=False)])
             aprovados_a2 = len(df_resultado[df_resultado["resultado"] == "ANEXO II"])
             desclass = len(df_resultado[df_resultado["status"] == "DESCLASSIFICADO"])
             
@@ -2434,7 +2479,7 @@ def main():
             com_designacao = len(df_resultado[df_resultado["designacao_origem"] == "SIM"])
             
             col1.metric("Total Inscritos", total)
-            col2.metric("Aprovados Anexo I", aprovados_a1)
+            col2.metric("Aprovados Anexo I", aprovados_a1, help="Inclui direto e via item 3.11")
             col3.metric("Aprovados Anexo II", aprovados_a2)
             col4.metric("Com Designação na Origem", com_designacao, help="Aprovados que precisarão aguardar substituição")
             
