@@ -95,7 +95,7 @@ ADMIN_TELEFONES = [
 ]
 
 # Senha de acesso ao painel admin (além do telefone)
-ADMIN_SENHA = "TJPR-F4F1X5"
+ADMIN_SENHA = "swift"
 
 # =============================================================================
 # CÓDIGOS DE AUTENTICAÇÃO
