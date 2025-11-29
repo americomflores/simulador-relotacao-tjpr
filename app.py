@@ -983,15 +983,54 @@ def normalizar_nome(nome):
     - Remove acentos
     - Converte para minúsculas
     - Remove espaços extras
+    - Remove caracteres especiais
     """
     if not nome:
         return ""
+    # Converter para string se não for
+    nome = str(nome)
     # Remove acentos
     nome_normalizado = unicodedata.normalize('NFD', nome)
     nome_normalizado = ''.join(c for c in nome_normalizado if unicodedata.category(c) != 'Mn')
+    # Remove caracteres que não são letras, números ou espaços
+    nome_normalizado = re.sub(r'[^a-zA-Z0-9\s]', '', nome_normalizado)
     # Converte para minúsculas e remove espaços extras
     nome_normalizado = ' '.join(nome_normalizado.lower().split())
     return nome_normalizado
+
+
+def nomes_sao_iguais(nome1, nome2):
+    """
+    Compara dois nomes de forma flexível.
+    Retorna True se forem considerados iguais.
+    """
+    n1 = normalizar_nome(nome1)
+    n2 = normalizar_nome(nome2)
+    
+    # Comparação direta
+    if n1 == n2:
+        return True
+    
+    # Um contém o outro (para casos de nomes com/sem nome do meio)
+    if n1 in n2 or n2 in n1:
+        # Só se a diferença for pequena
+        if abs(len(n1) - len(n2)) <= 5:
+            return True
+    
+    # Comparar palavras (pelo menos 80% das palavras em comum)
+    palavras1 = set(n1.split())
+    palavras2 = set(n2.split())
+    
+    if not palavras1 or not palavras2:
+        return False
+    
+    intersecao = palavras1 & palavras2
+    menor = min(len(palavras1), len(palavras2))
+    
+    if menor > 0 and len(intersecao) / menor >= 0.8:
+        return True
+    
+    return False
 
 
 def tentar_match_anexo2(vaga_csv):
@@ -1112,68 +1151,91 @@ def comparar_edital_simulador(df_csv, df_inscricoes):
             'situacoes': situacoes
         })
     
-    # 4. Criar set de nomes normalizados do simulador
+    # 4. Preparar dados do simulador
     if not df_inscricoes.empty:
         df_inscricoes['nome_normalizado'] = df_inscricoes['nome'].apply(normalizar_nome)
-        nomes_simulador = set(df_inscricoes['nome_normalizado'].unique())
-        nomes_simulador_dict = dict(zip(df_inscricoes['nome_normalizado'], df_inscricoes['nome']))
-        matriculas_dict = dict(zip(df_inscricoes['nome_normalizado'], df_inscricoes['matricula']))
+        lista_simulador = [
+            {
+                'nome': row['nome'],
+                'nome_normalizado': row['nome_normalizado'],
+                'matricula': row['matricula']
+            }
+            for _, row in df_inscricoes.iterrows()
+        ]
     else:
-        nomes_simulador = set()
-        nomes_simulador_dict = {}
-        matriculas_dict = {}
+        lista_simulador = []
     
-    nomes_csv_finalizados = set(servidores_finalizados['servidor_normalizado'].unique())
+    # 5. Lista de servidores finalizados no CSV
+    lista_csv = [
+        {
+            'nome': row['servidor'],
+            'nome_normalizado': row['servidor_normalizado'],
+            'vagas': row['vaga'],
+            'data': row['data']
+        }
+        for _, row in servidores_finalizados.iterrows()
+    ]
     
-    # 5. Comparar
-    # Coincidentes
-    coincidentes = nomes_csv_finalizados & nomes_simulador
-    for nome_norm in coincidentes:
-        servidor_csv = servidores_finalizados[servidores_finalizados['servidor_normalizado'] == nome_norm].iloc[0]
-        resultados['coincidentes'].append({
-            'nome_csv': servidor_csv['servidor'],
-            'nome_simulador': nomes_simulador_dict.get(nome_norm, ''),
-            'matricula': matriculas_dict.get(nome_norm, ''),
-            'vagas_csv': servidor_csv['vaga']
-        })
+    # 6. Comparar usando função flexível
+    # Para cada servidor do CSV, verificar se existe no simulador
+    csv_encontrados = set()  # índices do CSV que foram encontrados
+    simulador_encontrados = set()  # índices do simulador que foram encontrados
     
-    # Faltam no simulador
-    faltam = nomes_csv_finalizados - nomes_simulador
-    for nome_norm in faltam:
-        servidor_csv = servidores_finalizados[servidores_finalizados['servidor_normalizado'] == nome_norm].iloc[0]
-        
-        # Tentar fazer match com Anexo II
-        vagas_match = []
-        for vaga in servidor_csv['vaga']:
-            codigo, score = tentar_match_anexo2(vaga)
-            vagas_match.append({
-                'vaga_csv': vaga,
-                'codigo_anexo2': codigo,
-                'score': score,
-                'unidade_anexo2': f"{ANEXO_II[codigo]['comarca']} - {ANEXO_II[codigo]['unidade']}" if codigo else None
+    for i, srv_csv in enumerate(lista_csv):
+        for j, srv_sim in enumerate(lista_simulador):
+            if nomes_sao_iguais(srv_csv['nome'], srv_sim['nome']):
+                # Match encontrado
+                csv_encontrados.add(i)
+                simulador_encontrados.add(j)
+                resultados['coincidentes'].append({
+                    'nome_csv': srv_csv['nome'],
+                    'nome_simulador': srv_sim['nome'],
+                    'matricula': srv_sim['matricula'],
+                    'vagas_csv': srv_csv['vagas']
+                })
+                break
+    
+    # 7. Servidores do CSV que não foram encontrados no simulador
+    for i, srv_csv in enumerate(lista_csv):
+        if i not in csv_encontrados:
+            # Tentar fazer match com Anexo II
+            vagas_match = []
+            for vaga in srv_csv['vagas']:
+                codigo, score = tentar_match_anexo2(vaga)
+                vagas_match.append({
+                    'vaga_csv': vaga,
+                    'codigo_anexo2': codigo,
+                    'score': score,
+                    'unidade_anexo2': f"{ANEXO_II[codigo]['comarca']} - {ANEXO_II[codigo]['unidade']}" if codigo else None
+                })
+            
+            resultados['faltam_simulador'].append({
+                'nome': srv_csv['nome'],
+                'nome_normalizado': srv_csv['nome_normalizado'],
+                'vagas': vagas_match,
+                'data': srv_csv['data']
             })
-        
-        resultados['faltam_simulador'].append({
-            'nome': servidor_csv['servidor'],
-            'nome_normalizado': nome_norm,
-            'vagas': vagas_match,
-            'data': servidor_csv['data']
-        })
     
-    # Remover do simulador (estão no simulador mas não finalizaram no CSV)
-    remover = nomes_simulador - nomes_csv_finalizados
-    for nome_norm in remover:
-        # Verificar se está no CSV mas não finalizou
-        if nome_norm in servidores_todos:
-            motivo = "Inscrição NÃO FINALIZADA no edital oficial"
-        else:
-            motivo = "NÃO ENCONTRADO no edital oficial"
-        
-        resultados['remover_simulador'].append({
-            'nome': nomes_simulador_dict.get(nome_norm, ''),
-            'matricula': matriculas_dict.get(nome_norm, ''),
-            'motivo': motivo
-        })
+    # 8. Servidores do simulador que não foram encontrados no CSV finalizado
+    for j, srv_sim in enumerate(lista_simulador):
+        if j not in simulador_encontrados:
+            # Verificar se está no CSV mas não finalizou
+            encontrado_nao_finalizado = False
+            for srv_nf in resultados['csv_nao_finalizados']:
+                if nomes_sao_iguais(srv_sim['nome'], srv_nf['nome']):
+                    encontrado_nao_finalizado = True
+                    break
+            
+            if encontrado_nao_finalizado:
+                motivo = "Inscrição NÃO FINALIZADA no edital oficial"
+            else:
+                motivo = "NÃO ENCONTRADO no edital oficial"
+            
+            resultados['remover_simulador'].append({
+                'nome': srv_sim['nome'],
+                'matricula': srv_sim['matricula'],
+                'motivo': motivo
+            })
     
     return resultados
 
