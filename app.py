@@ -4,6 +4,7 @@ Edital nº 4/2025 - Técnico Judiciário
 """
 
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 from datetime import datetime, date
 from data import ANEXO_I, ANEXO_II
@@ -257,6 +258,13 @@ def tela_login():
     st.title("⚖️ Simulador de Relotação - TJPR")
     st.caption("Edital nº 4/2025 - Técnico Judiciário")
     
+    # Aviso importante
+    st.warning("""
+    ⚠️ **ATENÇÃO:** Este é um simulador **não oficial**, criado apenas para auxiliar na tomada de decisão. 
+    O resultado oficial depende exclusivamente da análise do TJPR conforme Edital nº 4/2025. 
+    Não me responsabilizo por decisões ou interpretações feitas a partir destas informações.
+    """)
+    
     st.divider()
     
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -265,8 +273,44 @@ def tela_login():
         st.subheader("🔐 Acesso Restrito")
         st.info("Este simulador é exclusivo para membros autorizados. Informe seu telefone e código de acesso.")
         
+        # Inicializar session state para código lembrado
+        if "codigo_lembrado" not in st.session_state:
+            st.session_state.codigo_lembrado = ""
+        if "telefone_lembrado" not in st.session_state:
+            st.session_state.telefone_lembrado = ""
+        
+        # JavaScript para ler/salvar no localStorage do navegador
+        # Só executa uma vez para ler os valores salvos
+        if "lembrar_carregado" not in st.session_state:
+            st.session_state.lembrar_carregado = True
+            # Injetar script para ler localStorage
+            st.components.v1.html("""
+                <script>
+                    // Ler dados salvos do localStorage
+                    const telefone = localStorage.getItem('tjpr_telefone') || '';
+                    const codigo = localStorage.getItem('tjpr_codigo') || '';
+                    
+                    // Enviar para o Streamlit via query params (hack)
+                    if (telefone || codigo) {
+                        const url = new URL(window.parent.location.href);
+                        if (telefone) url.searchParams.set('tel', telefone);
+                        if (codigo) url.searchParams.set('cod', codigo);
+                        // Só redireciona se ainda não tem os params
+                        if (!window.parent.location.href.includes('tel=') && (telefone || codigo)) {
+                            window.parent.location.href = url.toString();
+                        }
+                    }
+                </script>
+            """, height=0)
+        
+        # Ler query params se existirem
+        params = st.query_params
+        telefone_salvo = params.get("tel", "")
+        codigo_salvo = params.get("cod", "")
+        
         telefone_input = st.text_input(
             "📱 Telefone com DDD:",
+            value=telefone_salvo,
             placeholder="41999999999",
             help="Digite apenas os números (DDD + telefone)",
             key="telefone_login",
@@ -282,25 +326,66 @@ def tela_login():
         
         codigo = st.text_input(
             "🔑 Código de Acesso:",
+            value=codigo_salvo,
             placeholder="TJPR-XXXXXX",
-            help="Código enviado por WhatsApp, ex: TJPR-A1B2C3"
+            help="Código enviado por WhatsApp, ex: TJPR-A1B2C3",
+            key="codigo_login"
         )
         
-        if st.button("🚀 Entrar", use_container_width=True):
-            telefone_numeros = limpar_telefone(telefone_input)
-            if not telefone_numeros or not codigo:
-                st.error("Preencha o telefone e o código!")
-            elif len(telefone_numeros) < 10:
-                st.error("Telefone inválido! Digite DDD + número (mínimo 10 dígitos).")
-            elif verificar_login(telefone_numeros, codigo):
-                st.session_state.autenticado = True
-                st.session_state.telefone_usuario = telefone_numeros
-                st.rerun()
-            else:
-                st.error("❌ Telefone ou código inválido!")
+        # Checkbox para lembrar credenciais
+        lembrar = st.checkbox("🔒 Lembrar meus dados neste navegador", value=bool(telefone_salvo or codigo_salvo))
+        
+        col_btn1, col_btn2 = st.columns([3, 1])
+        
+        with col_btn1:
+            if st.button("🚀 Entrar", use_container_width=True, type="primary"):
+                telefone_numeros = limpar_telefone(telefone_input)
+                if not telefone_numeros or not codigo:
+                    st.error("Preencha o telefone e o código!")
+                elif len(telefone_numeros) < 10:
+                    st.error("Telefone inválido! Digite DDD + número (mínimo 10 dígitos).")
+                elif verificar_login(telefone_numeros, codigo):
+                    st.session_state.autenticado = True
+                    st.session_state.telefone_usuario = telefone_numeros
+                    
+                    # Salvar no localStorage se marcou "lembrar"
+                    if lembrar:
+                        st.components.v1.html(f"""
+                            <script>
+                                localStorage.setItem('tjpr_telefone', '{telefone_numeros}');
+                                localStorage.setItem('tjpr_codigo', '{codigo}');
+                            </script>
+                        """, height=0)
+                    else:
+                        # Limpar localStorage
+                        st.components.v1.html("""
+                            <script>
+                                localStorage.removeItem('tjpr_telefone');
+                                localStorage.removeItem('tjpr_codigo');
+                            </script>
+                        """, height=0)
+                    
+                    st.rerun()
+                else:
+                    st.error("❌ Telefone ou código inválido!")
+        
+        with col_btn2:
+            if telefone_salvo or codigo_salvo:
+                if st.button("🗑️", help="Limpar dados salvos"):
+                    st.components.v1.html("""
+                        <script>
+                            localStorage.removeItem('tjpr_telefone');
+                            localStorage.removeItem('tjpr_codigo');
+                            // Limpar query params
+                            const url = new URL(window.parent.location.href);
+                            url.searchParams.delete('tel');
+                            url.searchParams.delete('cod');
+                            window.parent.location.href = url.toString();
+                        </script>
+                    """, height=0)
         
         st.divider()
-        st.caption("Não recebeu seu código? Entre em contato com o administrador do grupo.")
+        st.caption("Não recebeu seu código? Entre em contato pelo WhatsApp: **(41) 99781-3606**")
 
 
 # =============================================================================
