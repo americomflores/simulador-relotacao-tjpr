@@ -150,7 +150,7 @@ AUTH_CODES = {
 
 def formatar_telefone_display(telefone):
     """Formata telefone para exibição: (XX) XXXXX-XXXX"""
-    numeros = re.sub(r'\D', '', telefone)
+    numeros = re.sub(r'\D', '', str(telefone))
     if len(numeros) == 0:
         return ""
     elif len(numeros) <= 2:
@@ -162,18 +162,9 @@ def formatar_telefone_display(telefone):
     else:
         return f"({numeros[:2]}) {numeros[2:7]}-{numeros[7:11]}"
 
-def on_telefone_change():
-    """Callback para formatar telefone em tempo real"""
-    if "telefone_raw" in st.session_state:
-        raw = st.session_state.telefone_raw
-        numeros = re.sub(r'\D', '', raw)
-        numeros = numeros[:11]
-        st.session_state.telefone_formatado = formatar_telefone_display(numeros)
-        st.session_state.telefone_numeros = numeros
-
 def limpar_telefone(telefone):
     """Remove tudo que não for número do telefone"""
-    return re.sub(r'\D', '', telefone)
+    return re.sub(r'\D', '', str(telefone))
 
 def verificar_login(telefone, codigo):
     """Verifica se telefone e código são válidos"""
@@ -184,17 +175,18 @@ def verificar_login(telefone, codigo):
         return AUTH_CODES[telefone_limpo] == codigo_upper
     return False
 
+def get_usuario_logado():
+    """Retorna o telefone formatado do usuário logado"""
+    if "telefone_usuario" in st.session_state and st.session_state.telefone_usuario:
+        return formatar_telefone_display(st.session_state.telefone_usuario)
+    return "Desconhecido"
+
 def tela_login():
     """Exibe a tela de login"""
     st.title("⚖️ Simulador de Relotação - TJPR")
     st.caption("Edital nº 4/2025 - Técnico Judiciário")
     
     st.divider()
-    
-    if "telefone_formatado" not in st.session_state:
-        st.session_state.telefone_formatado = ""
-    if "telefone_numeros" not in st.session_state:
-        st.session_state.telefone_numeros = ""
     
     col1, col2, col3 = st.columns([1, 2, 1])
     
@@ -204,12 +196,18 @@ def tela_login():
         
         telefone_input = st.text_input(
             "📱 Telefone com DDD:",
-            value=st.session_state.telefone_formatado,
-            placeholder="(41) 99999-9999",
-            help="Digite seu número com DDD",
-            key="telefone_raw",
-            on_change=on_telefone_change
+            placeholder="41999999999",
+            help="Digite apenas os números (DDD + telefone)",
+            key="telefone_login",
+            max_chars=11
         )
+        
+        # Mostrar preview formatado em tempo real
+        if telefone_input:
+            telefone_numeros = limpar_telefone(telefone_input)
+            telefone_formatado = formatar_telefone_display(telefone_numeros)
+            if telefone_formatado:
+                st.caption(f"📞 {telefone_formatado}")
         
         codigo = st.text_input(
             "🔑 Código de Acesso:",
@@ -218,11 +216,11 @@ def tela_login():
         )
         
         if st.button("🚀 Entrar", use_container_width=True):
-            telefone_numeros = st.session_state.telefone_numeros
+            telefone_numeros = limpar_telefone(telefone_input)
             if not telefone_numeros or not codigo:
                 st.error("Preencha o telefone e o código!")
             elif len(telefone_numeros) < 10:
-                st.error("Telefone inválido! Digite DDD + número.")
+                st.error("Telefone inválido! Digite DDD + número (mínimo 10 dígitos).")
             elif verificar_login(telefone_numeros, codigo):
                 st.session_state.autenticado = True
                 st.session_state.telefone_usuario = telefone_numeros
@@ -465,32 +463,77 @@ def conectar_sheets():
         client = gspread.authorize(creds)
         
         spreadsheet = client.open(st.secrets["spreadsheet_name"])
-        return spreadsheet.sheet1
+        sheet = spreadsheet.sheet1
+        
+        # Verificar e adicionar cabeçalhos de log se necessário
+        verificar_cabecalhos_log(sheet)
+        
+        return sheet
     except Exception as e:
         st.error(f"Erro ao conectar com Google Sheets: {e}")
         return None
 
 
+def verificar_cabecalhos_log(sheet):
+    """Verifica se os cabeçalhos de log existem e adiciona se necessário"""
+    try:
+        # Pegar primeira linha (cabeçalhos)
+        cabecalhos = sheet.row_values(1)
+        
+        # Cabeçalhos esperados
+        cabecalhos_necessarios = ["nome", "matricula", "data_admissao", "lotacao_atual", 
+                                   "escolha_anexo1", "escolha_anexo2", "data_inscricao",
+                                   "registrado_por", "alterado_por", "data_alteracao"]
+        
+        # Se planilha vazia, criar todos os cabeçalhos
+        if not cabecalhos:
+            sheet.update('A1:J1', [cabecalhos_necessarios])
+            return
+        
+        # Verificar se cabeçalhos de log existem (colunas H, I, J)
+        cabecalhos_log = ["registrado_por", "alterado_por", "data_alteracao"]
+        
+        for i, cab in enumerate(cabecalhos_log):
+            col_idx = 7 + i  # H=7, I=8, J=9 (0-indexed)
+            if len(cabecalhos) <= col_idx or cabecalhos[col_idx] != cab:
+                # Adicionar cabeçalho na posição correta
+                col_letra = chr(ord('H') + i)  # H, I, J
+                sheet.update(f'{col_letra}1', [[cab]])
+    except Exception as e:
+        # Não falhar silenciosamente, mas também não travar o app
+        pass
+
+
 def carregar_inscricoes(sheet):
     """Carrega todas as inscrições do Google Sheets"""
+    colunas_base = ["nome", "matricula", "data_admissao", "lotacao_atual", "escolha_anexo1", "escolha_anexo2", "data_inscricao"]
+    colunas_log = ["registrado_por", "alterado_por", "data_alteracao"]
+    todas_colunas = colunas_base + colunas_log
+    
     if sheet is None:
-        return pd.DataFrame(columns=["nome", "matricula", "data_admissao", "lotacao_atual", "escolha_anexo1", "escolha_anexo2", "data_inscricao"])
+        return pd.DataFrame(columns=todas_colunas)
     
     try:
         dados = sheet.get_all_records()
         if not dados:
-            return pd.DataFrame(columns=["nome", "matricula", "data_admissao", "lotacao_atual", "escolha_anexo1", "escolha_anexo2", "data_inscricao"])
+            return pd.DataFrame(columns=todas_colunas)
         
         df = pd.DataFrame(dados)
         df["data_admissao"] = pd.to_datetime(df["data_admissao"], format="%d/%m/%Y", errors="coerce").dt.date
+        
+        # Garantir que colunas de log existam (para compatibilidade com dados antigos)
+        for col in colunas_log:
+            if col not in df.columns:
+                df[col] = ""
+        
         return df
     except Exception as e:
         st.error(f"Erro ao carregar dados: {e}")
-        return pd.DataFrame(columns=["nome", "matricula", "data_admissao", "lotacao_atual", "escolha_anexo1", "escolha_anexo2", "data_inscricao"])
+        return pd.DataFrame(columns=todas_colunas)
 
 
-def salvar_inscricao(sheet, dados):
-    """Salva ou atualiza uma inscrição"""
+def salvar_inscricao(sheet, dados, telefone_usuario):
+    """Salva ou atualiza uma inscrição, registrando quem fez a operação"""
     if sheet is None:
         st.error("Conexão com Google Sheets não disponível")
         return False
@@ -498,25 +541,48 @@ def salvar_inscricao(sheet, dados):
     try:
         registros = sheet.get_all_records()
         linha_existente = None
+        registro_antigo = None
         
         for i, reg in enumerate(registros, start=2):
             if str(reg.get("matricula", "")) == str(dados["matricula"]):
                 linha_existente = i
+                registro_antigo = reg
                 break
         
-        valores = [
-            dados["nome"],
-            dados["matricula"],
-            dados["data_admissao"],
-            dados["lotacao_atual"],
-            dados["escolha_anexo1"],
-            dados["escolha_anexo2"],
-            dados["data_inscricao"]
-        ]
+        # Formatar telefone do usuário para o log
+        telefone_formatado = formatar_telefone_display(telefone_usuario) if telefone_usuario else "Desconhecido"
+        data_hora_atual = datetime.now().strftime("%d/%m/%Y %H:%M")
         
-        if linha_existente:
-            sheet.update(f"A{linha_existente}:G{linha_existente}", [valores])
+        if linha_existente and registro_antigo:
+            # Atualização - manter registrado_por original, atualizar alterado_por
+            registrado_por = registro_antigo.get("registrado_por", telefone_formatado) or telefone_formatado
+            valores = [
+                dados["nome"],
+                dados["matricula"],
+                dados["data_admissao"],
+                dados["lotacao_atual"],
+                dados["escolha_anexo1"],
+                dados["escolha_anexo2"],
+                dados["data_inscricao"],
+                registrado_por,           # H: manter original
+                telefone_formatado,       # I: quem alterou
+                data_hora_atual           # J: quando alterou
+            ]
+            sheet.update(f"A{linha_existente}:J{linha_existente}", [valores])
         else:
+            # Nova inscrição
+            valores = [
+                dados["nome"],
+                dados["matricula"],
+                dados["data_admissao"],
+                dados["lotacao_atual"],
+                dados["escolha_anexo1"],
+                dados["escolha_anexo2"],
+                dados["data_inscricao"],
+                telefone_formatado,       # H: quem registrou
+                telefone_formatado,       # I: quem alterou (mesmo, pois é novo)
+                data_hora_atual           # J: quando
+            ]
             sheet.append_row(valores)
         
         return True
@@ -525,21 +591,22 @@ def salvar_inscricao(sheet, dados):
         return False
 
 
-def excluir_inscricao(sheet, matricula):
-    """Exclui uma inscrição pela matrícula"""
+def excluir_inscricao(sheet, matricula, telefone_usuario):
+    """Exclui uma inscrição pela matrícula, retornando info para log"""
     if sheet is None:
-        return False
+        return False, None
     
     try:
         registros = sheet.get_all_records()
         for i, reg in enumerate(registros, start=2):
             if str(reg.get("matricula", "")) == str(matricula):
+                nome_excluido = reg.get("nome", "")
                 sheet.delete_rows(i)
-                return True
-        return False
+                return True, nome_excluido
+        return False, None
     except Exception as e:
         st.error(f"Erro ao excluir: {e}")
-        return False
+        return False, None
 
 
 def buscar_inscricao(sheet, matricula):
@@ -736,7 +803,9 @@ def main():
     
     # Botão de logout no sidebar
     with st.sidebar:
+        telefone_display = get_usuario_logado()
         st.success(f"✅ Conectado")
+        st.caption(f"📱 {telefone_display}")
         if st.button("🚪 Sair", use_container_width=True):
             st.session_state.autenticado = False
             st.session_state.telefone_usuario = None
@@ -908,7 +977,7 @@ def main():
                     index=lotacao_default
                 )
                 
-                opcoes_a1 = ["(não escolheu)"] + [f"{k} - {v['comarca']} - {v['unidade']} ({v['quantidade']} vagas)" for k, v in ANEXO_I.items()]
+                opcoes_a1 = ["(Não escolheu)"] + [f"{k} - {v['comarca']} - {v['unidade']} ({v['quantidade']} vagas)" for k, v in ANEXO_I.items()]
                 
                 escolha_a1_default = 0
                 if inscricao_existente and inscricao_existente.get("escolha_anexo1"):
@@ -924,7 +993,7 @@ def main():
                     index=escolha_a1_default
                 )
                 
-                opcoes_a2 = ["(não escolheu)"] + [f"{k} - {v['comarca']} - {v['unidade']}" for k, v in ANEXO_II.items()]
+                opcoes_a2 = ["(Não escolheu)"] + [f"{k} - {v['comarca']} - {v['unidade']}" for k, v in ANEXO_II.items()]
                 
                 escolha_a2_default = 0
                 if inscricao_existente and inscricao_existente.get("escolha_anexo2"):
@@ -947,8 +1016,8 @@ def main():
                         st.error("Preencha todos os campos obrigatórios!")
                     else:
                         codigo_lotacao = lotacao_atual.split(" - ")[0] if lotacao_atual else ""
-                        codigo_escolha_a1 = escolha_a1.split(" - ")[0] if escolha_a1 != "(não escolheu)" else ""
-                        codigo_escolha_a2 = escolha_a2.split(" - ")[0] if escolha_a2 != "(não escolheu)" else ""
+                        codigo_escolha_a1 = escolha_a1.split(" - ")[0] if escolha_a1 != "(Não escolheu)" else ""
+                        codigo_escolha_a2 = escolha_a2.split(" - ")[0] if escolha_a2 != "(Não escolheu)" else ""
                         
                         dados = {
                             "nome": nome,
@@ -960,7 +1029,7 @@ def main():
                             "data_inscricao": datetime.now().strftime("%d/%m/%Y %H:%M")
                         }
                         
-                        if salvar_inscricao(sheet, dados):
+                        if salvar_inscricao(sheet, dados, st.session_state.telefone_usuario):
                             st.success("✅ Inscrição salva com sucesso!")
                             st.cache_resource.clear()
                             st.rerun()
@@ -974,7 +1043,8 @@ def main():
                 if matricula_excluir:
                     inscricao = buscar_inscricao(sheet, matricula_excluir)
                     if inscricao:
-                        if excluir_inscricao(sheet, matricula_excluir):
+                        sucesso, nome = excluir_inscricao(sheet, matricula_excluir, st.session_state.telefone_usuario)
+                        if sucesso:
                             st.success(f"Inscrição de {inscricao['nome']} excluída!")
                             st.cache_resource.clear()
                             st.rerun()
@@ -1058,6 +1128,37 @@ def main():
             )
             
             st.caption(f"Total: {len(df_display)} servidores inscritos")
+            
+            # Expander com histórico de alterações
+            with st.expander("📋 Histórico de Registros/Alterações"):
+                st.markdown("**Quem cadastrou ou alterou cada inscrição:**")
+                
+                # Verificar se as colunas de log existem
+                tem_log = "registrado_por" in df_display.columns and "alterado_por" in df_display.columns
+                
+                if tem_log:
+                    df_log = df_display[[
+                        "nome", "matricula", "registrado_por", "alterado_por", "data_alteracao"
+                    ]].copy()
+                    
+                    # Preencher valores vazios
+                    df_log["registrado_por"] = df_log["registrado_por"].fillna("-")
+                    df_log["alterado_por"] = df_log["alterado_por"].fillna("-")
+                    df_log["data_alteracao"] = df_log["data_alteracao"].fillna("-")
+                    
+                    st.dataframe(
+                        df_log.rename(columns={
+                            "nome": "Nome",
+                            "matricula": "Matrícula",
+                            "registrado_por": "Registrado Por",
+                            "alterado_por": "Última Alteração Por",
+                            "data_alteracao": "Data/Hora Alteração"
+                        }),
+                        use_container_width=True,
+                        hide_index=True
+                    )
+                else:
+                    st.info("Registros antigos não possuem informações de log. Novas inscrições terão essa informação automaticamente.")
     
     # =========================================================================
     # ABA 5: RESULTADO
@@ -1199,7 +1300,7 @@ def main():
     # =========================================================================
     with tab6:
         st.header("🗺️ Inscritos por Região Administrativa Judiciária (RAJ)")
-        st.info("Análise dos candidatos **APROVADOS** por região de **ORIGEM** (lotação atual). Criada pela Resolução nº 409/2024 do TJPR.")
+        st.info("Análise dos candidatos **APROVADOS** por região de **ORIGEM** (lotação atual). Criada pela Resolução nº 441/2024 do TJPR.")
         
         if df_inscricoes.empty:
             st.warning("Nenhum servidor inscrito ainda.")
