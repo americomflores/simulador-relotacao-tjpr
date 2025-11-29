@@ -1637,152 +1637,25 @@ def main():
         painel_administrador(sheet, df_inscricoes)
         return
     
-    # Criar abas (agora com 10 abas)
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs([
-        "📋 Anexo I", 
-        "📋 Anexo II", 
+    # Criar abas (7 abas organizadas)
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
         "✍️ Inscrição",
         "👥 Inscritos", 
         "🏆 Resultado",
-        "🎯 Minha Simulação",
-        "📊 Dashboard",
-        "🔄 Comparador",
-        "🗺️ RAJs",
-        "📈 Lotação"
+        "🎯 Simulador",
+        "📋 Vagas",
+        "📈 Lotação",
+        "🗺️ RAJs"
     ])
     
     # Calcular demanda (quantos escolheram cada vaga)
     demanda_a1, demanda_a2 = calcular_demanda(df_inscricoes)
     
     # =========================================================================
-    # ABA 1: VAGAS ANEXO I
+    # ABA 1: INSCRIÇÃO
     # =========================================================================
     with tab1:
-        st.header("Vagas com Déficit (Anexo I)")
-        st.info("Estas são as vagas prioritárias com déficit de servidores. A coluna **Demanda** mostra quantos servidores escolheram cada vaga.")
-        
-        dados_a1 = []
-        for codigo, info in ANEXO_I.items():
-            demanda = demanda_a1.get(codigo, 0)
-            vagas = info["quantidade"]
-            # Calcular indicador de concorrência
-            if demanda == 0:
-                concorrencia = "🟢 Sem demanda"
-            elif demanda < vagas:
-                concorrencia = "🟡 Baixa"
-            elif demanda == vagas:
-                concorrencia = "🟠 Equilibrada"
-            else:
-                concorrencia = "🔴 Alta"
-            
-            dados_a1.append({
-                "Código": codigo,
-                "Comarca": info["comarca"],
-                "Unidade Judiciária": info["unidade"],
-                "Vagas": vagas,
-                "Demanda": demanda,
-                "Concorrência": concorrencia
-            })
-        
-        df_a1 = pd.DataFrame(dados_a1)
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            comarcas_a1 = sorted(df_a1["Comarca"].unique())
-            filtro_comarca_a1 = st.selectbox("Filtrar por comarca:", ["Todas"] + comarcas_a1, key="filtro_a1")
-        with col2:
-            filtro_concorrencia = st.selectbox("Filtrar por concorrência:", 
-                                                ["Todas", "🟢 Sem demanda", "🟡 Baixa", "🟠 Equilibrada", "🔴 Alta"], 
-                                                key="filtro_conc_a1")
-        
-        if filtro_comarca_a1 != "Todas":
-            df_a1 = df_a1[df_a1["Comarca"] == filtro_comarca_a1]
-        
-        if filtro_concorrencia != "Todas":
-            df_a1 = df_a1[df_a1["Concorrência"] == filtro_concorrencia]
-        
-        busca_a1 = st.text_input("🔍 Buscar:", key="busca_a1", placeholder="Digite parte do nome da comarca ou unidade...")
-        if busca_a1:
-            mask = df_a1.apply(lambda x: busca_a1.lower() in x["Comarca"].lower() or busca_a1.lower() in x["Unidade Judiciária"].lower(), axis=1)
-            df_a1 = df_a1[mask]
-        
-        st.dataframe(df_a1, use_container_width=True, hide_index=True)
-        
-        total_demanda = df_a1["Demanda"].sum()
-        st.caption(f"Total: {len(df_a1)} unidades | {df_a1['Vagas'].sum()} vagas | {total_demanda} servidores interessados")
-    
-    # =========================================================================
-    # ABA 2: VAGAS ANEXO II
-    # =========================================================================
-    with tab2:
-        st.header("Todas as Unidades (Anexo II)")
-        st.info("Estas são todas as unidades judiciárias. A coluna **Demanda** mostra quantos servidores escolheram cada unidade como 2ª opção.")
-        
-        dados_a2 = []
-        for codigo, info in ANEXO_II.items():
-            # Adicionar status de lotação
-            status_lot = obter_status_lotacao(codigo)
-            demanda = demanda_a2.get(codigo, 0)
-            dados_a2.append({
-                "Código": codigo,
-                "Comarca": info["comarca"],
-                "Unidade Judiciária": info["unidade"],
-                "Status Lotação": status_lot,
-                "Demanda": demanda
-            })
-        
-        df_a2 = pd.DataFrame(dados_a2)
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            comarcas_a2 = sorted(df_a2["Comarca"].unique())
-            filtro_comarca_a2 = st.selectbox("Filtrar por comarca:", ["Todas"] + comarcas_a2, key="filtro_a2")
-        with col2:
-            # Filtro por status de lotação
-            filtro_status = st.selectbox("Filtrar por status de lotação:", 
-                                          ["Todos", "SUPERAVITÁRIA", "EQUILIBRADA", "DEFICITÁRIA", "NÃO IDENTIFICADA"],
-                                          key="filtro_status_a2")
-        
-        if filtro_comarca_a2 != "Todas":
-            df_a2 = df_a2[df_a2["Comarca"] == filtro_comarca_a2]
-        
-        if filtro_status != "Todos":
-            df_a2 = df_a2[df_a2["Status Lotação"] == filtro_status]
-        
-        # Checkbox para mostrar apenas com demanda
-        mostrar_com_demanda = st.checkbox("Mostrar apenas unidades com demanda", key="filtro_demanda_a2")
-        if mostrar_com_demanda:
-            df_a2 = df_a2[df_a2["Demanda"] > 0]
-        
-        busca_a2 = st.text_input("🔍 Buscar:", key="busca_a2", placeholder="Digite parte do nome da comarca ou unidade...")
-        if busca_a2:
-            mask = df_a2.apply(lambda x: busca_a2.lower() in x["Comarca"].lower() or busca_a2.lower() in x["Unidade Judiciária"].lower(), axis=1)
-            df_a2 = df_a2[mask]
-        
-        # Colorir por status
-        def color_status(val):
-            if val == "SUPERAVITÁRIA":
-                return "background-color: #d4edda"
-            elif val == "EQUILIBRADA":
-                return "background-color: #fff3cd"
-            elif val == "DEFICITÁRIA":
-                return "background-color: #f8d7da"
-            return ""
-        
-        st.dataframe(
-            df_a2.style.applymap(color_status, subset=["Status Lotação"]),
-            use_container_width=True, 
-            hide_index=True
-        )
-        
-        total_demanda_a2 = df_a2["Demanda"].sum()
-        st.caption(f"Total: {len(df_a2)} unidades | {total_demanda_a2} servidores interessados")
-    
-    # =========================================================================
-    # ABA 3: INSCRIÇÃO
-    # =========================================================================
-    with tab3:
-        st.header("Inscrição / Edição")
+        st.header("✍️ Inscrição / Edição")
         
         col1, col2 = st.columns([1, 1])
         
@@ -1970,17 +1843,17 @@ def main():
             """)
     
     # =========================================================================
-    # ABA 4: SERVIDORES INSCRITOS
+    # ABA 2: SERVIDORES INSCRITOS
     # =========================================================================
-    with tab4:
-        st.header("Servidores Inscritos")
+    with tab2:
+        st.header("👥 Servidores Inscritos")
         
         if df_inscricoes.empty:
             st.info("Nenhum servidor inscrito ainda.")
         else:
-            df_inscricoes = carregar_inscricoes(sheet)
+            df_inscricoes_local = carregar_inscricoes(sheet)
             
-            df_display = df_inscricoes.sort_values("data_admissao", ascending=True).reset_index(drop=True)
+            df_display = df_inscricoes_local.sort_values("data_admissao", ascending=True).reset_index(drop=True)
             df_display["posicao"] = range(1, len(df_display) + 1)
             
             df_display["data_admissao_fmt"] = df_display["data_admissao"].apply(
@@ -2059,7 +1932,6 @@ def main():
                         "nome", "matricula", "registrado_por", "alterado_por", "data_alteracao"
                     ]].copy()
                     
-                    # Preencher valores vazios
                     df_log["registrado_por"] = df_log["registrado_por"].fillna("-")
                     df_log["alterado_por"] = df_log["alterado_por"].fillna("-")
                     df_log["data_alteracao"] = df_log["data_alteracao"].fillna("-")
@@ -2079,10 +1951,10 @@ def main():
                     st.info("Registros antigos não possuem informações de log. Novas inscrições terão essa informação automaticamente.")
     
     # =========================================================================
-    # ABA 5: RESULTADO
+    # ABA 3: RESULTADO E DASHBOARD
     # =========================================================================
-    with tab5:
-        st.header("Resultado da Simulação")
+    with tab3:
+        st.header("🏆 Resultado da Simulação")
         
         if df_inscricoes.empty:
             st.info("Nenhum servidor inscrito ainda. O resultado aparecerá quando houver inscrições.")
@@ -2212,221 +2084,23 @@ def main():
                     st.dataframe(pd.DataFrame(vagas_disp), use_container_width=True, hide_index=True)
                 else:
                     st.info("Nenhuma vaga liberada no Anexo II ainda.")
-    
-    # =========================================================================
-    # ABA 6: MINHA SIMULAÇÃO (Simulador Individual)
-    # =========================================================================
-    with tab6:
-        st.header("🎯 Minha Simulação Individual")
-        st.info("Digite sua matrícula para ver sua posição, chances e análise personalizada.")
-        
-        if df_inscricoes.empty:
-            st.warning("Nenhum servidor inscrito ainda.")
-        else:
-            # Campo de busca por matrícula
-            matricula_consulta = st.text_input(
-                "Digite sua matrícula:",
-                placeholder="Ex: 12345",
-                key="matricula_simulacao"
-            )
             
-            if matricula_consulta:
-                # Buscar servidor
-                servidor = df_inscricoes[df_inscricoes["matricula"].astype(str) == str(matricula_consulta)]
-                
-                if servidor.empty:
-                    st.error(f"❌ Matrícula {matricula_consulta} não encontrada nas inscrições.")
-                else:
-                    servidor = servidor.iloc[0]
-                    
-                    # Calcular resultado completo
-                    df_resultado, vagas_rest_a1, vagas_disp_a2, _ = calcular_resultado(df_inscricoes)
-                    
-                    # Encontrar este servidor no resultado
-                    resultado_servidor = df_resultado[df_resultado["matricula"].astype(str) == str(matricula_consulta)].iloc[0]
-                    
-                    st.success(f"✅ Servidor encontrado: **{servidor['nome']}**")
-                    
-                    st.divider()
-                    
-                    # Cards com informações principais
-                    col1, col2, col3 = st.columns(3)
-                    
-                    with col1:
-                        st.metric(
-                            "📊 Posição por Antiguidade",
-                            f"{resultado_servidor['posicao_antiguidade']}º",
-                            f"de {len(df_resultado)} inscritos"
-                        )
-                    
-                    with col2:
-                        status = resultado_servidor['status']
-                        if status == "APROVADO":
-                            st.metric("🏆 Status", "APROVADO", delta="✓", delta_color="normal")
-                        elif status == "DESCLASSIFICADO":
-                            st.metric("🏆 Status", "DESCLASSIFICADO", delta="✗", delta_color="inverse")
-                        else:
-                            st.metric("🏆 Status", "NÃO OBTEVE VAGA", delta="—")
-                    
-                    with col3:
-                        designacao = resultado_servidor['designacao_origem']
-                        if designacao == "SIM":
-                            st.metric("📍 Designação na Origem", "SIM", delta="Aguardar substituição", delta_color="off")
-                        elif designacao == "NÃO":
-                            st.metric("📍 Designação na Origem", "NÃO", delta="Pode ir imediatamente", delta_color="normal")
-                        else:
-                            st.metric("📍 Designação na Origem", "-", delta="")
-                    
-                    st.divider()
-                    
-                    # Detalhes da inscrição
-                    col1, col2 = st.columns(2)
-                    
-                    with col1:
-                        st.subheader("📋 Dados da Inscrição")
-                        
-                        # Lotação atual
-                        lotacao_codigo = servidor['lotacao_atual']
-                        if lotacao_codigo in ANEXO_II:
-                            lotacao_nome = f"{ANEXO_II[lotacao_codigo]['comarca']} - {ANEXO_II[lotacao_codigo]['unidade']}"
-                        else:
-                            lotacao_nome = lotacao_codigo
-                        
-                        st.markdown(f"**Data de Admissão:** {servidor['data_admissao'].strftime('%d/%m/%Y') if servidor['data_admissao'] else '-'}")
-                        st.markdown(f"**Lotação Atual:** {lotacao_nome}")
-                        
-                        # Status da lotação atual
-                        status_origem = obter_status_lotacao(lotacao_codigo)
-                        dados_origem = obter_dados_lotacao(lotacao_codigo)
-                        if dados_origem:
-                            cor = "🟢" if status_origem == "SUPERAVITÁRIA" else ("🟡" if status_origem == "EQUILIBRADA" else "🔴")
-                            st.markdown(f"**Status da Origem:** {cor} {status_origem} (LR: {dados_origem['lotacao_real']} | LP: {dados_origem['lotacao_paradigma']})")
-                    
-                    with col2:
-                        st.subheader("🎯 Escolhas")
-                        
-                        # Escolha Anexo I
-                        escolha_a1 = servidor.get('escolha_anexo1', '')
-                        if escolha_a1 and escolha_a1 in ANEXO_I:
-                            info_a1 = ANEXO_I[escolha_a1]
-                            demanda = demanda_a1.get(escolha_a1, 0)
-                            vagas = info_a1['quantidade']
-                            st.markdown(f"**1ª Opção (Anexo I):** {info_a1['comarca']} - {info_a1['unidade']}")
-                            st.markdown(f"   ↳ Vagas: {vagas} | Demanda: {demanda} | Restantes: {vagas_rest_a1.get(escolha_a1, vagas)}")
-                        else:
-                            st.markdown("**1ª Opção (Anexo I):** Não escolheu")
-                        
-                        # Escolha Anexo II
-                        escolha_a2 = servidor.get('escolha_anexo2', '')
-                        if escolha_a2 and escolha_a2 in ANEXO_II:
-                            info_a2 = ANEXO_II[escolha_a2]
-                            demanda = demanda_a2.get(escolha_a2, 0)
-                            st.markdown(f"**2ª Opção (Anexo II):** {info_a2['comarca']} - {info_a2['unidade']}")
-                            st.markdown(f"   ↳ Demanda: {demanda} | Vagas liberadas: {vagas_disp_a2.get(escolha_a2, 0)}")
-                        else:
-                            st.markdown("**2ª Opção (Anexo II):** Não escolheu")
-                    
-                    st.divider()
-                    
-                    # Análise e resultado
-                    st.subheader("📊 Análise do Resultado")
-                    
-                    resultado = resultado_servidor['resultado']
-                    vaga_obtida = resultado_servidor['vaga_obtida']
-                    observacao = resultado_servidor['observacao']
-                    
-                    if resultado_servidor['status'] == "APROVADO":
-                        st.success(f"🎉 **Parabéns!** Você obteve vaga pelo **{resultado}**!")
-                        st.markdown(f"**Vaga Obtida:** {vaga_obtida}")
-                        
-                        if resultado_servidor['designacao_origem'] == "SIM":
-                            st.warning("⚠️ **Atenção:** Você ficará designado na unidade de origem até que haja substituição (item 3.14 do Edital).")
-                        else:
-                            st.info("✅ Você poderá ir imediatamente para a nova unidade!")
-                    
-                    elif resultado_servidor['status'] == "DESCLASSIFICADO":
-                        st.error(f"❌ **Desclassificado:** {observacao}")
-                        st.markdown("Conforme item 3.2 do Edital, servidores em estágio probatório não podem participar.")
-                    
-                    else:
-                        st.warning(f"😔 **Não obteve vaga:** {observacao}")
-                        
-                        # Sugestões
-                        if escolha_a1 and vagas_rest_a1.get(escolha_a1, 0) == 0:
-                            st.markdown("💡 **Dica:** A vaga do Anexo I que você escolheu foi preenchida. Considere escolher outra opção.")
-                        
-                        if escolha_a2 and vagas_disp_a2.get(escolha_a2, 0) == 0:
-                            st.markdown("💡 **Dica:** A vaga do Anexo II que você escolheu não foi liberada. Isso acontece quando ninguém da sua unidade de interesse foi para o Anexo I.")
-    
-    # =========================================================================
-    # ABA 7: DASHBOARD (Gráficos e Estatísticas)
-    # =========================================================================
-    with tab7:
-        st.header("📊 Dashboard - Estatísticas e Gráficos")
-        
-        if df_inscricoes.empty:
-            st.warning("Nenhum servidor inscrito ainda.")
-        else:
-            df_resultado, _, _, _ = calcular_resultado(df_inscricoes)
+            # =========== DASHBOARD INTEGRADO ===========
+            st.divider()
+            st.subheader("📊 Dashboard - Estatísticas")
             
-            # Métricas principais
-            st.subheader("📈 Visão Geral")
-            
+            # Métricas adicionais
             col1, col2, col3, col4, col5 = st.columns(5)
             
-            total = len(df_resultado)
             aprovados = len(df_resultado[df_resultado["status"] == "APROVADO"])
-            aprovados_a1 = len(df_resultado[df_resultado["resultado"] == "ANEXO I"])
-            aprovados_a2 = len(df_resultado[df_resultado["resultado"] == "ANEXO II"])
-            desclass = len(df_resultado[df_resultado["status"] == "DESCLASSIFICADO"])
             sem_vaga = len(df_resultado[df_resultado["status"] == "NÃO OBTEVE VAGA"])
+            sem_designacao = len(df_resultado[df_resultado["designacao_origem"] == "NÃO"])
             
-            col1.metric("Total Inscritos", total)
-            col2.metric("Aprovados", aprovados, f"{100*aprovados/total:.1f}%" if total > 0 else "0%")
-            col3.metric("Anexo I", aprovados_a1)
-            col4.metric("Anexo II", aprovados_a2)
-            col5.metric("Sem Vaga/Desclass.", sem_vaga + desclass)
-            
-            st.divider()
-            
-            # Gráficos lado a lado
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                st.subheader("🎯 Distribuição de Resultados")
-                
-                # Dados para gráfico de pizza simulado com barras
-                dados_resultado = {
-                    "Categoria": ["Aprovados Anexo I", "Aprovados Anexo II", "Desclassificados", "Sem Vaga"],
-                    "Quantidade": [aprovados_a1, aprovados_a2, desclass, sem_vaga],
-                    "Cor": ["🟢", "🟢", "🔴", "⚪"]
-                }
-                df_graf = pd.DataFrame(dados_resultado)
-                df_graf = df_graf[df_graf["Quantidade"] > 0]
-                
-                # Criar gráfico de barras horizontal
-                if not df_graf.empty:
-                    df_graf["Percentual"] = (df_graf["Quantidade"] / total * 100).round(1)
-                    df_graf["Label"] = df_graf.apply(lambda x: f"{x['Cor']} {x['Categoria']}: {x['Quantidade']} ({x['Percentual']}%)", axis=1)
-                    
-                    for _, row in df_graf.iterrows():
-                        st.progress(row["Quantidade"] / total, text=row["Label"])
-            
-            with col2:
-                st.subheader("📍 Designação na Origem")
-                
-                com_designacao = len(df_resultado[df_resultado["designacao_origem"] == "SIM"])
-                sem_designacao = len(df_resultado[df_resultado["designacao_origem"] == "NÃO"])
-                
-                if aprovados > 0:
-                    st.markdown(f"""
-                    | Situação | Quantidade | % dos Aprovados |
-                    |----------|------------|-----------------|
-                    | ✅ Pode ir imediatamente | {sem_designacao} | {100*sem_designacao/aprovados:.1f}% |
-                    | ⚠️ Fica designado na origem | {com_designacao} | {100*com_designacao/aprovados:.1f}% |
-                    """)
-                else:
-                    st.info("Nenhum aprovado ainda.")
+            col1.metric("✅ Aprovados", aprovados, f"{100*aprovados/total:.1f}%" if total > 0 else "0%")
+            col2.metric("📋 Anexo I", aprovados_a1)
+            col3.metric("📋 Anexo II", aprovados_a2)
+            col4.metric("❌ Desclassificados", desclass)
+            col5.metric("⚪ Sem Vaga", sem_vaga)
             
             st.divider()
             
@@ -2484,168 +2158,535 @@ def main():
                         )
                 else:
                     st.info("Nenhuma escolha de Anexo II registrada.")
-            
-            st.divider()
-            
-            # Estatísticas por RAJ
-            st.subheader("🗺️ Inscritos por RAJ (Origem)")
-            
-            # Calcular RAJ de cada inscrito
-            def get_raj_inscrito(lotacao):
-                if lotacao and lotacao in ANEXO_II:
-                    comarca = ANEXO_II[lotacao]["comarca"]
-                    return obter_raj_da_comarca(comarca)
-                return "Não identificada"
-            
-            df_inscricoes["raj"] = df_inscricoes["lotacao_atual"].apply(get_raj_inscrito)
-            contagem_raj = df_inscricoes["raj"].value_counts()
-            
-            # Exibir como tabela
-            dados_raj = []
-            for raj, qtd in contagem_raj.items():
-                dados_raj.append({"RAJ": raj.replace("RAJ ", ""), "Inscritos": qtd})
-            
-            if dados_raj:
-                df_raj = pd.DataFrame(dados_raj)
-                
-                # Mostrar em 2 colunas
-                col1, col2 = st.columns(2)
-                meio = len(df_raj) // 2 + len(df_raj) % 2
-                
-                with col1:
-                    st.dataframe(df_raj.iloc[:meio], use_container_width=True, hide_index=True)
-                with col2:
-                    st.dataframe(df_raj.iloc[meio:], use_container_width=True, hide_index=True)
     
     # =========================================================================
-    # ABA 8: COMPARADOR DE CENÁRIOS
+    # ABA 4: SIMULADOR (Minha Simulação + Comparador)
     # =========================================================================
-    with tab8:
-        st.header("🔄 Comparador de Cenários")
-        st.info("Simule diferentes escolhas e veja como isso afetaria seu resultado, SEM alterar sua inscrição real.")
+    with tab4:
+        st.header("🎯 Simulador Individual")
         
-        if df_inscricoes.empty:
-            st.warning("Nenhum servidor inscrito ainda.")
-        else:
-            # Selecionar servidor para simular
-            matricula_comparar = st.text_input(
-                "Digite a matrícula para simular:",
-                placeholder="Ex: 12345",
-                key="matricula_comparador"
-            )
+        # Sub-seções com radio button
+        opcao_simulador = st.radio(
+            "Escolha uma opção:",
+            ["📊 Minha Simulação", "🔄 Comparador de Cenários"],
+            horizontal=True,
+            key="opcao_simulador"
+        )
+        
+        st.divider()
+        
+        if opcao_simulador == "📊 Minha Simulação":
+            st.subheader("📊 Minha Simulação Individual")
+            st.info("Digite sua matrícula para ver sua posição, chances e análise personalizada.")
             
-            if matricula_comparar:
-                servidor_orig = df_inscricoes[df_inscricoes["matricula"].astype(str) == str(matricula_comparar)]
+            if df_inscricoes.empty:
+                st.warning("Nenhum servidor inscrito ainda.")
+            else:
+                # Campo de busca por matrícula
+                matricula_consulta = st.text_input(
+                    "Digite sua matrícula:",
+                    placeholder="Ex: 12345",
+                    key="matricula_simulacao"
+                )
                 
-                if servidor_orig.empty:
-                    st.error(f"❌ Matrícula {matricula_comparar} não encontrada.")
-                else:
-                    servidor_orig = servidor_orig.iloc[0]
+                if matricula_consulta:
+                    # Buscar servidor
+                    servidor = df_inscricoes[df_inscricoes["matricula"].astype(str) == str(matricula_consulta)]
                     
-                    st.success(f"✅ Simulando para: **{servidor_orig['nome']}** (Posição atual por antiguidade)")
-                    
-                    st.divider()
-                    
-                    col1, col2 = st.columns(2)
-                    
-                    with col1:
-                        st.subheader("📋 Cenário ATUAL")
+                    if servidor.empty:
+                        st.error(f"❌ Matrícula {matricula_consulta} não encontrada nas inscrições.")
+                    else:
+                        servidor = servidor.iloc[0]
                         
-                        # Calcular resultado atual
-                        df_resultado_atual, _, _, _ = calcular_resultado(df_inscricoes)
-                        resultado_atual = df_resultado_atual[df_resultado_atual["matricula"].astype(str) == str(matricula_comparar)].iloc[0]
+                        # Calcular resultado completo
+                        df_resultado, vagas_rest_a1, vagas_disp_a2, _ = calcular_resultado(df_inscricoes)
                         
-                        escolha_a1_atual = servidor_orig.get('escolha_anexo1', '')
-                        escolha_a2_atual = servidor_orig.get('escolha_anexo2', '')
+                        # Encontrar este servidor no resultado
+                        resultado_servidor = df_resultado[df_resultado["matricula"].astype(str) == str(matricula_consulta)].iloc[0]
                         
-                        if escolha_a1_atual and escolha_a1_atual in ANEXO_I:
-                            st.markdown(f"**Anexo I:** {ANEXO_I[escolha_a1_atual]['comarca']} - {ANEXO_I[escolha_a1_atual]['unidade'][:30]}...")
-                        else:
-                            st.markdown("**Anexo I:** Não escolheu")
-                        
-                        if escolha_a2_atual and escolha_a2_atual in ANEXO_II:
-                            st.markdown(f"**Anexo II:** {ANEXO_II[escolha_a2_atual]['comarca']} - {ANEXO_II[escolha_a2_atual]['unidade'][:30]}...")
-                        else:
-                            st.markdown("**Anexo II:** Não escolheu")
+                        st.success(f"✅ Servidor encontrado: **{servidor['nome']}**")
                         
                         st.divider()
                         
-                        if resultado_atual['status'] == "APROVADO":
-                            st.success(f"✅ {resultado_atual['status']} - {resultado_atual['resultado']}")
-                            st.markdown(f"**Vaga:** {resultado_atual['vaga_obtida']}")
-                            st.markdown(f"**Designação:** {resultado_atual['designacao_origem']}")
-                        elif resultado_atual['status'] == "DESCLASSIFICADO":
-                            st.error(f"❌ {resultado_atual['status']}")
+                        # Cards com informações principais
+                        col1, col2, col3 = st.columns(3)
+                        
+                        with col1:
+                            st.metric(
+                                "📊 Posição por Antiguidade",
+                                f"{resultado_servidor['posicao_antiguidade']}º",
+                                f"de {len(df_resultado)} inscritos"
+                            )
+                        
+                        with col2:
+                            status = resultado_servidor['status']
+                            if status == "APROVADO":
+                                st.metric("🏆 Status", "APROVADO", delta="✓", delta_color="normal")
+                            elif status == "DESCLASSIFICADO":
+                                st.metric("🏆 Status", "DESCLASSIFICADO", delta="✗", delta_color="inverse")
+                            else:
+                                st.metric("🏆 Status", "NÃO OBTEVE VAGA", delta="—")
+                        
+                        with col3:
+                            designacao = resultado_servidor['designacao_origem']
+                            if designacao == "SIM":
+                                st.metric("📍 Designação na Origem", "SIM", delta="Aguardar substituição", delta_color="off")
+                            elif designacao == "NÃO":
+                                st.metric("📍 Designação na Origem", "NÃO", delta="Pode ir imediatamente", delta_color="normal")
+                            else:
+                                st.metric("📍 Designação na Origem", "-", delta="")
+                        
+                        st.divider()
+                        
+                        # Detalhes da inscrição
+                        col1, col2 = st.columns(2)
+                        
+                        with col1:
+                            st.markdown("**📋 Dados da Inscrição**")
+                            
+                            # Lotação atual
+                            lotacao_codigo = servidor['lotacao_atual']
+                            if lotacao_codigo in ANEXO_II:
+                                lotacao_nome = f"{ANEXO_II[lotacao_codigo]['comarca']} - {ANEXO_II[lotacao_codigo]['unidade']}"
+                            else:
+                                lotacao_nome = lotacao_codigo
+                            
+                            st.markdown(f"**Data de Admissão:** {servidor['data_admissao'].strftime('%d/%m/%Y') if servidor['data_admissao'] else '-'}")
+                            st.markdown(f"**Lotação Atual:** {lotacao_nome}")
+                            
+                            # Status da lotação atual
+                            status_origem = obter_status_lotacao(lotacao_codigo)
+                            dados_origem = obter_dados_lotacao(lotacao_codigo)
+                            if dados_origem:
+                                cor = "🟢" if status_origem == "SUPERAVITÁRIA" else ("🟡" if status_origem == "EQUILIBRADA" else "🔴")
+                                st.markdown(f"**Status da Origem:** {cor} {status_origem} (LR: {dados_origem['lotacao_real']} | LP: {dados_origem['lotacao_paradigma']})")
+                        
+                        with col2:
+                            st.markdown("**🎯 Escolhas**")
+                            
+                            # Escolha Anexo I
+                            escolha_a1 = servidor.get('escolha_anexo1', '')
+                            if escolha_a1 and escolha_a1 in ANEXO_I:
+                                info_a1 = ANEXO_I[escolha_a1]
+                                demanda = demanda_a1.get(escolha_a1, 0)
+                                vagas = info_a1['quantidade']
+                                st.markdown(f"**1ª Opção (Anexo I):** {info_a1['comarca']} - {info_a1['unidade']}")
+                                st.markdown(f"   ↳ Vagas: {vagas} | Demanda: {demanda} | Restantes: {vagas_rest_a1.get(escolha_a1, vagas)}")
+                            else:
+                                st.markdown("**1ª Opção (Anexo I):** Não escolheu")
+                            
+                            # Escolha Anexo II
+                            escolha_a2 = servidor.get('escolha_anexo2', '')
+                            if escolha_a2 and escolha_a2 in ANEXO_II:
+                                info_a2 = ANEXO_II[escolha_a2]
+                                demanda = demanda_a2.get(escolha_a2, 0)
+                                st.markdown(f"**2ª Opção (Anexo II):** {info_a2['comarca']} - {info_a2['unidade']}")
+                                st.markdown(f"   ↳ Demanda: {demanda} | Vagas liberadas: {vagas_disp_a2.get(escolha_a2, 0)}")
+                            else:
+                                st.markdown("**2ª Opção (Anexo II):** Não escolheu")
+                        
+                        st.divider()
+                        
+                        # Análise e resultado
+                        st.markdown("**📊 Análise do Resultado**")
+                        
+                        resultado = resultado_servidor['resultado']
+                        vaga_obtida = resultado_servidor['vaga_obtida']
+                        observacao = resultado_servidor['observacao']
+                        
+                        if resultado_servidor['status'] == "APROVADO":
+                            st.success(f"🎉 **Parabéns!** Você obteve vaga pelo **{resultado}**!")
+                            st.markdown(f"**Vaga Obtida:** {vaga_obtida}")
+                            
+                            if resultado_servidor['designacao_origem'] == "SIM":
+                                st.warning("⚠️ **Atenção:** Você ficará designado na unidade de origem até que haja substituição (item 3.14 do Edital).")
+                            else:
+                                st.info("✅ Você poderá ir imediatamente para a nova unidade!")
+                        
+                        elif resultado_servidor['status'] == "DESCLASSIFICADO":
+                            st.error(f"❌ **Desclassificado:** {observacao}")
+                            st.markdown("Conforme item 3.2 do Edital, servidores em estágio probatório não podem participar.")
+                        
                         else:
-                            st.warning(f"⚠️ {resultado_atual['status']}")
-                            st.markdown(f"**Motivo:** {resultado_atual['observacao']}")
+                            st.warning(f"😔 **Não obteve vaga:** {observacao}")
+                            
+                            # Sugestões
+                            if escolha_a1 and vagas_rest_a1.get(escolha_a1, 0) == 0:
+                                st.markdown("💡 **Dica:** A vaga do Anexo I que você escolheu foi preenchida. Considere escolher outra opção.")
+                            
+                            if escolha_a2 and vagas_disp_a2.get(escolha_a2, 0) == 0:
+                                st.markdown("💡 **Dica:** A vaga do Anexo II que você escolheu não foi liberada. Isso acontece quando ninguém da sua unidade de interesse foi para o Anexo I.")
+        
+        else:  # Comparador de Cenários
+            st.subheader("🔄 Comparador de Cenários")
+            st.info("Simule diferentes escolhas e veja como isso afetaria seu resultado, SEM alterar sua inscrição real.")
+            
+            if df_inscricoes.empty:
+                st.warning("Nenhum servidor inscrito ainda.")
+            else:
+                # Selecionar servidor para simular
+                matricula_comparar = st.text_input(
+                    "Digite a matrícula para simular:",
+                    placeholder="Ex: 12345",
+                    key="matricula_comparador"
+                )
+                
+                if matricula_comparar:
+                    servidor_orig = df_inscricoes[df_inscricoes["matricula"].astype(str) == str(matricula_comparar)]
                     
-                    with col2:
-                        st.subheader("🔮 Cenário SIMULADO")
+                    if servidor_orig.empty:
+                        st.error(f"❌ Matrícula {matricula_comparar} não encontrada.")
+                    else:
+                        servidor_orig = servidor_orig.iloc[0]
                         
-                        # Seletores para novas escolhas
-                        opcoes_a1_sim = ["(Não escolher)"] + [f"{k} - {v['comarca']} - {v['unidade'][:40]}" for k, v in ANEXO_I.items()]
-                        opcoes_a2_sim = ["(Não escolher)"] + [f"{k} - {v['comarca']} - {v['unidade'][:40]}" for k, v in ANEXO_II.items()]
+                        st.success(f"✅ Simulando para: **{servidor_orig['nome']}**")
                         
-                        # Encontrar índice atual
-                        idx_a1 = 0
-                        if escolha_a1_atual:
-                            for i, op in enumerate(opcoes_a1_sim):
-                                if op.startswith(escolha_a1_atual + " -"):
-                                    idx_a1 = i
-                                    break
+                        st.divider()
                         
-                        idx_a2 = 0
-                        if escolha_a2_atual:
-                            for i, op in enumerate(opcoes_a2_sim):
-                                if op.startswith(escolha_a2_atual + " -"):
-                                    idx_a2 = i
-                                    break
+                        col1, col2 = st.columns(2)
                         
-                        nova_escolha_a1 = st.selectbox("Nova escolha Anexo I:", opcoes_a1_sim, index=idx_a1, key="sim_a1")
-                        nova_escolha_a2 = st.selectbox("Nova escolha Anexo II:", opcoes_a2_sim, index=idx_a2, key="sim_a2")
-                        
-                        if st.button("🔄 Simular Cenário", use_container_width=True):
-                            # Criar cópia do dataframe com a alteração
-                            df_simulacao = df_inscricoes.copy()
+                        with col1:
+                            st.markdown("**📋 Cenário ATUAL**")
                             
-                            # Extrair códigos
-                            codigo_sim_a1 = nova_escolha_a1.split(" - ")[0] if nova_escolha_a1 != "(Não escolher)" else ""
-                            codigo_sim_a2 = nova_escolha_a2.split(" - ")[0] if nova_escolha_a2 != "(Não escolher)" else ""
+                            # Calcular resultado atual
+                            df_resultado_atual, _, _, _ = calcular_resultado(df_inscricoes)
+                            resultado_atual = df_resultado_atual[df_resultado_atual["matricula"].astype(str) == str(matricula_comparar)].iloc[0]
                             
-                            # Atualizar escolhas no dataframe de simulação
-                            mask = df_simulacao["matricula"].astype(str) == str(matricula_comparar)
-                            df_simulacao.loc[mask, "escolha_anexo1"] = codigo_sim_a1
-                            df_simulacao.loc[mask, "escolha_anexo2"] = codigo_sim_a2
+                            escolha_a1_atual = servidor_orig.get('escolha_anexo1', '')
+                            escolha_a2_atual = servidor_orig.get('escolha_anexo2', '')
                             
-                            # Calcular novo resultado
-                            df_resultado_sim, _, _, _ = calcular_resultado(df_simulacao)
-                            resultado_sim = df_resultado_sim[df_resultado_sim["matricula"].astype(str) == str(matricula_comparar)].iloc[0]
+                            if escolha_a1_atual and escolha_a1_atual in ANEXO_I:
+                                st.markdown(f"**Anexo I:** {ANEXO_I[escolha_a1_atual]['comarca']} - {ANEXO_I[escolha_a1_atual]['unidade'][:30]}...")
+                            else:
+                                st.markdown("**Anexo I:** Não escolheu")
+                            
+                            if escolha_a2_atual and escolha_a2_atual in ANEXO_II:
+                                st.markdown(f"**Anexo II:** {ANEXO_II[escolha_a2_atual]['comarca']} - {ANEXO_II[escolha_a2_atual]['unidade'][:30]}...")
+                            else:
+                                st.markdown("**Anexo II:** Não escolheu")
                             
                             st.divider()
                             
-                            if resultado_sim['status'] == "APROVADO":
-                                st.success(f"✅ {resultado_sim['status']} - {resultado_sim['resultado']}")
-                                st.markdown(f"**Vaga:** {resultado_sim['vaga_obtida']}")
-                                st.markdown(f"**Designação:** {resultado_sim['designacao_origem']}")
-                            elif resultado_sim['status'] == "DESCLASSIFICADO":
-                                st.error(f"❌ {resultado_sim['status']}")
+                            if resultado_atual['status'] == "APROVADO":
+                                st.success(f"✅ {resultado_atual['status']} - {resultado_atual['resultado']}")
+                                st.markdown(f"**Vaga:** {resultado_atual['vaga_obtida']}")
+                                st.markdown(f"**Designação:** {resultado_atual['designacao_origem']}")
+                            elif resultado_atual['status'] == "DESCLASSIFICADO":
+                                st.error(f"❌ {resultado_atual['status']}")
                             else:
-                                st.warning(f"⚠️ {resultado_sim['status']}")
-                                st.markdown(f"**Motivo:** {resultado_sim['observacao']}")
+                                st.warning(f"⚠️ {resultado_atual['status']}")
+                                st.markdown(f"**Motivo:** {resultado_atual['observacao']}")
+                        
+                        with col2:
+                            st.markdown("**🔮 Cenário SIMULADO**")
                             
-                            # Comparação
-                            st.divider()
-                            if resultado_atual['status'] != resultado_sim['status'] or resultado_atual['resultado'] != resultado_sim['resultado']:
-                                st.info("💡 **O resultado mudou!** Compare os cenários acima.")
-                            else:
-                                st.info("💡 **O resultado seria o mesmo** com essas escolhas.")
+                            # Seletores para novas escolhas
+                            opcoes_a1_sim = ["(Não escolher)"] + [f"{k} - {v['comarca']} - {v['unidade'][:40]}" for k, v in ANEXO_I.items()]
+                            opcoes_a2_sim = ["(Não escolher)"] + [f"{k} - {v['comarca']} - {v['unidade'][:40]}" for k, v in ANEXO_II.items()]
+                            
+                            # Encontrar índice atual
+                            idx_a1 = 0
+                            if escolha_a1_atual:
+                                for i, op in enumerate(opcoes_a1_sim):
+                                    if op.startswith(escolha_a1_atual + " -"):
+                                        idx_a1 = i
+                                        break
+                            
+                            idx_a2 = 0
+                            if escolha_a2_atual:
+                                for i, op in enumerate(opcoes_a2_sim):
+                                    if op.startswith(escolha_a2_atual + " -"):
+                                        idx_a2 = i
+                                        break
+                            
+                            nova_escolha_a1 = st.selectbox("Nova escolha Anexo I:", opcoes_a1_sim, index=idx_a1, key="sim_a1")
+                            nova_escolha_a2 = st.selectbox("Nova escolha Anexo II:", opcoes_a2_sim, index=idx_a2, key="sim_a2")
+                            
+                            if st.button("🔄 Simular Cenário", use_container_width=True):
+                                # Criar cópia do dataframe com a alteração
+                                df_simulacao = df_inscricoes.copy()
+                                
+                                # Extrair códigos
+                                codigo_sim_a1 = nova_escolha_a1.split(" - ")[0] if nova_escolha_a1 != "(Não escolher)" else ""
+                                codigo_sim_a2 = nova_escolha_a2.split(" - ")[0] if nova_escolha_a2 != "(Não escolher)" else ""
+                                
+                                # Atualizar escolhas no dataframe de simulação
+                                mask = df_simulacao["matricula"].astype(str) == str(matricula_comparar)
+                                df_simulacao.loc[mask, "escolha_anexo1"] = codigo_sim_a1
+                                df_simulacao.loc[mask, "escolha_anexo2"] = codigo_sim_a2
+                                
+                                # Calcular novo resultado
+                                df_resultado_sim, _, _, _ = calcular_resultado(df_simulacao)
+                                resultado_sim = df_resultado_sim[df_resultado_sim["matricula"].astype(str) == str(matricula_comparar)].iloc[0]
+                                
+                                st.divider()
+                                
+                                if resultado_sim['status'] == "APROVADO":
+                                    st.success(f"✅ {resultado_sim['status']} - {resultado_sim['resultado']}")
+                                    st.markdown(f"**Vaga:** {resultado_sim['vaga_obtida']}")
+                                    st.markdown(f"**Designação:** {resultado_sim['designacao_origem']}")
+                                elif resultado_sim['status'] == "DESCLASSIFICADO":
+                                    st.error(f"❌ {resultado_sim['status']}")
+                                else:
+                                    st.warning(f"⚠️ {resultado_sim['status']}")
+                                    st.markdown(f"**Motivo:** {resultado_sim['observacao']}")
+                                
+                                # Comparação
+                                st.divider()
+                                if resultado_atual['status'] != resultado_sim['status'] or resultado_atual['resultado'] != resultado_sim['resultado']:
+                                    st.info("💡 **O resultado mudou!** Compare os cenários acima.")
+                                else:
+                                    st.info("💡 **O resultado seria o mesmo** com essas escolhas.")
     
     # =========================================================================
-    # ABA 9: INSCRITOS POR RAJ (antiga aba 6)
+    # ABA 5: VAGAS (Anexo I e II)
     # =========================================================================
-    with tab9:
-        st.header("🗺️ Inscritos por Região Administrativa Judiciária (RAJ)")
+    with tab5:
+        st.header("📋 Vagas Disponíveis")
+        
+        # Sub-seções com radio button
+        opcao_vagas = st.radio(
+            "Escolha o anexo:",
+            ["📋 Anexo I (Vagas com Déficit)", "📋 Anexo II (Todas as Unidades)"],
+            horizontal=True,
+            key="opcao_vagas"
+        )
+        
+        st.divider()
+        
+        if opcao_vagas == "📋 Anexo I (Vagas com Déficit)":
+            st.subheader("Vagas com Déficit (Anexo I)")
+            st.info("Estas são as vagas prioritárias com déficit de servidores. A coluna **Demanda** mostra quantos servidores escolheram cada vaga.")
+            
+            dados_a1 = []
+            for codigo, info in ANEXO_I.items():
+                demanda = demanda_a1.get(codigo, 0)
+                vagas = info["quantidade"]
+                # Calcular indicador de concorrência
+                if demanda == 0:
+                    concorrencia = "🟢 Sem demanda"
+                elif demanda < vagas:
+                    concorrencia = "🟡 Baixa"
+                elif demanda == vagas:
+                    concorrencia = "🟠 Equilibrada"
+                else:
+                    concorrencia = "🔴 Alta"
+                
+                dados_a1.append({
+                    "Código": codigo,
+                    "Comarca": info["comarca"],
+                    "Unidade Judiciária": info["unidade"],
+                    "Vagas": vagas,
+                    "Demanda": demanda,
+                    "Concorrência": concorrencia
+                })
+            
+            df_a1 = pd.DataFrame(dados_a1)
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                comarcas_a1 = sorted(df_a1["Comarca"].unique())
+                filtro_comarca_a1 = st.selectbox("Filtrar por comarca:", ["Todas"] + comarcas_a1, key="filtro_a1")
+            with col2:
+                filtro_concorrencia = st.selectbox("Filtrar por concorrência:", 
+                                                    ["Todas", "🟢 Sem demanda", "🟡 Baixa", "🟠 Equilibrada", "🔴 Alta"], 
+                                                    key="filtro_conc_a1")
+            
+            if filtro_comarca_a1 != "Todas":
+                df_a1 = df_a1[df_a1["Comarca"] == filtro_comarca_a1]
+            
+            if filtro_concorrencia != "Todas":
+                df_a1 = df_a1[df_a1["Concorrência"] == filtro_concorrencia]
+            
+            busca_a1 = st.text_input("🔍 Buscar:", key="busca_a1", placeholder="Digite parte do nome da comarca ou unidade...")
+            if busca_a1:
+                mask = df_a1.apply(lambda x: busca_a1.lower() in x["Comarca"].lower() or busca_a1.lower() in x["Unidade Judiciária"].lower(), axis=1)
+                df_a1 = df_a1[mask]
+            
+            st.dataframe(df_a1, use_container_width=True, hide_index=True)
+            
+            total_demanda = df_a1["Demanda"].sum()
+            st.caption(f"Total: {len(df_a1)} unidades | {df_a1['Vagas'].sum()} vagas | {total_demanda} servidores interessados")
+        
+        else:  # Anexo II
+            st.subheader("Todas as Unidades (Anexo II)")
+            st.info("Estas são todas as unidades judiciárias. A coluna **Demanda** mostra quantos servidores escolheram cada unidade como 2ª opção.")
+            
+            dados_a2 = []
+            for codigo, info in ANEXO_II.items():
+                # Adicionar status de lotação
+                status_lot = obter_status_lotacao(codigo)
+                demanda = demanda_a2.get(codigo, 0)
+                dados_a2.append({
+                    "Código": codigo,
+                    "Comarca": info["comarca"],
+                    "Unidade Judiciária": info["unidade"],
+                    "Status Lotação": status_lot,
+                    "Demanda": demanda
+                })
+            
+            df_a2 = pd.DataFrame(dados_a2)
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                comarcas_a2 = sorted(df_a2["Comarca"].unique())
+                filtro_comarca_a2 = st.selectbox("Filtrar por comarca:", ["Todas"] + comarcas_a2, key="filtro_a2")
+            with col2:
+                # Filtro por status de lotação
+                filtro_status = st.selectbox("Filtrar por status de lotação:", 
+                                              ["Todos", "SUPERAVITÁRIA", "EQUILIBRADA", "DEFICITÁRIA", "NÃO IDENTIFICADA"],
+                                              key="filtro_status_a2")
+            
+            if filtro_comarca_a2 != "Todas":
+                df_a2 = df_a2[df_a2["Comarca"] == filtro_comarca_a2]
+            
+            if filtro_status != "Todos":
+                df_a2 = df_a2[df_a2["Status Lotação"] == filtro_status]
+            
+            # Checkbox para mostrar apenas com demanda
+            mostrar_com_demanda = st.checkbox("Mostrar apenas unidades com demanda", key="filtro_demanda_a2")
+            if mostrar_com_demanda:
+                df_a2 = df_a2[df_a2["Demanda"] > 0]
+            
+            busca_a2 = st.text_input("🔍 Buscar:", key="busca_a2", placeholder="Digite parte do nome da comarca ou unidade...")
+            if busca_a2:
+                mask = df_a2.apply(lambda x: busca_a2.lower() in x["Comarca"].lower() or busca_a2.lower() in x["Unidade Judiciária"].lower(), axis=1)
+                df_a2 = df_a2[mask]
+            
+            # Colorir por status
+            def color_status(val):
+                if val == "SUPERAVITÁRIA":
+                    return "background-color: #d4edda"
+                elif val == "EQUILIBRADA":
+                    return "background-color: #fff3cd"
+                elif val == "DEFICITÁRIA":
+                    return "background-color: #f8d7da"
+                return ""
+            
+            st.dataframe(
+                df_a2.style.applymap(color_status, subset=["Status Lotação"]),
+                use_container_width=True, 
+                hide_index=True
+            )
+            
+            total_demanda_a2 = df_a2["Demanda"].sum()
+            st.caption(f"Total: {len(df_a2)} unidades | {total_demanda_a2} servidores interessados")
+    
+    # =========================================================================
+    # ABA 6: LOTAÇÃO DAS UNIDADES
+    # =========================================================================
+    with tab6:
+        st.header("📈 Lotação das Unidades Judiciárias")
+        st.info("Dados da Tabela de Lotação de Pessoal (TLP) - 2º Semestre 2025. Fonte: BI do TJPR.")
+        
+        # Explicação
+        with st.expander("ℹ️ Como interpretar os dados"):
+            st.markdown("""
+            **Colunas:**
+            - **Lotação Real (LR)**: Total de servidores atualmente lotados na unidade
+            - **Lotação Paradigma (LP)**: Mínimo de servidores necessários segundo a Resolução CNJ 219/2016
+            - **Diferença**: Lotação Real - Lotação Paradigma
+            
+            **Status:**
+            - 🟢 **SUPERAVITÁRIA**: Mais servidores que o necessário (diferença > 0)
+            - 🟡 **EQUILIBRADA**: Exatamente o necessário (diferença = 0)
+            - 🔴 **DEFICITÁRIA**: Menos servidores que o necessário (diferença < 0)
+            
+            **Impacto na Relotação (item 3.14 do Edital):**
+            - Se a saída do servidor **ocasionar déficit** na origem (unidade fica DEFICITÁRIA) → servidor fica **designado** para continuar na origem até substituição
+            - Se a saída **não ocasionar déficit** (unidade fica EQUILIBRADA ou SUPERAVITÁRIA) → servidor pode sair **imediatamente**
+            """)
+        
+        # Métricas gerais
+        col1, col2, col3, col4 = st.columns(4)
+        
+        total_unidades = len(LOTACAO_COMPLETA)
+        superavit = len([u for u in LOTACAO_COMPLETA if u["status"] == "SUPERAVITÁRIA"])
+        equilibrada = len([u for u in LOTACAO_COMPLETA if u["status"] == "EQUILIBRADA"])
+        deficit = len([u for u in LOTACAO_COMPLETA if u["status"] == "DEFICITÁRIA"])
+        
+        col1.metric("Total Unidades", total_unidades)
+        col2.metric("🟢 Superavitárias", superavit)
+        col3.metric("🟡 Equilibradas", equilibrada)
+        col4.metric("🔴 Deficitárias", deficit)
+        
+        st.divider()
+        
+        # Filtros
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            comarcas_lot = sorted(set(u["comarca"] for u in LOTACAO_COMPLETA))
+            filtro_comarca_lot = st.selectbox("Filtrar por comarca:", ["Todas"] + comarcas_lot, key="filtro_comarca_lot")
+        
+        with col2:
+            filtro_status_lot = st.selectbox("Filtrar por status:", 
+                                              ["Todos", "SUPERAVITÁRIA", "EQUILIBRADA", "DEFICITÁRIA"],
+                                              key="filtro_status_lot")
+        
+        with col3:
+            busca_lot = st.text_input("🔍 Buscar:", key="busca_lot", placeholder="Nome da unidade...")
+        
+        # Preparar dados
+        dados_lotacao = []
+        for u in LOTACAO_COMPLETA:
+            dados_lotacao.append({
+                "Código": u["codigo"],
+                "Comarca": u["comarca"],
+                "Unidade": u["unidade"],
+                "Lotação Real": u["lotacao_real"],
+                "Lotação Paradigma": u["lotacao_paradigma"],
+                "Diferença": u["diferenca"],
+                "Status": u["status"]
+            })
+        
+        df_lotacao = pd.DataFrame(dados_lotacao)
+        
+        # Aplicar filtros
+        if filtro_comarca_lot != "Todas":
+            df_lotacao = df_lotacao[df_lotacao["Comarca"] == filtro_comarca_lot]
+        
+        if filtro_status_lot != "Todos":
+            df_lotacao = df_lotacao[df_lotacao["Status"] == filtro_status_lot]
+        
+        if busca_lot:
+            mask = df_lotacao.apply(lambda x: busca_lot.lower() in x["Comarca"].lower() or busca_lot.lower() in x["Unidade"].lower(), axis=1)
+            df_lotacao = df_lotacao[mask]
+        
+        # Colorir por status
+        def color_status_lot(val):
+            if val == "SUPERAVITÁRIA":
+                return "background-color: #d4edda"
+            elif val == "EQUILIBRADA":
+                return "background-color: #fff3cd"
+            elif val == "DEFICITÁRIA":
+                return "background-color: #f8d7da"
+            return ""
+        
+        def color_diferenca(val):
+            try:
+                if int(val) > 0:
+                    return "color: green; font-weight: bold"
+                elif int(val) < 0:
+                    return "color: red; font-weight: bold"
+            except:
+                pass
+            return ""
+        
+        st.dataframe(
+            df_lotacao.style.applymap(color_status_lot, subset=["Status"]).applymap(color_diferenca, subset=["Diferença"]),
+            use_container_width=True,
+            hide_index=True,
+            height=500
+        )
+        
+        st.caption(f"Exibindo: {len(df_lotacao)} de {total_unidades} unidades")
+    
+    # =========================================================================
+    # ABA 7: RAJS
+    # =========================================================================
+    with tab7:
+        st.header("🗺️ Regiões Administrativas Judiciárias (RAJs)")
         st.info("Análise dos candidatos **APROVADOS** por região de **ORIGEM** (lotação atual). Criada pela Resolução nº 441/2024 do TJPR.")
         
         if df_inscricoes.empty:
@@ -2675,67 +2716,38 @@ def main():
                 # Criar dicionário de contagem
                 contagem_dict = dict(zip(contagem_raj["RAJ"], contagem_raj["Quantidade de Aprovados"]))
                 
-                # Layout geográfico aproximado das RAJs
-                st.markdown("""
-                <style>
-                .raj-card {
-                    padding: 10px;
-                    border-radius: 8px;
-                    text-align: center;
-                    margin: 2px;
-                    font-size: 12px;
-                }
-                </style>
-                """, unsafe_allow_html=True)
-                
-                # Linha 1: Norte do Paraná
-                st.markdown("**Norte do Paraná:**")
-                col1, col2, col3, col4, col5 = st.columns(5)
-                
                 def get_raj_qtd(raj_num):
                     for raj, qtd in contagem_dict.items():
                         if f"RAJ {raj_num}" in raj:
                             return qtd
                     return 0
                 
+                # Linha 1: Norte do Paraná
+                st.markdown("**Norte do Paraná:**")
+                col1, col2, col3, col4, col5 = st.columns(5)
+                
                 with col1:
                     qtd = get_raj_qtd(10)
                     cor = "🟢" if qtd > 0 else "⚪"
-                    st.markdown(f"""
-                    **RAJ 10** {cor}  
-                    Jacarezinho  
-                    {qtd} aprovados
-                    """)
+                    st.markdown(f"**RAJ 10** {cor}  \nJacarezinho  \n{qtd} aprovados")
                 
                 with col2:
                     qtd = get_raj_qtd(9)
                     cor = "🟢" if qtd > 0 else "⚪"
-                    st.markdown(f"""
-                    **RAJ 9** {cor}  
-                    Londrina  
-                    {qtd} aprovados
-                    """)
+                    st.markdown(f"**RAJ 9** {cor}  \nLondrina  \n{qtd} aprovados")
                 
                 with col3:
                     qtd = get_raj_qtd(8)
                     cor = "🟢" if qtd > 0 else "⚪"
-                    st.markdown(f"""
-                    **RAJ 8** {cor}  
-                    Maringá  
-                    {qtd} aprovados
-                    """)
+                    st.markdown(f"**RAJ 8** {cor}  \nMaringá  \n{qtd} aprovados")
                 
                 with col4:
                     qtd = get_raj_qtd(7)
                     cor = "🟢" if qtd > 0 else "⚪"
-                    st.markdown(f"""
-                    **RAJ 7** {cor}  
-                    Umuarama  
-                    {qtd} aprovados
-                    """)
+                    st.markdown(f"**RAJ 7** {cor}  \nUmuarama  \n{qtd} aprovados")
                 
                 with col5:
-                    st.markdown("")  # Espaço vazio
+                    st.markdown("")
                 
                 # Linha 2: Centro-Oeste
                 st.markdown("**Centro-Oeste:**")
@@ -2744,38 +2756,22 @@ def main():
                 with col1:
                     qtd = get_raj_qtd(2)
                     cor = "🟢" if qtd > 0 else "⚪"
-                    st.markdown(f"""
-                    **RAJ 2** {cor}  
-                    Ponta Grossa  
-                    {qtd} aprovados
-                    """)
+                    st.markdown(f"**RAJ 2** {cor}  \nPonta Grossa  \n{qtd} aprovados")
                 
                 with col2:
                     qtd = get_raj_qtd(3)
                     cor = "🟢" if qtd > 0 else "⚪"
-                    st.markdown(f"""
-                    **RAJ 3** {cor}  
-                    Guarapuava  
-                    {qtd} aprovados
-                    """)
+                    st.markdown(f"**RAJ 3** {cor}  \nGuarapuava  \n{qtd} aprovados")
                 
                 with col3:
                     qtd = get_raj_qtd(6)
                     cor = "🟢" if qtd > 0 else "⚪"
-                    st.markdown(f"""
-                    **RAJ 6** {cor}  
-                    Cascavel  
-                    {qtd} aprovados
-                    """)
+                    st.markdown(f"**RAJ 6** {cor}  \nCascavel  \n{qtd} aprovados")
                 
                 with col4:
                     qtd = get_raj_qtd(5)
                     cor = "🟢" if qtd > 0 else "⚪"
-                    st.markdown(f"""
-                    **RAJ 5** {cor}  
-                    Foz do Iguaçu  
-                    {qtd} aprovados
-                    """)
+                    st.markdown(f"**RAJ 5** {cor}  \nFoz do Iguaçu  \n{qtd} aprovados")
                 
                 with col5:
                     st.markdown("")
@@ -2787,20 +2783,12 @@ def main():
                 with col1:
                     qtd = get_raj_qtd(1)
                     cor = "🟢" if qtd > 0 else "⚪"
-                    st.markdown(f"""
-                    **RAJ 1** {cor}  
-                    Curitiba/Litoral  
-                    {qtd} aprovados
-                    """)
+                    st.markdown(f"**RAJ 1** {cor}  \nCuritiba/Litoral  \n{qtd} aprovados")
                 
                 with col2:
                     qtd = get_raj_qtd(4)
                     cor = "🟢" if qtd > 0 else "⚪"
-                    st.markdown(f"""
-                    **RAJ 4** {cor}  
-                    Francisco Beltrão  
-                    {qtd} aprovados
-                    """)
+                    st.markdown(f"**RAJ 4** {cor}  \nFrancisco Beltrão  \n{qtd} aprovados")
                 
                 with col3:
                     st.markdown("")
@@ -2887,116 +2875,7 @@ def main():
                 
                 st.dataframe(df_exibir_raj, use_container_width=True, hide_index=True)
                 st.caption(f"Total de aprovados exibidos: {len(df_filtrado)}")
-    
-    # =========================================================================
-    # ABA 10: LOTAÇÃO DAS UNIDADES (antiga aba 7)
-    # =========================================================================
-    with tab10:
-        st.header("📈 Lotação das Unidades Judiciárias")
-        st.info("Dados da Tabela de Lotação de Pessoal (TLP) - 2º Semestre 2025. Fonte: BI do TJPR.")
-        
-        # Explicação
-        with st.expander("ℹ️ Como interpretar os dados"):
-            st.markdown("""
-            **Colunas:**
-            - **Lotação Real (LR)**: Total de servidores atualmente lotados na unidade
-            - **Lotação Paradigma (LP)**: Mínimo de servidores necessários segundo a Resolução CNJ 219/2016
-            - **Diferença**: Lotação Real - Lotação Paradigma
-            
-            **Status:**
-            - 🟢 **SUPERAVITÁRIA**: Mais servidores que o necessário (diferença > 0)
-            - 🟡 **EQUILIBRADA**: Exatamente o necessário (diferença = 0)
-            - 🔴 **DEFICITÁRIA**: Menos servidores que o necessário (diferença < 0)
-            
-            **Impacto na Relotação (item 3.14 do Edital):**
-            - Se a saída do servidor **ocasionar déficit** na origem (unidade fica DEFICITÁRIA) → servidor fica **designado** para continuar na origem até substituição
-            - Se a saída **não ocasionar déficit** (unidade fica EQUILIBRADA ou SUPERAVITÁRIA) → servidor pode sair **imediatamente**
-            """)
-        
-        # Métricas gerais
-        col1, col2, col3, col4 = st.columns(4)
-        
-        total_unidades = len(LOTACAO_COMPLETA)
-        superavit = len([u for u in LOTACAO_COMPLETA if u["status"] == "SUPERAVITÁRIA"])
-        equilibrada = len([u for u in LOTACAO_COMPLETA if u["status"] == "EQUILIBRADA"])
-        deficit = len([u for u in LOTACAO_COMPLETA if u["status"] == "DEFICITÁRIA"])
-        
-        col1.metric("Total de Unidades", total_unidades)
-        col2.metric("Superavitárias", superavit, delta=None)
-        col3.metric("Equilibradas", equilibrada, delta=None)
-        col4.metric("Deficitárias", deficit, delta=None, delta_color="inverse")
-        
-        st.divider()
-        
-        # Filtros
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            comarcas_lot = sorted(set([u["comarca"] for u in LOTACAO_COMPLETA]))
-            filtro_comarca_lot = st.selectbox("Filtrar por comarca:", ["Todas"] + comarcas_lot, key="filtro_comarca_lot")
-        
-        with col2:
-            filtro_status_lot = st.selectbox("Filtrar por status:", 
-                                              ["Todos", "SUPERAVITÁRIA", "EQUILIBRADA", "DEFICITÁRIA"],
-                                              key="filtro_status_lot")
-        
-        busca_lot = st.text_input("🔍 Buscar:", key="busca_lot", placeholder="Digite parte do nome da comarca ou unidade...")
-        
-        # Preparar dados
-        dados_lot = []
-        for u in LOTACAO_COMPLETA:
-            # Aplicar filtros
-            if filtro_comarca_lot != "Todas" and u["comarca"] != filtro_comarca_lot:
-                continue
-            if filtro_status_lot != "Todos" and u["status"] != filtro_status_lot:
-                continue
-            if busca_lot:
-                if busca_lot.lower() not in u["comarca"].lower() and busca_lot.lower() not in u["unidade"].lower():
-                    continue
-            
-            dados_lot.append({
-                "Comarca": u["comarca"],
-                "Unidade Judiciária": u["unidade"],
-                "Lotação Real": u["lotacao_real"],
-                "Lotação Paradigma": u["lotacao_paradigma"],
-                "Diferença": u["diferenca"],
-                "Status": u["status"]
-            })
-        
-        df_lot = pd.DataFrame(dados_lot)
-        
-        if not df_lot.empty:
-            def color_status_lot(val):
-                if val == "SUPERAVITÁRIA":
-                    return "background-color: #d4edda"
-                elif val == "EQUILIBRADA":
-                    return "background-color: #fff3cd"
-                elif val == "DEFICITÁRIA":
-                    return "background-color: #f8d7da"
-                return ""
-            
-            def color_diferenca(val):
-                if val > 0:
-                    return "color: green; font-weight: bold"
-                elif val < 0:
-                    return "color: red; font-weight: bold"
-                return ""
-            
-            st.dataframe(
-                df_lot.style.applymap(color_status_lot, subset=["Status"])
-                           .applymap(color_diferenca, subset=["Diferença"]),
-                use_container_width=True,
-                hide_index=True
-            )
-            
-            st.caption(f"Exibindo {len(df_lot)} de {total_unidades} unidades")
-        else:
-            st.warning("Nenhuma unidade encontrada com os filtros selecionados.")
 
-
-# =============================================================================
-# FOOTER
-# =============================================================================
 
 def footer():
     st.divider()
