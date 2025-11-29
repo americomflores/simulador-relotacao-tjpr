@@ -2631,7 +2631,7 @@ def main():
         dados_lotacao = []
         for u in LOTACAO_COMPLETA:
             dados_lotacao.append({
-                "Código": u["codigo"],
+                "Código": u.get("codigo_anexo2", "-"),
                 "Comarca": u["comarca"],
                 "Unidade": u["unidade"],
                 "Lotação Real": u["lotacao_real"],
