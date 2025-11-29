@@ -12,6 +12,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 import json
 import re
+from io import BytesIO
 
 # =============================================================================
 # CONFIGURAÇÃO
@@ -793,6 +794,63 @@ def calcular_resultado(df_inscricoes):
     return df, vagas_anexo1, vagas_anexo2, ajustes_lotacao
 
 
+def calcular_demanda(df_inscricoes):
+    """
+    Calcula quantos servidores escolheram cada vaga.
+    Retorna dicionários com contagem para Anexo I e Anexo II.
+    """
+    demanda_a1 = {}
+    demanda_a2 = {}
+    
+    if df_inscricoes.empty:
+        return demanda_a1, demanda_a2
+    
+    for _, row in df_inscricoes.iterrows():
+        # Contar escolhas do Anexo I
+        escolha_a1 = row.get("escolha_anexo1", "")
+        if escolha_a1 and escolha_a1 in ANEXO_I:
+            demanda_a1[escolha_a1] = demanda_a1.get(escolha_a1, 0) + 1
+        
+        # Contar escolhas do Anexo II
+        escolha_a2 = row.get("escolha_anexo2", "")
+        if escolha_a2 and escolha_a2 in ANEXO_II:
+            demanda_a2[escolha_a2] = demanda_a2.get(escolha_a2, 0) + 1
+    
+    return demanda_a1, demanda_a2
+
+
+def gerar_excel_resultado(df_resultado):
+    """
+    Gera um arquivo Excel com o resultado da simulação.
+    Retorna bytes do arquivo para download.
+    """
+    output = BytesIO()
+    
+    # Preparar DataFrame para exportação
+    df_export = df_resultado[[
+        "posicao_antiguidade", "nome", "matricula", "data_admissao",
+        "status", "resultado", "vaga_obtida", "designacao_origem", "observacao"
+    ]].copy()
+    
+    # Formatar data
+    df_export["data_admissao"] = df_export["data_admissao"].apply(
+        lambda x: x.strftime("%d/%m/%Y") if x else ""
+    )
+    
+    # Renomear colunas
+    df_export.columns = [
+        "Posição", "Nome", "Matrícula", "Data Admissão",
+        "Status", "Resultado", "Vaga Obtida", "Designação Origem", "Observação"
+    ]
+    
+    # Criar Excel com pandas
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df_export.to_excel(writer, sheet_name='Resultado Simulação', index=False)
+    
+    output.seek(0)
+    return output.getvalue()
+
+
 # =============================================================================
 # INTERFACE PRINCIPAL
 # =============================================================================
@@ -825,29 +883,55 @@ def main():
         "📈 Lotação das Unidades"
     ])
     
+    # Calcular demanda (quantos escolheram cada vaga)
+    demanda_a1, demanda_a2 = calcular_demanda(df_inscricoes)
+    
     # =========================================================================
     # ABA 1: VAGAS ANEXO I
     # =========================================================================
     with tab1:
         st.header("Vagas com Déficit (Anexo I)")
-        st.info("Estas são as vagas prioritárias com déficit de servidores. A quantidade indica o número de posições disponíveis.")
+        st.info("Estas são as vagas prioritárias com déficit de servidores. A coluna **Demanda** mostra quantos servidores escolheram cada vaga.")
         
         dados_a1 = []
         for codigo, info in ANEXO_I.items():
+            demanda = demanda_a1.get(codigo, 0)
+            vagas = info["quantidade"]
+            # Calcular indicador de concorrência
+            if demanda == 0:
+                concorrencia = "🟢 Sem demanda"
+            elif demanda < vagas:
+                concorrencia = "🟡 Baixa"
+            elif demanda == vagas:
+                concorrencia = "🟠 Equilibrada"
+            else:
+                concorrencia = "🔴 Alta"
+            
             dados_a1.append({
                 "Código": codigo,
                 "Comarca": info["comarca"],
                 "Unidade Judiciária": info["unidade"],
-                "Vagas": info["quantidade"]
+                "Vagas": vagas,
+                "Demanda": demanda,
+                "Concorrência": concorrencia
             })
         
         df_a1 = pd.DataFrame(dados_a1)
         
-        comarcas_a1 = sorted(df_a1["Comarca"].unique())
-        filtro_comarca_a1 = st.selectbox("Filtrar por comarca:", ["Todas"] + comarcas_a1, key="filtro_a1")
+        col1, col2 = st.columns(2)
+        with col1:
+            comarcas_a1 = sorted(df_a1["Comarca"].unique())
+            filtro_comarca_a1 = st.selectbox("Filtrar por comarca:", ["Todas"] + comarcas_a1, key="filtro_a1")
+        with col2:
+            filtro_concorrencia = st.selectbox("Filtrar por concorrência:", 
+                                                ["Todas", "🟢 Sem demanda", "🟡 Baixa", "🟠 Equilibrada", "🔴 Alta"], 
+                                                key="filtro_conc_a1")
         
         if filtro_comarca_a1 != "Todas":
             df_a1 = df_a1[df_a1["Comarca"] == filtro_comarca_a1]
+        
+        if filtro_concorrencia != "Todas":
+            df_a1 = df_a1[df_a1["Concorrência"] == filtro_concorrencia]
         
         busca_a1 = st.text_input("🔍 Buscar:", key="busca_a1", placeholder="Digite parte do nome da comarca ou unidade...")
         if busca_a1:
@@ -855,40 +939,52 @@ def main():
             df_a1 = df_a1[mask]
         
         st.dataframe(df_a1, use_container_width=True, hide_index=True)
-        st.caption(f"Total: {len(df_a1)} unidades | {df_a1['Vagas'].sum()} vagas")
+        
+        total_demanda = df_a1["Demanda"].sum()
+        st.caption(f"Total: {len(df_a1)} unidades | {df_a1['Vagas'].sum()} vagas | {total_demanda} servidores interessados")
     
     # =========================================================================
     # ABA 2: VAGAS ANEXO II
     # =========================================================================
     with tab2:
         st.header("Todas as Unidades (Anexo II)")
-        st.info("Estas são todas as unidades judiciárias. As vagas só ficam disponíveis quando um servidor sai para o Anexo I.")
+        st.info("Estas são todas as unidades judiciárias. A coluna **Demanda** mostra quantos servidores escolheram cada unidade como 2ª opção.")
         
         dados_a2 = []
         for codigo, info in ANEXO_II.items():
             # Adicionar status de lotação
             status_lot = obter_status_lotacao(codigo)
+            demanda = demanda_a2.get(codigo, 0)
             dados_a2.append({
                 "Código": codigo,
                 "Comarca": info["comarca"],
                 "Unidade Judiciária": info["unidade"],
-                "Status Lotação": status_lot
+                "Status Lotação": status_lot,
+                "Demanda": demanda
             })
         
         df_a2 = pd.DataFrame(dados_a2)
         
-        comarcas_a2 = sorted(df_a2["Comarca"].unique())
-        filtro_comarca_a2 = st.selectbox("Filtrar por comarca:", ["Todas"] + comarcas_a2, key="filtro_a2")
+        col1, col2 = st.columns(2)
+        with col1:
+            comarcas_a2 = sorted(df_a2["Comarca"].unique())
+            filtro_comarca_a2 = st.selectbox("Filtrar por comarca:", ["Todas"] + comarcas_a2, key="filtro_a2")
+        with col2:
+            # Filtro por status de lotação
+            filtro_status = st.selectbox("Filtrar por status de lotação:", 
+                                          ["Todos", "SUPERAVITÁRIA", "EQUILIBRADA", "DEFICITÁRIA", "NÃO IDENTIFICADA"],
+                                          key="filtro_status_a2")
         
         if filtro_comarca_a2 != "Todas":
             df_a2 = df_a2[df_a2["Comarca"] == filtro_comarca_a2]
         
-        # Filtro por status de lotação
-        filtro_status = st.selectbox("Filtrar por status de lotação:", 
-                                      ["Todos", "SUPERAVITÁRIA", "EQUILIBRADA", "DEFICITÁRIA", "NÃO IDENTIFICADA"],
-                                      key="filtro_status_a2")
         if filtro_status != "Todos":
             df_a2 = df_a2[df_a2["Status Lotação"] == filtro_status]
+        
+        # Checkbox para mostrar apenas com demanda
+        mostrar_com_demanda = st.checkbox("Mostrar apenas unidades com demanda", key="filtro_demanda_a2")
+        if mostrar_com_demanda:
+            df_a2 = df_a2[df_a2["Demanda"] > 0]
         
         busca_a2 = st.text_input("🔍 Buscar:", key="busca_a2", placeholder="Digite parte do nome da comarca ou unidade...")
         if busca_a2:
@@ -910,7 +1006,9 @@ def main():
             use_container_width=True, 
             hide_index=True
         )
-        st.caption(f"Total: {len(df_a2)} unidades")
+        
+        total_demanda_a2 = df_a2["Demanda"].sum()
+        st.caption(f"Total: {len(df_a2)} unidades | {total_demanda_a2} servidores interessados")
     
     # =========================================================================
     # ABA 3: INSCRIÇÃO
@@ -1009,10 +1107,40 @@ def main():
                     index=escolha_a2_default
                 )
                 
+                # Extrair códigos para verificações
+                codigo_lotacao_temp = lotacao_atual.split(" - ")[0] if lotacao_atual else ""
+                codigo_escolha_a2_temp = escolha_a2.split(" - ")[0] if escolha_a2 != "(Não escolheu)" else ""
+                
+                # ALERTA DE CONFLITO: origem = destino
+                if codigo_lotacao_temp and codigo_escolha_a2_temp and codigo_lotacao_temp == codigo_escolha_a2_temp:
+                    st.error("⚠️ **CONFLITO:** Você escolheu a mesma unidade como origem e destino no Anexo II. Isso não faz sentido!")
+                
+                # RESUMO/PREVIEW antes de salvar
+                st.divider()
+                st.markdown("**📋 Resumo da Inscrição:**")
+                
+                col_resumo1, col_resumo2 = st.columns(2)
+                with col_resumo1:
+                    st.markdown(f"**Nome:** {nome if nome else '-'}")
+                    st.markdown(f"**Matrícula:** {matricula if matricula else '-'}")
+                    st.markdown(f"**Data Admissão:** {data_admissao.strftime('%d/%m/%Y') if data_admissao else '-'}")
+                
+                with col_resumo2:
+                    lotacao_resumo = lotacao_atual.split(" - ", 1)[1] if lotacao_atual and " - " in lotacao_atual else "-"
+                    escolha_a1_resumo = escolha_a1.split(" - ", 1)[1] if escolha_a1 != "(Não escolheu)" and " - " in escolha_a1 else "-"
+                    escolha_a2_resumo = escolha_a2.split(" - ", 1)[1] if escolha_a2 != "(Não escolheu)" and " - " in escolha_a2 else "-"
+                    
+                    st.markdown(f"**Origem:** {lotacao_resumo[:50]}..." if len(lotacao_resumo) > 50 else f"**Origem:** {lotacao_resumo}")
+                    st.markdown(f"**1ª Opção (Anexo I):** {escolha_a1_resumo[:50]}..." if len(escolha_a1_resumo) > 50 else f"**1ª Opção (Anexo I):** {escolha_a1_resumo}")
+                    st.markdown(f"**2ª Opção (Anexo II):** {escolha_a2_resumo[:50]}..." if len(escolha_a2_resumo) > 50 else f"**2ª Opção (Anexo II):** {escolha_a2_resumo}")
+                
                 submitted = st.form_submit_button("💾 Salvar Inscrição", use_container_width=True)
                 
                 if submitted:
-                    if not nome or not matricula or not data_admissao or not lotacao_atual:
+                    # Verificar conflito novamente
+                    if codigo_lotacao_temp and codigo_escolha_a2_temp and codigo_lotacao_temp == codigo_escolha_a2_temp:
+                        st.error("❌ Não é possível salvar: origem e destino são iguais!")
+                    elif not nome or not matricula or not data_admissao or not lotacao_atual:
                         st.error("Preencha todos os campos obrigatórios!")
                     else:
                         codigo_lotacao = lotacao_atual.split(" - ")[0] if lotacao_atual else ""
@@ -1108,8 +1236,30 @@ def main():
                 lambda x: f"{ANEXO_II[x]['comarca']} - {ANEXO_II[x]['unidade']}" if x and x in ANEXO_II else "-"
             )
             
+            # BUSCA POR NOME OU MATRÍCULA
+            col_busca1, col_busca2 = st.columns([3, 1])
+            with col_busca1:
+                busca_servidor = st.text_input("🔍 Buscar servidor:", key="busca_servidor", 
+                                                placeholder="Digite nome ou matrícula...")
+            with col_busca2:
+                filtro_estagio = st.selectbox("Estágio Probatório:", ["Todos", "Não", "⚠️ SIM"], key="filtro_estagio")
+            
+            # Aplicar filtros
+            df_filtrado = df_display.copy()
+            
+            if busca_servidor:
+                mask = df_filtrado.apply(
+                    lambda x: busca_servidor.lower() in str(x["nome"]).lower() or 
+                              busca_servidor.lower() in str(x["matricula"]).lower(), 
+                    axis=1
+                )
+                df_filtrado = df_filtrado[mask]
+            
+            if filtro_estagio != "Todos":
+                df_filtrado = df_filtrado[df_filtrado["estagio_probatorio"] == filtro_estagio]
+            
             st.dataframe(
-                df_display[[
+                df_filtrado[[
                     "posicao", "nome", "matricula", "data_admissao_fmt", 
                     "estagio_probatorio", "status_origem", "lotacao_desc", "escolha_a1_desc", "escolha_a2_desc"
                 ]].rename(columns={
@@ -1127,7 +1277,7 @@ def main():
                 hide_index=True
             )
             
-            st.caption(f"Total: {len(df_display)} servidores inscritos")
+            st.caption(f"Exibindo: {len(df_filtrado)} de {len(df_display)} servidores inscritos")
             
             # Expander com histórico de alterações
             with st.expander("📋 Histórico de Registros/Alterações"):
@@ -1248,14 +1398,31 @@ def main():
                 hide_index=True
             )
             
-            # Legenda de cores
-            st.markdown("""
-            **Legenda:** 
-            - 🟢 Aprovado (designação = NÃO) - pode sair imediatamente
-            - 🟡 Aprovado (designação = SIM) - fica na origem até substituição
-            - 🔴 Desclassificado (estágio probatório)
-            - ⚪ Não obteve vaga
-            """)
+            # Legenda de cores e botão de exportação
+            col_leg1, col_leg2 = st.columns([3, 1])
+            
+            with col_leg1:
+                st.markdown("""
+                **Legenda:** 
+                - 🟢 Aprovado (designação = NÃO) - pode sair imediatamente
+                - 🟡 Aprovado (designação = SIM) - fica na origem até substituição
+                - 🔴 Desclassificado (estágio probatório)
+                - ⚪ Não obteve vaga
+                """)
+            
+            with col_leg2:
+                # Botão de exportar para Excel
+                try:
+                    excel_data = gerar_excel_resultado(df_resultado)
+                    st.download_button(
+                        label="📥 Exportar Excel",
+                        data=excel_data,
+                        file_name=f"resultado_simulacao_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        use_container_width=True
+                    )
+                except Exception as e:
+                    st.error(f"Erro ao gerar Excel: {e}")
             
             st.divider()
             
