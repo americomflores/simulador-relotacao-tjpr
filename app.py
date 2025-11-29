@@ -1740,10 +1740,12 @@ def main():
             st.divider()
             
             # Top vagas mais disputadas
+            st.subheader("🔥 Top 10 Vagas Mais Disputadas")
+            
             col1, col2 = st.columns(2)
             
             with col1:
-                st.subheader("🔥 Top 10 Vagas Mais Disputadas (Anexo I)")
+                st.markdown("**Anexo I (Vagas com Déficit):**")
                 
                 if demanda_a1:
                     top_a1 = sorted(demanda_a1.items(), key=lambda x: x[1], reverse=True)[:10]
@@ -1752,19 +1754,24 @@ def main():
                         if codigo in ANEXO_I:
                             vagas = ANEXO_I[codigo]["quantidade"]
                             dados_top.append({
-                                "Unidade": f"{ANEXO_I[codigo]['comarca'][:15]}...",
+                                "Comarca": ANEXO_I[codigo]['comarca'],
+                                "Unidade": ANEXO_I[codigo]['unidade'],
                                 "Vagas": vagas,
-                                "Demanda": dem,
-                                "Proporção": f"{dem/vagas:.1f}x" if vagas > 0 else "-"
+                                "Interessados": dem
                             })
                     
                     if dados_top:
-                        st.dataframe(pd.DataFrame(dados_top), use_container_width=True, hide_index=True)
+                        st.dataframe(
+                            pd.DataFrame(dados_top), 
+                            use_container_width=True, 
+                            hide_index=True,
+                            height=400
+                        )
                 else:
                     st.info("Nenhuma escolha de Anexo I registrada.")
             
             with col2:
-                st.subheader("🔥 Top 10 Vagas Mais Disputadas (Anexo II)")
+                st.markdown("**Anexo II (Todas as Unidades):**")
                 
                 if demanda_a2:
                     top_a2 = sorted(demanda_a2.items(), key=lambda x: x[1], reverse=True)[:10]
@@ -1772,12 +1779,18 @@ def main():
                     for codigo, dem in top_a2:
                         if codigo in ANEXO_II:
                             dados_top.append({
-                                "Unidade": f"{ANEXO_II[codigo]['comarca'][:15]}...",
-                                "Demanda": dem
+                                "Comarca": ANEXO_II[codigo]['comarca'],
+                                "Unidade": ANEXO_II[codigo]['unidade'],
+                                "Interessados": dem
                             })
                     
                     if dados_top:
-                        st.dataframe(pd.DataFrame(dados_top), use_container_width=True, hide_index=True)
+                        st.dataframe(
+                            pd.DataFrame(dados_top), 
+                            use_container_width=True, 
+                            hide_index=True,
+                            height=400
+                        )
                 else:
                     st.info("Nenhuma escolha de Anexo II registrada.")
             
