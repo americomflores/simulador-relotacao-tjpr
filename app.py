@@ -1366,13 +1366,14 @@ def painel_administrador(sheet, df_inscricoes):
     st.divider()
     
     # Abas do painel admin
-    admin_tab1, admin_tab2, admin_tab3, admin_tab4, admin_tab5, admin_tab6, admin_tab7 = st.tabs([
+    admin_tab1, admin_tab2, admin_tab3, admin_tab4, admin_tab5, admin_tab6, admin_tab7, admin_tab8 = st.tabs([
         "📊 Visão Geral",
         "👥 Usuários",
         "📝 Inscrições",
         "📋 Logs",
         "📥 Exportar",
         "📤 Comparar Edital",
+        "🏠 Vagas RMC",
         "⚙️ Configurações"
     ])
     
@@ -2075,9 +2076,198 @@ def painel_administrador(sheet, df_inscricoes):
             st.info("👆 Faça upload do arquivo CSV para iniciar a comparação.")
     
     # =========================================================================
-    # ABA ADMIN 7: CONFIGURAÇÕES
+    # ABA ADMIN 7: VAGAS RMC (Região Metropolitana de Curitiba)
     # =========================================================================
     with admin_tab7:
+        st.header("🏠 Vagas na Região Metropolitana de Curitiba")
+        st.info("""
+        **Referência:** Rua Bine Gersten Reiss, Cajuru, Curitiba (CEP 82900-190)
+        
+        Esta aba mostra as vagas disponíveis nas comarcas próximas, ordenadas por distância aproximada.
+        """)
+        
+        # Definir comarcas da RMC com distâncias aproximadas do Cajuru (em km)
+        # Cajuru fica na zona leste de Curitiba
+        COMARCAS_RMC = {
+            "Curitiba": {"distancia_km": 0, "regiao": "Capital", "proxima": True},
+            "Pinhais": {"distancia_km": 8, "regiao": "Leste", "proxima": True},
+            "Piraquara": {"distancia_km": 18, "regiao": "Leste", "proxima": True},
+            "São José dos Pinhais": {"distancia_km": 15, "regiao": "Sudeste", "proxima": True},
+            "Colombo": {"distancia_km": 15, "regiao": "Norte", "proxima": True},
+            "Quatro Barras": {"distancia_km": 22, "regiao": "Leste", "proxima": True},
+            "Campina Grande do Sul": {"distancia_km": 28, "regiao": "Nordeste", "proxima": True},
+            "Almirante Tamandaré": {"distancia_km": 18, "regiao": "Norte", "proxima": True},
+            "Fazenda Rio Grande": {"distancia_km": 25, "regiao": "Sul", "proxima": True},
+            "Araucária": {"distancia_km": 28, "regiao": "Sudoeste", "proxima": True},
+            "Campo Largo": {"distancia_km": 32, "regiao": "Oeste", "proxima": False},
+            "Bocaiúva do Sul": {"distancia_km": 38, "regiao": "Norte", "proxima": False},
+            "Rio Branco do Sul": {"distancia_km": 35, "regiao": "Norte", "proxima": False},
+            "Cerro Azul": {"distancia_km": 85, "regiao": "Norte (Vale do Ribeira)", "proxima": False},
+            "Morretes": {"distancia_km": 68, "regiao": "Litoral", "proxima": False},
+            "Antonina": {"distancia_km": 78, "regiao": "Litoral", "proxima": False},
+            "Paranaguá": {"distancia_km": 90, "regiao": "Litoral", "proxima": False},
+            "Pontal do Paraná": {"distancia_km": 105, "regiao": "Litoral", "proxima": False},
+            "Matinhos": {"distancia_km": 110, "regiao": "Litoral", "proxima": False},
+            "Guaratuba": {"distancia_km": 120, "regiao": "Litoral", "proxima": False},
+        }
+        
+        # Ordenar por distância
+        comarcas_ordenadas = sorted(COMARCAS_RMC.items(), key=lambda x: x[1]["distancia_km"])
+        
+        # Calcular resultado atual para saber vagas disponíveis
+        df_resultado, vagas_restantes_a1, vagas_disponiveis_a2, ajustes_lotacao = calcular_resultado(df_inscricoes)
+        
+        # Contar demanda por comarca
+        demanda_a1, demanda_a2 = calcular_demanda(df_inscricoes)
+        
+        # Filtros
+        col1, col2 = st.columns(2)
+        with col1:
+            mostrar_apenas_proximas = st.checkbox("🎯 Mostrar apenas comarcas mais próximas (até 30km)", value=True)
+        with col2:
+            mostrar_apenas_com_vaga = st.checkbox("✅ Mostrar apenas com vagas disponíveis", value=False)
+        
+        st.divider()
+        
+        # Preparar dados
+        dados_rmc = []
+        
+        for comarca, info in comarcas_ordenadas:
+            if mostrar_apenas_proximas and not info["proxima"]:
+                continue
+            
+            # Contar vagas no Anexo I para esta comarca
+            vagas_a1_total = 0
+            vagas_a1_restantes = 0
+            demanda_a1_comarca = 0
+            unidades_a1 = []
+            
+            for codigo, dados in ANEXO_I.items():
+                if dados["comarca"].upper() == comarca.upper():
+                    vagas_a1_total += dados["quantidade"]
+                    restantes = vagas_restantes_a1.get(codigo, dados["quantidade"])
+                    vagas_a1_restantes += restantes
+                    demanda_a1_comarca += demanda_a1.get(codigo, 0)
+                    if restantes > 0:
+                        unidades_a1.append({
+                            "codigo": codigo,
+                            "unidade": dados["unidade"],
+                            "vagas": restantes,
+                            "demanda": demanda_a1.get(codigo, 0)
+                        })
+            
+            # Contar vagas no Anexo II para esta comarca
+            vagas_a2_disponiveis = 0
+            demanda_a2_comarca = 0
+            unidades_a2 = []
+            
+            for codigo, dados in ANEXO_II.items():
+                if dados["comarca"].upper() == comarca.upper():
+                    disponiveis = vagas_disponiveis_a2.get(codigo, 0)
+                    vagas_a2_disponiveis += disponiveis
+                    demanda_a2_comarca += demanda_a2.get(codigo, 0)
+                    if disponiveis > 0:
+                        unidades_a2.append({
+                            "codigo": codigo,
+                            "unidade": dados["unidade"],
+                            "vagas": disponiveis,
+                            "demanda": demanda_a2.get(codigo, 0)
+                        })
+            
+            total_vagas = vagas_a1_restantes + vagas_a2_disponiveis
+            
+            if mostrar_apenas_com_vaga and total_vagas == 0:
+                continue
+            
+            dados_rmc.append({
+                "comarca": comarca,
+                "distancia_km": info["distancia_km"],
+                "regiao": info["regiao"],
+                "proxima": info["proxima"],
+                "vagas_a1_restantes": vagas_a1_restantes,
+                "vagas_a1_total": vagas_a1_total,
+                "demanda_a1": demanda_a1_comarca,
+                "vagas_a2_disponiveis": vagas_a2_disponiveis,
+                "demanda_a2": demanda_a2_comarca,
+                "total_vagas": total_vagas,
+                "unidades_a1": unidades_a1,
+                "unidades_a2": unidades_a2
+            })
+        
+        # Métricas resumo
+        total_vagas_a1 = sum(d["vagas_a1_restantes"] for d in dados_rmc)
+        total_vagas_a2 = sum(d["vagas_a2_disponiveis"] for d in dados_rmc)
+        comarcas_com_vaga = len([d for d in dados_rmc if d["total_vagas"] > 0])
+        
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("📍 Comarcas RMC", len(dados_rmc))
+        col2.metric("🏆 Com Vagas", comarcas_com_vaga)
+        col3.metric("📋 Vagas Anexo I", total_vagas_a1)
+        col4.metric("📋 Vagas Anexo II", total_vagas_a2)
+        
+        st.divider()
+        
+        # Exibir tabela resumo
+        st.subheader("📊 Resumo por Comarca")
+        
+        df_resumo = pd.DataFrame([{
+            "📍 Comarca": d["comarca"],
+            "📏 Distância": f"{d['distancia_km']} km",
+            "🧭 Região": d["regiao"],
+            "📋 Anexo I": f"{d['vagas_a1_restantes']}/{d['vagas_a1_total']}",
+            "📋 Anexo II": d["vagas_a2_disponiveis"],
+            "👥 Demanda": d["demanda_a1"] + d["demanda_a2"],
+            "✅ Total Vagas": d["total_vagas"]
+        } for d in dados_rmc])
+        
+        if not df_resumo.empty:
+            def highlight_vagas(val):
+                if isinstance(val, int) and val > 0:
+                    return "background-color: #d4edda; font-weight: bold"
+                return ""
+            
+            st.dataframe(
+                df_resumo.style.applymap(highlight_vagas, subset=["✅ Total Vagas"]),
+                use_container_width=True,
+                hide_index=True,
+                height=min(400, len(df_resumo) * 35 + 40)
+            )
+        else:
+            st.warning("Nenhuma comarca encontrada com os filtros selecionados.")
+        
+        st.divider()
+        
+        # Detalhamento por comarca
+        st.subheader("🔍 Detalhamento das Vagas")
+        
+        for d in dados_rmc:
+            if d["total_vagas"] > 0:
+                with st.expander(f"📍 {d['comarca']} ({d['distancia_km']} km - {d['regiao']}) - **{d['total_vagas']} vaga(s)**", expanded=d["proxima"] and d["distancia_km"] <= 20):
+                    
+                    if d["unidades_a1"]:
+                        st.markdown("**📋 Anexo I (Vagas com Déficit):**")
+                        for u in d["unidades_a1"]:
+                            demanda_txt = f" | 👥 {u['demanda']} interessado(s)" if u['demanda'] > 0 else ""
+                            st.markdown(f"- `{u['codigo']}` {u['unidade']} - **{u['vagas']} vaga(s)**{demanda_txt}")
+                    
+                    if d["unidades_a2"]:
+                        st.markdown("**📋 Anexo II (Vagas Liberadas):**")
+                        for u in d["unidades_a2"]:
+                            demanda_txt = f" | 👥 {u['demanda']} interessado(s)" if u['demanda'] > 0 else ""
+                            st.markdown(f"- `{u['codigo']}` {u['unidade']} - **{u['vagas']} vaga(s)**{demanda_txt}")
+        
+        st.divider()
+        
+        # Dica
+        st.info("""
+        💡 **Dica:** As vagas do **Anexo II** só são liberadas quando alguém do Anexo I é aprovado e sai da unidade.
+        Acompanhe esta aba para ver novas oportunidades conforme as inscrições forem sendo processadas.
+        """)
+    
+    # =========================================================================
+    # ABA ADMIN 8: CONFIGURAÇÕES
+    # =========================================================================
+    with admin_tab8:
         st.header("⚙️ Configurações do Sistema")
         
         st.warning("⚠️ Alterações nas configurações requerem edição do código fonte.")
