@@ -14,7 +14,7 @@ import json
 import re
 from io import BytesIO
 import unicodedata
-import extra_streamlit_components as stx
+from streamlit_cookies_controller import CookieController
 
 # =============================================================================
 # CONFIGURAÇÃO
@@ -253,13 +253,26 @@ def get_usuario_logado():
         return formatar_telefone_display(st.session_state.telefone_usuario)
     return "Desconhecido"
 
-def get_cookie_manager():
-    """Retorna o gerenciador de cookies (singleton)"""
-    return stx.CookieManager(key="tjpr_cookies")
-
-
 def tela_login():
     """Exibe a tela de login"""
+    
+    # Controlador de cookies
+    controller = CookieController()
+    
+    # Ler cookies salvos
+    telefone_cookie = controller.get("tjpr_tel") or ""
+    codigo_cookie = controller.get("tjpr_cod") or ""
+    
+    # Tentar login automático com cookies (apenas uma vez por sessão)
+    if not st.session_state.get("tentou_login_auto", False):
+        st.session_state.tentou_login_auto = True
+        if telefone_cookie and codigo_cookie:
+            if verificar_login(telefone_cookie, codigo_cookie):
+                st.session_state.autenticado = True
+                st.session_state.telefone_usuario = telefone_cookie
+                st.rerun()
+    
+    # Se chegou aqui, mostra tela de login
     st.title("⚖️ Simulador de Relotação - TJPR")
     st.caption("Edital nº 4/2025 - Técnico Judiciário")
     
@@ -278,17 +291,10 @@ def tela_login():
         st.subheader("🔐 Acesso Restrito")
         st.info("Este simulador é exclusivo para membros autorizados. Informe seu telefone e código de acesso.")
         
-        # Gerenciador de cookies
-        cookie_manager = get_cookie_manager()
-        
-        # Ler cookies salvos
-        telefone_salvo = cookie_manager.get("tjpr_tel") or ""
-        codigo_salvo = cookie_manager.get("tjpr_cod") or ""
-        tem_dados_salvos = bool(telefone_salvo or codigo_salvo)
-        
+        # Preencher campos com valores dos cookies
         telefone_input = st.text_input(
             "📱 Telefone com DDD:",
-            value=telefone_salvo,
+            value=telefone_cookie,
             placeholder="41999999999",
             help="Digite apenas os números (DDD + telefone)",
             key="telefone_login",
@@ -304,55 +310,41 @@ def tela_login():
         
         codigo = st.text_input(
             "🔑 Código de Acesso:",
-            value=codigo_salvo,
+            value=codigo_cookie,
             placeholder="TJPR-XXXXXX",
             help="Código enviado por WhatsApp, ex: TJPR-A1B2C3",
-            key="codigo_login",
-            type="password" if codigo_salvo else "default"
+            key="codigo_login"
         )
         
         # Checkbox para lembrar credenciais
         lembrar = st.checkbox(
             "🔒 Lembrar meus dados neste navegador", 
-            value=tem_dados_salvos,
+            value=bool(telefone_cookie or codigo_cookie),
             help="Seus dados serão salvos em cookies no seu navegador."
         )
         
-        col_btn1, col_btn2 = st.columns([3, 1])
-        
-        with col_btn1:
-            if st.button("🚀 Entrar", use_container_width=True, type="primary"):
-                telefone_numeros = limpar_telefone(telefone_input)
-                if not telefone_numeros or not codigo:
-                    st.error("Preencha o telefone e o código!")
-                elif len(telefone_numeros) < 10:
-                    st.error("Telefone inválido! Digite DDD + número (mínimo 10 dígitos).")
-                elif verificar_login(telefone_numeros, codigo):
-                    st.session_state.autenticado = True
-                    st.session_state.telefone_usuario = telefone_numeros
-                    
-                    # Salvar em cookies se marcou "lembrar"
-                    if lembrar:
-                        cookie_manager.set("tjpr_tel", telefone_numeros, key="set_tel")
-                        cookie_manager.set("tjpr_cod", codigo, key="set_cod")
-                    else:
-                        # Limpar cookies
-                        cookie_manager.delete("tjpr_tel", key="del_tel")
-                        cookie_manager.delete("tjpr_cod", key="del_cod")
-                    
-                    st.rerun()
+        if st.button("🚀 Entrar", use_container_width=True, type="primary"):
+            telefone_numeros = limpar_telefone(telefone_input)
+            if not telefone_numeros or not codigo:
+                st.error("Preencha o telefone e o código!")
+            elif len(telefone_numeros) < 10:
+                st.error("Telefone inválido! Digite DDD + número (mínimo 10 dígitos).")
+            elif verificar_login(telefone_numeros, codigo):
+                st.session_state.autenticado = True
+                st.session_state.telefone_usuario = telefone_numeros
+                
+                # Salvar em cookies se marcou "lembrar"
+                if lembrar:
+                    controller.set("tjpr_tel", telefone_numeros)
+                    controller.set("tjpr_cod", codigo)
                 else:
-                    st.error("❌ Telefone ou código inválido!")
-        
-        with col_btn2:
-            if tem_dados_salvos:
-                if st.button("🗑️", help="Limpar dados salvos"):
-                    cookie_manager.delete("tjpr_tel", key="clear_tel")
-                    cookie_manager.delete("tjpr_cod", key="clear_cod")
-                    st.rerun()
-        
-        if tem_dados_salvos:
-            st.success("✅ Dados carregados dos cookies!")
+                    # Limpar cookies
+                    controller.remove("tjpr_tel")
+                    controller.remove("tjpr_cod")
+                
+                st.rerun()
+            else:
+                st.error("❌ Telefone ou código inválido!")
         
         st.divider()
         st.caption("Não recebeu seu código? Entre em contato pelo WhatsApp: **(41) 99781-3606**")
@@ -2187,6 +2179,7 @@ def main():
             st.session_state.telefone_usuario = None
             st.session_state.modo_admin = False
             st.session_state.admin_autenticado = False
+            st.session_state.tentou_login_auto = False  # Permitir login automático na próxima vez
             st.rerun()
     
     # Conectar ao Google Sheets
