@@ -14,7 +14,6 @@ import json
 import re
 from io import BytesIO
 import unicodedata
-from streamlit_cookies_controller import CookieController
 
 # =============================================================================
 # CONFIGURAÇÃO
@@ -256,23 +255,6 @@ def get_usuario_logado():
 def tela_login():
     """Exibe a tela de login"""
     
-    # Controlador de cookies
-    controller = CookieController()
-    
-    # Ler cookies salvos
-    telefone_cookie = controller.get("tjpr_tel") or ""
-    codigo_cookie = controller.get("tjpr_cod") or ""
-    
-    # Tentar login automático com cookies (apenas uma vez por sessão)
-    if not st.session_state.get("tentou_login_auto", False):
-        st.session_state.tentou_login_auto = True
-        if telefone_cookie and codigo_cookie:
-            if verificar_login(telefone_cookie, codigo_cookie):
-                st.session_state.autenticado = True
-                st.session_state.telefone_usuario = telefone_cookie
-                st.rerun()
-    
-    # Se chegou aqui, mostra tela de login
     st.title("⚖️ Simulador de Relotação - TJPR")
     st.caption("Edital nº 4/2025 - Técnico Judiciário")
     
@@ -291,10 +273,8 @@ def tela_login():
         st.subheader("🔐 Acesso Restrito")
         st.info("Este simulador é exclusivo para membros autorizados. Informe seu telefone e código de acesso.")
         
-        # Preencher campos com valores dos cookies
         telefone_input = st.text_input(
             "📱 Telefone com DDD:",
-            value=telefone_cookie,
             placeholder="41999999999",
             help="Digite apenas os números (DDD + telefone)",
             key="telefone_login",
@@ -310,17 +290,9 @@ def tela_login():
         
         codigo = st.text_input(
             "🔑 Código de Acesso:",
-            value=codigo_cookie,
             placeholder="TJPR-XXXXXX",
             help="Código enviado por WhatsApp, ex: TJPR-A1B2C3",
             key="codigo_login"
-        )
-        
-        # Checkbox para lembrar credenciais
-        lembrar = st.checkbox(
-            "🔒 Lembrar meus dados neste navegador", 
-            value=bool(telefone_cookie or codigo_cookie),
-            help="Seus dados serão salvos em cookies no seu navegador."
         )
         
         if st.button("🚀 Entrar", use_container_width=True, type="primary"):
@@ -332,16 +304,6 @@ def tela_login():
             elif verificar_login(telefone_numeros, codigo):
                 st.session_state.autenticado = True
                 st.session_state.telefone_usuario = telefone_numeros
-                
-                # Salvar em cookies se marcou "lembrar"
-                if lembrar:
-                    controller.set("tjpr_tel", telefone_numeros)
-                    controller.set("tjpr_cod", codigo)
-                else:
-                    # Limpar cookies
-                    controller.remove("tjpr_tel")
-                    controller.remove("tjpr_cod")
-                
                 st.rerun()
             else:
                 st.error("❌ Telefone ou código inválido!")
@@ -1457,7 +1419,7 @@ def painel_administrador(sheet, df_inscricoes):
                         "alterado_por": "Alterado Por",
                         "data_alteracao": "Data/Hora"
                     }),
-                    use_container_width=True,
+                    width="stretch",
                     hide_index=True
                 )
             else:
@@ -1510,7 +1472,7 @@ def painel_administrador(sheet, df_inscricoes):
         elif filtro_admin == "Apenas Usuários":
             df_filtrado = df_filtrado[df_filtrado["Admin"] == "Não"]
         
-        st.dataframe(df_filtrado, use_container_width=True, hide_index=True)
+        st.dataframe(df_filtrado, width="stretch", hide_index=True)
         st.caption(f"Total: {len(df_filtrado)} usuários")
         
         st.divider()
@@ -1529,7 +1491,7 @@ def painel_administrador(sheet, df_inscricoes):
                         "Usuário": contagem.index,
                         "Inscrições": contagem.values
                     })
-                    st.dataframe(df_contagem, use_container_width=True, hide_index=True)
+                    st.dataframe(df_contagem, width="stretch", hide_index=True)
                 else:
                     st.info("Nenhum dado disponível.")
             else:
@@ -1544,7 +1506,7 @@ def painel_administrador(sheet, df_inscricoes):
                         "Usuário": contagem.index,
                         "Alterações": contagem.values
                     })
-                    st.dataframe(df_contagem, use_container_width=True, hide_index=True)
+                    st.dataframe(df_contagem, width="stretch", hide_index=True)
                 else:
                     st.info("Nenhum dado disponível.")
             else:
@@ -1615,7 +1577,7 @@ def painel_administrador(sheet, df_inscricoes):
                     "resultado": "Resultado",
                     "designacao_origem": "Designação"
                 }),
-                use_container_width=True,
+                width="stretch",
                 hide_index=True,
                 height=500
             )
@@ -1735,7 +1697,7 @@ def painel_administrador(sheet, df_inscricoes):
                         "data_alteracao": "Data Alteração",
                         "data_inscricao": "Data Inscrição"
                     }),
-                    use_container_width=True,
+                    width="stretch",
                     hide_index=True,
                     height=500
                 )
@@ -1755,7 +1717,7 @@ def painel_administrador(sheet, df_inscricoes):
                         registros = df_inscricoes["registrado_por"].value_counts()
                         st.dataframe(
                             pd.DataFrame({"Usuário": registros.index, "Registros": registros.values}),
-                            use_container_width=True,
+                            width="stretch",
                             hide_index=True
                         )
                 
@@ -1765,7 +1727,7 @@ def painel_administrador(sheet, df_inscricoes):
                         alteracoes = df_inscricoes["alterado_por"].value_counts()
                         st.dataframe(
                             pd.DataFrame({"Usuário": alteracoes.index, "Alterações": alteracoes.values}),
-                            use_container_width=True,
+                            width="stretch",
                             hide_index=True
                         )
     
@@ -1793,7 +1755,7 @@ def painel_administrador(sheet, df_inscricoes):
                         data=excel_inscricoes,
                         file_name=f"inscricoes_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        use_container_width=True
+                        width="stretch"
                     )
                 except Exception as e:
                     st.error(f"Erro: {e}")
@@ -1810,7 +1772,7 @@ def painel_administrador(sheet, df_inscricoes):
                         data=excel_resultado,
                         file_name=f"resultados_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        use_container_width=True
+                        width="stretch"
                     )
                 except Exception as e:
                     st.error(f"Erro: {e}")
@@ -1826,7 +1788,7 @@ def painel_administrador(sheet, df_inscricoes):
                         data=excel_logs,
                         file_name=f"logs_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        use_container_width=True
+                        width="stretch"
                     )
                 except Exception as e:
                     st.error(f"Erro: {e}")
@@ -1872,7 +1834,7 @@ def painel_administrador(sheet, df_inscricoes):
                     data=output.getvalue(),
                     file_name=f"relatorio_completo_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    use_container_width=True,
+                    width="stretch",
                     type="primary"
                 )
             except Exception as e:
@@ -1908,7 +1870,7 @@ def painel_administrador(sheet, df_inscricoes):
                 # Mostrar preview do CSV
                 with st.expander("📋 Visualizar dados do CSV"):
                     st.dataframe(df_csv[['servidor', 'vaga', 'situacao', 'data']].head(20), 
-                                use_container_width=True, hide_index=True)
+                                width="stretch", hide_index=True)
                 
                 st.divider()
                 
@@ -1969,7 +1931,7 @@ def painel_administrador(sheet, df_inscricoes):
                         
                         st.dataframe(
                             pd.DataFrame(dados_faltam),
-                            use_container_width=True,
+                            width="stretch",
                             hide_index=True,
                             height=min(400, len(dados_faltam) * 35 + 40)
                         )
@@ -1993,7 +1955,7 @@ def painel_administrador(sheet, df_inscricoes):
                         
                         st.dataframe(
                             pd.DataFrame(dados_remover),
-                            use_container_width=True,
+                            width="stretch",
                             hide_index=True
                         )
                     else:
@@ -2015,7 +1977,7 @@ def painel_administrador(sheet, df_inscricoes):
                             
                             st.dataframe(
                                 pd.DataFrame(dados_coinc),
-                                use_container_width=True,
+                                width="stretch",
                                 hide_index=True
                             )
                         else:
@@ -2035,7 +1997,7 @@ def painel_administrador(sheet, df_inscricoes):
                             
                             st.dataframe(
                                 pd.DataFrame(dados_nao_fin),
-                                use_container_width=True,
+                                width="stretch",
                                 hide_index=True
                             )
                         else:
@@ -2228,7 +2190,7 @@ def painel_administrador(sheet, df_inscricoes):
             
             st.dataframe(
                 df_resumo.style.applymap(highlight_vagas, subset=["✅ Total Vagas"]),
-                use_container_width=True,
+                width="stretch",
                 hide_index=True,
                 height=min(400, len(df_resumo) * 35 + 40)
             )
@@ -2316,7 +2278,7 @@ def painel_administrador(sheet, df_inscricoes):
                     "Código": cod
                 })
             
-            st.dataframe(pd.DataFrame(dados_codigos), use_container_width=True, hide_index=True, height=400)
+            st.dataframe(pd.DataFrame(dados_codigos), width="stretch", hide_index=True, height=400)
         
         st.divider()
         
@@ -2369,7 +2331,6 @@ def main():
             st.session_state.telefone_usuario = None
             st.session_state.modo_admin = False
             st.session_state.admin_autenticado = False
-            st.session_state.tentou_login_auto = False  # Permitir login automático na próxima vez
             st.rerun()
     
     # Conectar ao Google Sheets
@@ -2658,7 +2619,7 @@ def main():
                     "escolha_a1_desc": "Escolha Anexo I",
                     "escolha_a2_desc": "Escolha Anexo II"
                 }),
-                use_container_width=True,
+                width="stretch",
                 hide_index=True
             )
             
@@ -2688,7 +2649,7 @@ def main():
                             "alterado_por": "Última Alteração Por",
                             "data_alteracao": "Data/Hora Alteração"
                         }),
-                        use_container_width=True,
+                        width="stretch",
                         hide_index=True
                     )
                 else:
@@ -2779,7 +2740,7 @@ def main():
             
             st.dataframe(
                 df_exibir.style.apply(highlight_status, axis=1),
-                use_container_width=True,
+                width="stretch",
                 hide_index=True
             )
             
@@ -2809,7 +2770,7 @@ def main():
                         })
                 
                 if vagas_rest:
-                    st.dataframe(pd.DataFrame(vagas_rest), use_container_width=True, hide_index=True)
+                    st.dataframe(pd.DataFrame(vagas_rest), width="stretch", hide_index=True)
                 else:
                     st.success("Todas as vagas do Anexo I foram preenchidas!")
             
@@ -2826,7 +2787,7 @@ def main():
                         })
                 
                 if vagas_disp:
-                    st.dataframe(pd.DataFrame(vagas_disp), use_container_width=True, hide_index=True)
+                    st.dataframe(pd.DataFrame(vagas_disp), width="stretch", hide_index=True)
                 else:
                     st.info("Nenhuma vaga liberada no Anexo II ainda.")
             
@@ -2873,7 +2834,7 @@ def main():
                     if dados_top:
                         st.dataframe(
                             pd.DataFrame(dados_top), 
-                            use_container_width=True, 
+                            width="stretch", 
                             hide_index=True,
                             height=400
                         )
@@ -2897,7 +2858,7 @@ def main():
                     if dados_top:
                         st.dataframe(
                             pd.DataFrame(dados_top), 
-                            use_container_width=True, 
+                            width="stretch", 
                             hide_index=True,
                             height=400
                         )
@@ -3248,7 +3209,7 @@ def main():
                 mask = df_a1.apply(lambda x: busca_a1.lower() in x["Comarca"].lower() or busca_a1.lower() in x["Unidade Judiciária"].lower(), axis=1)
                 df_a1 = df_a1[mask]
             
-            st.dataframe(df_a1, use_container_width=True, hide_index=True)
+            st.dataframe(df_a1, width="stretch", hide_index=True)
             
             total_demanda = df_a1["Demanda"].sum()
             st.caption(f"Total: {len(df_a1)} unidades | {df_a1['Vagas'].sum()} vagas | {total_demanda} servidores interessados")
@@ -3310,7 +3271,7 @@ def main():
             
             st.dataframe(
                 df_a2.style.applymap(color_status, subset=["Status Lotação"]),
-                use_container_width=True, 
+                width="stretch", 
                 hide_index=True
             )
             
@@ -3420,7 +3381,7 @@ def main():
         
         st.dataframe(
             df_lotacao.style.applymap(color_status_lot, subset=["Status"]).applymap(color_diferenca, subset=["Diferença"]),
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
             height=500
         )
@@ -3574,7 +3535,7 @@ def main():
                 
                 st.dataframe(
                     df_raj_detalhado,
-                    use_container_width=True,
+                    width="stretch",
                     hide_index=True,
                     column_config={
                         "RAJ": st.column_config.TextColumn("Região Administrativa", width="medium"),
@@ -3618,7 +3579,7 @@ def main():
                     "designacao_origem": "Designação Origem"
                 })
                 
-                st.dataframe(df_exibir_raj, use_container_width=True, hide_index=True)
+                st.dataframe(df_exibir_raj, width="stretch", hide_index=True)
                 st.caption(f"Total de aprovados exibidos: {len(df_filtrado)}")
 
 
