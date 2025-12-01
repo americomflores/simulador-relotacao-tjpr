@@ -16,7 +16,7 @@ class SessionService:
     def __init__(self):
         """Inicializa o controlador de cookies."""
         try:
-            self.cookies = CookiesController()
+            self.cookies = CookieController()
         except Exception as e:
             log_error(e, "SessionService.__init__")
             self.cookies = None
