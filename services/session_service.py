@@ -5,7 +5,7 @@ import streamlit as st
 import hashlib
 import json
 from datetime import datetime, timedelta
-from streamlit_cookies_controller.CookieController import CookieController
+from streamlit_cookies_controller import CookieController
 from utils.logger import log_operation, log_error
 from config.settings import COOKIE_EXPIRATION_DAYS, COOKIE_SECRET_KEY
 
