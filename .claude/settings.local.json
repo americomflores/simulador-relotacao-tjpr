@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(.venv/Scripts/python.exe:*)"
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(del:*)",
+      "Bash(python -m py_compile:*)"
     ],
     "deny": [],
     "ask": []

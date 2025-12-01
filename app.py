@@ -249,8 +249,7 @@ def get_usuario_logado():
     return "Desconhecido"
 
 def tela_login():
-    """Exibe a tela de login melhorada com opção de manter logado"""
-    from services.session_service import get_session_service
+    """Exibe a tela de login"""
     from services.auth_service import formatar_telefone_display, limpar_telefone, verificar_login
     
     st.title("⚖️ Simulador de Relotação - TJPR")
@@ -295,15 +294,7 @@ def tela_login():
                 key="codigo_login",
                 type="password"  # Ocultar código digitado
             )
-            
-            # Checkbox "Manter-me logado"
-            manter_logado = st.checkbox(
-                "🔒 Manter-me logado",
-                value=False,
-                help="Se marcado, você permanecerá logado mesmo após fechar o navegador (por 30 dias)",
-                key="manter_logado"
-            )
-            
+
             # Botão de login
             if st.button("🚀 Entrar", use_container_width=True, type="primary"):
                 telefone_numeros = limpar_telefone(telefone_input)
@@ -320,15 +311,7 @@ def tela_login():
                             # Autenticação bem-sucedida
                             st.session_state.autenticado = True
                             st.session_state.telefone_usuario = telefone_numeros
-                            
-                            # Criar sessão persistente se solicitado
-                            session_service = get_session_service()
-                            if manter_logado:
-                                session_service.criar_sessao_persistente(telefone_numeros, manter_logado=True)
-                            else:
-                                # Criar sessão apenas para esta sessão do navegador
-                                session_service.criar_sessao_persistente(telefone_numeros, manter_logado=False)
-                            
+
                             st.success("✅ Login realizado com sucesso!")
                             st.rerun()
                         else:
@@ -336,39 +319,6 @@ def tela_login():
 
         st.divider()
         st.caption("Não recebeu seu código? Entre em contato pelo WhatsApp: **(41) 99781-3606**")
-
-        # Expander de diagnóstico de cookies (apenas para debug)
-        with st.expander("🔧 Diagnóstico de Cookies (Debug)", expanded=False):
-            session_service = get_session_service()
-            status = session_service.obter_status_cookies()
-
-            st.write("**Status do Sistema de Cookies:**")
-
-            if status["disponivel"]:
-                st.success(f"✅ Sistema de cookies disponível: **{status['metodo']}**")
-
-                col_d1, col_d2 = st.columns(2)
-                with col_d1:
-                    if status["tem_auth_data"]:
-                        st.info("🔑 Dados de autenticação: Presentes")
-                    else:
-                        st.warning("🔑 Dados de autenticação: Ausentes")
-
-                with col_d2:
-                    if status["tem_remember_me"]:
-                        st.info("💾 Lembrar login: Ativo")
-                    else:
-                        st.warning("💾 Lembrar login: Inativo")
-
-                if status["sessao_valida"]:
-                    st.success(f"✅ Sessão válida encontrada")
-                    if status["telefone"]:
-                        st.caption(f"Telefone: {formatar_telefone_display(status['telefone'])}")
-                else:
-                    st.warning("⚠️ Nenhuma sessão válida nos cookies")
-            else:
-                st.error(f"❌ Sistema de cookies indisponível: {status['erro']}")
-                st.caption("Instale: `pip install extra-streamlit-components`")
 
 
 # =============================================================================
@@ -2390,12 +2340,7 @@ def main():
             st.session_state.telefone_usuario = None
             st.session_state.modo_admin = False
             st.session_state.admin_autenticado = False
-            
-            # Limpar cookies de sessão
-            from services.session_service import get_session_service
-            session_service = get_session_service()
-            session_service.limpar_sessao()
-            
+
             st.rerun()
     
     # Conectar ao Google Sheets
@@ -3661,46 +3606,13 @@ def footer():
 # =============================================================================
 
 if __name__ == "__main__":
-    # Importar serviço de sessão
-    from services.session_service import get_session_service
-
     # Inicializar session state
     if "autenticado" not in st.session_state:
         st.session_state.autenticado = False
 
-    # Verificar sessão persistente (cookies) se não estiver autenticado
-    if not st.session_state.autenticado:
-        try:
-            session_service = get_session_service()
-
-            # Verificar se o sistema de cookies está disponível
-            if session_service.cookie_manager or session_service.cookies:
-                if session_service.verificar_sessao_persistente():
-                    telefone = session_service.obter_telefone_do_cookie()
-                    if telefone:
-                        # Restaurar sessão do cookie
-                        st.session_state.autenticado = True
-                        st.session_state.telefone_usuario = telefone
-                        # Mostrar mensagem de sessão restaurada (apenas uma vez)
-                        if "sessao_restaurada" not in st.session_state:
-                            st.session_state.sessao_restaurada = True
-                            st.success("✅ Sessão restaurada automaticamente via cookies")
-                            st.rerun()
-            else:
-                # Sistema de cookies não disponível - mostrar aviso apenas uma vez
-                if "cookie_warning_shown" not in st.session_state:
-                    st.session_state.cookie_warning_shown = True
-                    st.warning("⚠️ Sistema de cookies não disponível. Execute: `pip install extra-streamlit-components`")
-        except Exception as e:
-            # Logar erro mas não impedir login
-            from utils.logger import log_error
-            log_error(e, "main:verificar_sessao_persistente")
-
+    # Verificar autenticação
     if not st.session_state.autenticado:
         tela_login()
     else:
-        # Limpar flag de sessão restaurada após mostrar
-        if st.session_state.get("sessao_restaurada"):
-            st.session_state.sessao_restaurada = False
         main()
         footer()

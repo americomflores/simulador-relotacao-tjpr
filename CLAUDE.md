@@ -14,34 +14,27 @@ Aplicação Streamlit para simular o processo de relotação de servidores do Tr
 
 ```
 simulador-relotacao-tjpr/
-├── app.py                           # Aplicação principal (3.700+ linhas)
+├── app.py                           # Aplicação principal (3.600+ linhas)
 ├── data.py                          # ANEXO_I e ANEXO_II (vagas do edital)
 ├── lotacao_data.py                  # Dados de lotação paradigma das unidades
 ├── requirements.txt                 # Dependências Python
-├── test_cookies.py                  # Script de teste do sistema de cookies
 ├── .streamlit/
 │   └── config.toml                 # Configuração do Streamlit
 ├── secrets.toml.example            # Template para credenciais Google Sheets
 ├── services/                        # Módulos de serviços
-│   ├── session_service.py          # Gerenciamento de sessões e cookies
 │   ├── auth_service.py             # Autenticação e autorização
 │   ├── sheets_service.py           # Operações com Google Sheets
 │   └── simulacao_service.py        # Lógica de cálculo de resultados
 ├── config/                          # Configurações do sistema
 │   ├── auth_config.py              # AUTH_CODES, ADMIN_TELEFONES, ADMIN_SENHA
-│   └── settings.py                 # COOKIE_SECRET_KEY, DATA_LIMITE_ESTAGIO
+│   └── settings.py                 # DATA_LIMITE_ESTAGIO
 ├── utils/                           # Utilitários
 │   ├── logger.py                   # Sistema de logging
 │   ├── formatters.py               # Formatação de dados
 │   ├── normalizers.py              # Normalização de strings
 │   └── validators.py               # Validações
-├── logs/                            # Logs da aplicação (auto-gerado)
-│   └── simulador_YYYYMMDD.log      # Logs diários
-└── docs/                            # Documentação
-    ├── MELHORIAS_COOKIES.md        # Detalhamento técnico do sistema de cookies
-    ├── GUIA_TESTE_LOGIN.md         # Guia de testes passo a passo
-    ├── DEPLOY_ATUALIZACAO_COOKIES.md  # Instruções de deploy
-    └── RESUMO_MELHORIAS_COOKIES.md    # Resumo executivo das melhorias
+└── logs/                            # Logs da aplicação (auto-gerado)
+    └── simulador_YYYYMMDD.log      # Logs diários
 ```
 
 ## 🔑 Arquivos Principais
@@ -83,53 +76,6 @@ Dados de lotação real vs paradigma (CNJ 219/2016):
 2. **Administradores**: Lista `ADMIN_TELEFONES` + senha `ADMIN_SENHA = "swift"`
    - Apenas 1 admin: "41997813606"
    - Acesso: painel administrativo completo
-
-### 🍪 Sistema de Cookies Persistentes (Versão 2.0)
-
-**Funcionalidade "Manter-me logado":**
-
-O sistema utiliza cookies para persistir a autenticação do usuário entre sessões do navegador.
-
-**Arquitetura:**
-```
-services/
-├── session_service.py      # Gerenciamento de sessões e cookies
-├── auth_service.py          # Validação de credenciais
-└── ...
-
-config/
-└── settings.py              # COOKIE_SECRET_KEY, COOKIE_EXPIRATION_DAYS
-```
-
-**Bibliotecas de Cookies (Sistema Dual com Fallback):**
-1. **Primária:** `extra-streamlit-components` (mais estável)
-2. **Fallback:** `streamlit-cookies-controller` (compatibilidade)
-
-**Fluxo de Autenticação com Cookies:**
-```
-Login → verificar_login() → criar_sessao_persistente()
-                                    ↓
-                         [Cookie: auth_token + remember_me]
-                                    ↓
-Reload → verificar_sessao_persistente() → obter_telefone_do_cookie()
-                                    ↓
-                         Login automático ✅
-```
-
-**Segurança:**
-- Token: `base64(telefone) + ":" + sha256(telefone + timestamp + secret)`
-- **NÃO armazena:** senhas, códigos, dados sensíveis
-- Expiração configurável (padrão: 30 dias)
-
-**Recursos de Debug:**
-- Logs detalhados em `logs/simulador_YYYYMMDD.log`
-- Interface de diagnóstico na tela de login (expander "🔧 Diagnóstico de Cookies")
-- Método `obter_status_cookies()` para verificação programática
-
-**Documentação Completa:**
-- `MELHORIAS_COOKIES.md` - Detalhamento técnico
-- `GUIA_TESTE_LOGIN.md` - Testes passo a passo
-- `DEPLOY_ATUALIZACAO_COOKIES.md` - Instruções de deploy
 
 ## 📊 Fluxo de Dados
 
