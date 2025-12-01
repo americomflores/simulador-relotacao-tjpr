@@ -349,10 +349,10 @@ def tela_login():
 
                 col_d1, col_d2 = st.columns(2)
                 with col_d1:
-                    if status["tem_auth_token"]:
-                        st.info("🔑 Token de autenticação: Presente")
+                    if status["tem_auth_data"]:
+                        st.info("🔑 Dados de autenticação: Presentes")
                     else:
-                        st.warning("🔑 Token de autenticação: Ausente")
+                        st.warning("🔑 Dados de autenticação: Ausentes")
 
                 with col_d2:
                     if status["tem_remember_me"]:

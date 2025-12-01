@@ -53,13 +53,34 @@ class SessionService:
             return False
 
         try:
-            auth_token = self._get_cookie("auth_token")
-            if not auth_token:
-                log_operation("verificar_sessao", "system", "Token não encontrado nos cookies")
+            # Tentar cookie novo (auth_data)
+            auth_data = self._get_cookie_json("auth_data")
+
+            # MIGRAÇÃO: Se não encontrar cookie novo, tentar cookies antigos
+            if not auth_data:
+                old_token = self._get_cookie("auth_token")
+                old_remember = self._get_cookie("remember_me")
+
+                if old_token:
+                    # Migrar para novo formato
+                    auth_data = {
+                        "token": old_token,
+                        "remember": old_remember == "true",
+                        "created_at": datetime.now().isoformat()
+                    }
+
+                    # Salvar no novo formato
+                    expires_days = COOKIE_EXPIRATION_DAYS if auth_data["remember"] else None
+                    self._set_cookie_json("auth_data", auth_data, expires_days)
+
+                    log_operation("migrar_cookies", "system", "Cookies migrados para novo formato")
+
+            if not auth_data or "token" not in auth_data:
+                log_operation("verificar_sessao", "system", "Dados de autenticação não encontrados nos cookies")
                 return False
 
             # Validar token
-            telefone = self._validar_token(auth_token)
+            telefone = self._validar_token(auth_data["token"])
             if telefone:
                 log_operation("verificar_sessao", telefone, "Sessão válida encontrada")
                 return True
@@ -81,11 +102,12 @@ class SessionService:
             return None
 
         try:
-            auth_token = self._get_cookie("auth_token")
-            if not auth_token:
+            # Obter dados do cookie JSON
+            auth_data = self._get_cookie_json("auth_data")
+            if not auth_data or "token" not in auth_data:
                 return None
 
-            telefone = self._validar_token(auth_token)
+            telefone = self._validar_token(auth_data["token"])
             if telefone:
                 log_operation("obter_telefone", telefone, "Telefone recuperado do cookie")
             return telefone
@@ -113,22 +135,22 @@ class SessionService:
             token = self._gerar_token(telefone)
 
             # Definir expiração
-            if manter_logado:
-                # 30 dias
-                expires_days = COOKIE_EXPIRATION_DAYS
-            else:
-                # Apenas sessão atual (expira quando navegador fecha)
-                expires_days = None
+            expires_days = COOKIE_EXPIRATION_DAYS if manter_logado else None
 
-            # Salvar cookie
-            success_token = self._set_cookie("auth_token", token, expires_days)
-            success_remember = self._set_cookie("remember_me", "true" if manter_logado else "false", expires_days)
+            # SOLUÇÃO: Salvar tudo em 1 cookie JSON (evita erro de chave duplicada)
+            auth_data = {
+                "token": token,
+                "remember": manter_logado,
+                "created_at": datetime.now().isoformat()
+            }
 
-            if success_token and success_remember:
+            success = self._set_cookie_json("auth_data", auth_data, expires_days)
+
+            if success:
                 log_operation("criar_sessao_persistente", telefone, f"manter_logado={manter_logado}, method={self.method}")
                 return True
             else:
-                log_operation("criar_sessao_persistente", telefone, f"Falha ao salvar cookies, method={self.method}")
+                log_operation("criar_sessao_persistente", telefone, f"Falha ao salvar cookie, method={self.method}")
                 return False
         except Exception as e:
             log_error(e, "criar_sessao_persistente")
@@ -145,14 +167,14 @@ class SessionService:
             return False
 
         try:
-            success1 = self._remove_cookie("auth_token")
-            success2 = self._remove_cookie("remember_me")
+            # SOLUÇÃO: Apenas 1 chamada a delete() (evita erro de chave duplicada)
+            success = self._remove_cookie("auth_data")
 
             # Garantir que o cache foi limpo
             if "cookies_cache" in st.session_state:
                 del st.session_state.cookies_cache
 
-            if success1 or success2:
+            if success:
                 log_operation("limpar_sessao", "system", f"method={self.method}")
                 return True
             return False
@@ -263,6 +285,49 @@ class SessionService:
         except Exception as e:
             log_error(e, f"_remove_cookie:{key}")
             return False
+
+    def _set_cookie_json(self, key: str, data: dict, expires_days: int | None = None) -> bool:
+        """
+        Define um cookie com dados em formato JSON.
+
+        Args:
+            key: Nome do cookie
+            data: Dicionário com dados a salvar
+            expires_days: Dias para expiração (None = sessão atual)
+
+        Returns:
+            True se sucesso, False caso contrário
+        """
+        try:
+            # Serializar para JSON
+            value = json.dumps(data)
+
+            # Usar método existente para salvar
+            return self._set_cookie(key, value, expires_days)
+        except Exception as e:
+            log_error(e, f"_set_cookie_json:{key}")
+            return False
+
+    def _get_cookie_json(self, key: str) -> dict | None:
+        """
+        Obtém um cookie e desserializa de JSON.
+
+        Args:
+            key: Nome do cookie
+
+        Returns:
+            Dicionário com dados ou None
+        """
+        try:
+            value = self._get_cookie(key)
+            if not value:
+                return None
+
+            # Desserializar JSON
+            return json.loads(value)
+        except Exception as e:
+            log_error(e, f"_get_cookie_json:{key}")
+            return None
     
     def _gerar_token(self, telefone: str) -> str:
         """
@@ -330,7 +395,7 @@ class SessionService:
         status = {
             "disponivel": False,
             "metodo": None,
-            "tem_auth_token": False,
+            "tem_auth_data": False,
             "tem_remember_me": False,
             "sessao_valida": False,
             "telefone": None,
@@ -345,16 +410,15 @@ class SessionService:
             status["disponivel"] = True
             status["metodo"] = self.method
 
-            # Verificar cookies existentes
-            auth_token = self._get_cookie("auth_token")
-            remember_me = self._get_cookie("remember_me")
+            # Verificar cookie JSON
+            auth_data = self._get_cookie_json("auth_data")
 
-            status["tem_auth_token"] = bool(auth_token)
-            status["tem_remember_me"] = bool(remember_me)
+            status["tem_auth_data"] = bool(auth_data)
+            status["tem_remember_me"] = auth_data.get("remember", False) if auth_data else False
 
             # Validar sessão
-            if auth_token:
-                telefone = self._validar_token(auth_token)
+            if auth_data and "token" in auth_data:
+                telefone = self._validar_token(auth_data["token"])
                 if telefone:
                     status["sessao_valida"] = True
                     status["telefone"] = telefone
