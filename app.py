@@ -333,9 +333,42 @@ def tela_login():
                             st.rerun()
                         else:
                             st.error("❌ Telefone ou código inválido!")
-        
+
         st.divider()
         st.caption("Não recebeu seu código? Entre em contato pelo WhatsApp: **(41) 99781-3606**")
+
+        # Expander de diagnóstico de cookies (apenas para debug)
+        with st.expander("🔧 Diagnóstico de Cookies (Debug)", expanded=False):
+            session_service = get_session_service()
+            status = session_service.obter_status_cookies()
+
+            st.write("**Status do Sistema de Cookies:**")
+
+            if status["disponivel"]:
+                st.success(f"✅ Sistema de cookies disponível: **{status['metodo']}**")
+
+                col_d1, col_d2 = st.columns(2)
+                with col_d1:
+                    if status["tem_auth_token"]:
+                        st.info("🔑 Token de autenticação: Presente")
+                    else:
+                        st.warning("🔑 Token de autenticação: Ausente")
+
+                with col_d2:
+                    if status["tem_remember_me"]:
+                        st.info("💾 Lembrar login: Ativo")
+                    else:
+                        st.warning("💾 Lembrar login: Inativo")
+
+                if status["sessao_valida"]:
+                    st.success(f"✅ Sessão válida encontrada")
+                    if status["telefone"]:
+                        st.caption(f"Telefone: {formatar_telefone_display(status['telefone'])}")
+                else:
+                    st.warning("⚠️ Nenhuma sessão válida nos cookies")
+            else:
+                st.error(f"❌ Sistema de cookies indisponível: {status['erro']}")
+                st.caption("Instale: `pip install extra-streamlit-components`")
 
 
 # =============================================================================
@@ -3630,26 +3663,39 @@ def footer():
 if __name__ == "__main__":
     # Importar serviço de sessão
     from services.session_service import get_session_service
-    
+
     # Inicializar session state
     if "autenticado" not in st.session_state:
         st.session_state.autenticado = False
-    
+
     # Verificar sessão persistente (cookies) se não estiver autenticado
     if not st.session_state.autenticado:
-        session_service = get_session_service()
-        if session_service.verificar_sessao_persistente():
-            telefone = session_service.obter_telefone_do_cookie()
-            if telefone:
-                # Restaurar sessão do cookie
-                st.session_state.autenticado = True
-                st.session_state.telefone_usuario = telefone
-                # Mostrar mensagem de sessão restaurada (apenas uma vez)
-                if "sessao_restaurada" not in st.session_state:
-                    st.session_state.sessao_restaurada = True
-                    st.success("✅ Sessão restaurada automaticamente")
-                    st.rerun()
-    
+        try:
+            session_service = get_session_service()
+
+            # Verificar se o sistema de cookies está disponível
+            if session_service.cookie_manager or session_service.cookies:
+                if session_service.verificar_sessao_persistente():
+                    telefone = session_service.obter_telefone_do_cookie()
+                    if telefone:
+                        # Restaurar sessão do cookie
+                        st.session_state.autenticado = True
+                        st.session_state.telefone_usuario = telefone
+                        # Mostrar mensagem de sessão restaurada (apenas uma vez)
+                        if "sessao_restaurada" not in st.session_state:
+                            st.session_state.sessao_restaurada = True
+                            st.success("✅ Sessão restaurada automaticamente via cookies")
+                            st.rerun()
+            else:
+                # Sistema de cookies não disponível - mostrar aviso apenas uma vez
+                if "cookie_warning_shown" not in st.session_state:
+                    st.session_state.cookie_warning_shown = True
+                    st.warning("⚠️ Sistema de cookies não disponível. Execute: `pip install extra-streamlit-components`")
+        except Exception as e:
+            # Logar erro mas não impedir login
+            from utils.logger import log_error
+            log_error(e, "main:verificar_sessao_persistente")
+
     if not st.session_state.autenticado:
         tela_login()
     else:

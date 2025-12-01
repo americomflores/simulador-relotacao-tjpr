@@ -3,6 +3,7 @@ pandas
 gspread
 google-auth
 openpyxl
+extra-streamlit-components>=0.1.71
 streamlit-cookies-controller
 
 # Testing
