@@ -239,12 +239,8 @@ def limpar_telefone(telefone):
 
 def verificar_login(telefone, codigo):
     """Verifica se telefone e código são válidos"""
-    telefone_limpo = limpar_telefone(telefone)
-    codigo_upper = codigo.upper().strip()
-    
-    if telefone_limpo in AUTH_CODES:
-        return AUTH_CODES[telefone_limpo] == codigo_upper
-    return False
+    from services.auth_service import verificar_login as verificar_login_service
+    return verificar_login_service(telefone, codigo)
 
 def get_usuario_logado():
     """Retorna o telefone formatado do usuário logado"""
@@ -253,7 +249,9 @@ def get_usuario_logado():
     return "Desconhecido"
 
 def tela_login():
-    """Exibe a tela de login"""
+    """Exibe a tela de login melhorada com opção de manter logado"""
+    from services.session_service import get_session_service
+    from services.auth_service import formatar_telefone_display, limpar_telefone, verificar_login
     
     st.title("⚖️ Simulador de Relotação - TJPR")
     st.caption("Edital nº 4/2025 - Técnico Judiciário")
@@ -273,40 +271,68 @@ def tela_login():
         st.subheader("🔐 Acesso Restrito")
         st.info("Este simulador é exclusivo para membros autorizados. Informe seu telefone e código de acesso.")
         
-        telefone_input = st.text_input(
-            "📱 Telefone com DDD:",
-            placeholder="41999999999",
-            help="Digite apenas os números (DDD + telefone)",
-            key="telefone_login",
-            max_chars=11
-        )
-        
-        # Mostrar preview formatado em tempo real
-        if telefone_input:
-            telefone_numeros = limpar_telefone(telefone_input)
-            telefone_formatado = formatar_telefone_display(telefone_numeros)
-            if telefone_formatado:
-                st.caption(f"📞 {telefone_formatado}")
-        
-        codigo = st.text_input(
-            "🔑 Código de Acesso:",
-            placeholder="TJPR-XXXXXX",
-            help="Código enviado por WhatsApp, ex: TJPR-A1B2C3",
-            key="codigo_login"
-        )
-        
-        if st.button("🚀 Entrar", use_container_width=True, type="primary"):
-            telefone_numeros = limpar_telefone(telefone_input)
-            if not telefone_numeros or not codigo:
-                st.error("Preencha o telefone e o código!")
-            elif len(telefone_numeros) < 10:
-                st.error("Telefone inválido! Digite DDD + número (mínimo 10 dígitos).")
-            elif verificar_login(telefone_numeros, codigo):
-                st.session_state.autenticado = True
-                st.session_state.telefone_usuario = telefone_numeros
-                st.rerun()
-            else:
-                st.error("❌ Telefone ou código inválido!")
+        # Container para formulário de login
+        with st.container():
+            telefone_input = st.text_input(
+                "📱 Telefone com DDD:",
+                placeholder="41999999999",
+                help="Digite apenas os números (DDD + telefone)",
+                key="telefone_login",
+                max_chars=11
+            )
+            
+            # Mostrar preview formatado em tempo real
+            if telefone_input:
+                telefone_numeros = limpar_telefone(telefone_input)
+                telefone_formatado = formatar_telefone_display(telefone_numeros)
+                if telefone_formatado:
+                    st.caption(f"📞 {telefone_formatado}")
+            
+            codigo = st.text_input(
+                "🔑 Código de Acesso:",
+                placeholder="TJPR-XXXXXX",
+                help="Código enviado por WhatsApp, ex: TJPR-A1B2C3",
+                key="codigo_login",
+                type="password"  # Ocultar código digitado
+            )
+            
+            # Checkbox "Manter-me logado"
+            manter_logado = st.checkbox(
+                "🔒 Manter-me logado",
+                value=False,
+                help="Se marcado, você permanecerá logado mesmo após fechar o navegador (por 30 dias)",
+                key="manter_logado"
+            )
+            
+            # Botão de login
+            if st.button("🚀 Entrar", use_container_width=True, type="primary"):
+                telefone_numeros = limpar_telefone(telefone_input)
+                
+                # Validações
+                if not telefone_numeros or not codigo:
+                    st.error("❌ Preencha o telefone e o código!")
+                elif len(telefone_numeros) < 10:
+                    st.error("❌ Telefone inválido! Digite DDD + número (mínimo 10 dígitos).")
+                else:
+                    # Mostrar indicador de carregamento
+                    with st.spinner("🔐 Verificando credenciais..."):
+                        if verificar_login(telefone_numeros, codigo):
+                            # Autenticação bem-sucedida
+                            st.session_state.autenticado = True
+                            st.session_state.telefone_usuario = telefone_numeros
+                            
+                            # Criar sessão persistente se solicitado
+                            session_service = get_session_service()
+                            if manter_logado:
+                                session_service.criar_sessao_persistente(telefone_numeros, manter_logado=True)
+                            else:
+                                # Criar sessão apenas para esta sessão do navegador
+                                session_service.criar_sessao_persistente(telefone_numeros, manter_logado=False)
+                            
+                            st.success("✅ Login realizado com sucesso!")
+                            st.rerun()
+                        else:
+                            st.error("❌ Telefone ou código inválido!")
         
         st.divider()
         st.caption("Não recebeu seu código? Entre em contato pelo WhatsApp: **(41) 99781-3606**")
@@ -1024,9 +1050,8 @@ def gerar_excel_logs(df_inscricoes):
 
 def is_admin():
     """Verifica se o usuário logado é administrador."""
-    if "telefone_usuario" in st.session_state and st.session_state.telefone_usuario:
-        return st.session_state.telefone_usuario in ADMIN_TELEFONES
-    return False
+    from services.auth_service import is_admin as is_admin_service
+    return is_admin_service()
 
 
 def normalizar_nome(nome):
@@ -2327,10 +2352,17 @@ def main():
             st.divider()
         
         if st.button("🚪 Sair", use_container_width=True):
+            # Limpar session state
             st.session_state.autenticado = False
             st.session_state.telefone_usuario = None
             st.session_state.modo_admin = False
             st.session_state.admin_autenticado = False
+            
+            # Limpar cookies de sessão
+            from services.session_service import get_session_service
+            session_service = get_session_service()
+            session_service.limpar_sessao()
+            
             st.rerun()
     
     # Conectar ao Google Sheets
@@ -3596,11 +3628,33 @@ def footer():
 # =============================================================================
 
 if __name__ == "__main__":
+    # Importar serviço de sessão
+    from services.session_service import get_session_service
+    
+    # Inicializar session state
     if "autenticado" not in st.session_state:
         st.session_state.autenticado = False
+    
+    # Verificar sessão persistente (cookies) se não estiver autenticado
+    if not st.session_state.autenticado:
+        session_service = get_session_service()
+        if session_service.verificar_sessao_persistente():
+            telefone = session_service.obter_telefone_do_cookie()
+            if telefone:
+                # Restaurar sessão do cookie
+                st.session_state.autenticado = True
+                st.session_state.telefone_usuario = telefone
+                # Mostrar mensagem de sessão restaurada (apenas uma vez)
+                if "sessao_restaurada" not in st.session_state:
+                    st.session_state.sessao_restaurada = True
+                    st.success("✅ Sessão restaurada automaticamente")
+                    st.rerun()
     
     if not st.session_state.autenticado:
         tela_login()
     else:
+        # Limpar flag de sessão restaurada após mostrar
+        if st.session_state.get("sessao_restaurada"):
+            st.session_state.sessao_restaurada = False
         main()
         footer()

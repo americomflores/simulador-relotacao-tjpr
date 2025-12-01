@@ -4,3 +4,11 @@ gspread
 google-auth
 openpyxl
 streamlit-cookies-controller
+
+# Testing
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-mock>=3.10.0
+
+# Security (optional - for password hashing in future)
+# bcrypt>=4.0.0

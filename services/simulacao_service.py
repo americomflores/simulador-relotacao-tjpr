@@ -1,0 +1,346 @@
+"""
+Serviço de lógica de simulação de relotação.
+"""
+import pandas as pd
+from data import ANEXO_I, ANEXO_II
+from lotacao_data import LOTACAO_POR_CODIGO
+from config.settings import DATA_LIMITE_ESTAGIO
+from exceptions import SimulationError
+from utils.logger import log_error
+
+
+def obter_status_lotacao(codigo_unidade):
+    """
+    Retorna o status de lotação de uma unidade.
+    
+    Args:
+        codigo_unidade: Código da unidade
+        
+    Returns:
+        Status: SUPERAVITÁRIA, EQUILIBRADA, DEFICITÁRIA ou NÃO IDENTIFICADA
+    """
+    if codigo_unidade in LOTACAO_POR_CODIGO:
+        return LOTACAO_POR_CODIGO[codigo_unidade]["status"]
+    return "NÃO IDENTIFICADA"
+
+
+def obter_dados_lotacao(codigo_unidade):
+    """
+    Retorna todos os dados de lotação de uma unidade.
+    
+    Args:
+        codigo_unidade: Código da unidade
+        
+    Returns:
+        Dicionário com dados de lotação ou None
+    """
+    if codigo_unidade in LOTACAO_POR_CODIGO:
+        return LOTACAO_POR_CODIGO[codigo_unidade]
+    return None
+
+
+def calcular_lotacao_dinamica(codigo_unidade, ajuste=0):
+    """
+    Calcula a lotação considerando ajustes dinâmicos.
+    
+    Args:
+        codigo_unidade: Código da unidade
+        ajuste: Número de servidores a adicionar (+) ou remover (-)
+        
+    Returns:
+        Dicionário com lotação calculada ou None
+    """
+    dados = obter_dados_lotacao(codigo_unidade)
+    if not dados:
+        return None
+    
+    nova_lotacao_real = dados["lotacao_real"] + ajuste
+    nova_diferenca = nova_lotacao_real - dados["lotacao_paradigma"]
+    
+    if nova_diferenca > 0:
+        novo_status = "SUPERAVITÁRIA"
+    elif nova_diferenca == 0:
+        novo_status = "EQUILIBRADA"
+    else:
+        novo_status = "DEFICITÁRIA"
+    
+    return {
+        "lotacao_real": nova_lotacao_real,
+        "lotacao_paradigma": dados["lotacao_paradigma"],
+        "diferenca": nova_diferenca,
+        "status": novo_status
+    }
+
+
+def verificar_estagio_probatorio(data_admissao):
+    """
+    Verifica se servidor está em estágio probatório.
+    
+    Args:
+        data_admissao: Data de admissão do servidor
+        
+    Returns:
+        True se está em estágio probatório, False caso contrário
+    """
+    if data_admissao is None:
+        return True
+    return data_admissao > DATA_LIMITE_ESTAGIO
+
+
+# Cache para mapeamento A1->A2 (calculado uma vez)
+_mapeamento_a1_para_a2_cache = None
+
+
+def _obter_mapeamento_a1_para_a2():
+    """
+    Obtém mapeamento de Anexo I para Anexo II (cacheado).
+    
+    Returns:
+        Dicionário mapeando códigos A1 para A2
+    """
+    global _mapeamento_a1_para_a2_cache
+    
+    if _mapeamento_a1_para_a2_cache is None:
+        mapeamento = {}
+        # Criar índice reverso para otimizar busca
+        anexo2_index = {}
+        for codigo_a2, info_a2 in ANEXO_II.items():
+            chave = (info_a2['comarca'].strip().lower(), info_a2['unidade'].strip().lower())
+            if chave not in anexo2_index:
+                anexo2_index[chave] = codigo_a2
+        
+        for codigo_a1, info_a1 in ANEXO_I.items():
+            chave = (info_a1['comarca'].strip().lower(), info_a1['unidade'].strip().lower())
+            if chave in anexo2_index:
+                mapeamento[codigo_a1] = anexo2_index[chave]
+        
+        _mapeamento_a1_para_a2_cache = mapeamento
+    
+    return _mapeamento_a1_para_a2_cache
+
+
+def calcular_resultado(df_inscricoes):
+    """
+    Calcula o resultado da simulação com lotação dinâmica.
+    Inclui cálculo de "Designação na Origem" baseado no status da unidade.
+    
+    Implementa item 3.11 do Edital:
+    "Se, durante a análise do Anexo II, for possível o deferimento em ambas as unidades,
+    será concedido o deferimento para a unidade originalmente indicada no Anexo I."
+    
+    Args:
+        df_inscricoes: DataFrame com inscrições
+        
+    Returns:
+        Tupla (df_resultado, vagas_anexo1, vagas_anexo2, ajustes_lotacao)
+    """
+    if df_inscricoes.empty:
+        return pd.DataFrame(), {}, {}, {}
+    
+    try:
+        df = df_inscricoes.copy()
+        df = df.sort_values("data_admissao", ascending=True).reset_index(drop=True)
+        
+        df["posicao_antiguidade"] = range(1, len(df) + 1)
+        df["status"] = ""
+        df["resultado"] = ""
+        df["vaga_obtida"] = ""
+        df["observacao"] = ""
+        df["designacao_origem"] = ""
+        df["status_origem_inicial"] = ""
+        df["status_origem_final"] = ""
+        
+        # Usar mapeamento cacheado
+        mapeamento_a1_para_a2 = _obter_mapeamento_a1_para_a2()
+        
+        # Marcar desclassificados por estágio probatório (otimizado com vetorização)
+        mask_estagio = df["data_admissao"].apply(verificar_estagio_probatorio)
+        df.loc[mask_estagio, "status"] = "DESCLASSIFICADO"
+        df.loc[mask_estagio, "resultado"] = "Estágio Probatório"
+        df.loc[mask_estagio, "observacao"] = f"Admitido após {DATA_LIMITE_ESTAGIO.strftime('%d/%m/%Y')}"
+        df.loc[mask_estagio, "designacao_origem"] = "-"
+        
+        # Controle de vagas Anexo I
+        vagas_anexo1 = {}
+        for codigo, info in ANEXO_I.items():
+            vagas_anexo1[codigo] = info["quantidade"]
+        
+        # Controle dinâmico de lotação das unidades
+        # Começar com os valores originais e ajustar conforme movimentações
+        ajustes_lotacao = {}  # codigo_unidade -> ajuste acumulado
+        
+        vagas_anexo2 = {}
+        servidores_para_anexo2 = []
+        
+        # FASE 1: Processar Anexo I
+        # Usar itertuples() que é mais rápido que iterrows()
+        for idx, row in df.itertuples():
+            if df.at[row.Index, "status"] == "DESCLASSIFICADO":
+                continue
+            
+            escolha_a1 = row.escolha_anexo1
+            lotacao_origem = row.lotacao_atual
+            
+            # Registrar status inicial da origem (cachear para evitar recálculo)
+            if lotacao_origem and not df.at[row.Index, "status_origem_inicial"]:
+                dados_origem = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao.get(lotacao_origem, 0))
+                if dados_origem:
+                    df.at[row.Index, "status_origem_inicial"] = dados_origem["status"]
+            
+            if escolha_a1 and escolha_a1 in vagas_anexo1:
+                if vagas_anexo1[escolha_a1] > 0:
+                    vagas_anexo1[escolha_a1] -= 1
+                    df.at[row.Index, "status"] = "APROVADO"
+                    df.at[row.Index, "resultado"] = "ANEXO I"
+                    df.at[row.Index, "vaga_obtida"] = f"{ANEXO_I[escolha_a1]['comarca']} - {ANEXO_I[escolha_a1]['unidade']}"
+                    
+                    # Atualizar ajustes de lotação
+                    if lotacao_origem:
+                        # Servidor sai da origem (-1)
+                        ajustes_lotacao[lotacao_origem] = ajustes_lotacao.get(lotacao_origem, 0) - 1
+                        
+                        # Calcular status final da origem após saída
+                        dados_origem_final = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao[lotacao_origem])
+                        if dados_origem_final:
+                            df.at[row.Index, "status_origem_final"] = dados_origem_final["status"]
+                            
+                            # Determinar se precisa designação na origem
+                            # Conforme item 3.14 do Edital: designação apenas se a saída OCASIONAR DÉFICIT
+                            if dados_origem_final["status"] == "DEFICITÁRIA":
+                                df.at[row.Index, "designacao_origem"] = "SIM"
+                            else:
+                                df.at[row.Index, "designacao_origem"] = "NÃO"
+                        
+                        # Liberar vaga no Anexo II
+                        if lotacao_origem in vagas_anexo2:
+                            vagas_anexo2[lotacao_origem] += 1
+                        else:
+                            vagas_anexo2[lotacao_origem] = 1
+                else:
+                    servidores_para_anexo2.append(row.Index)
+            elif escolha_a1:
+                df.at[row.Index, "observacao"] = "Código Anexo I inválido"
+                servidores_para_anexo2.append(row.Index)
+            else:
+                servidores_para_anexo2.append(row.Index)
+        
+        # FASE 2: Processar Anexo II
+        # Conforme item 3.11: se possível deferimento em ambas as unidades (A1 e A2),
+        # será concedido deferimento para a unidade originalmente indicada no Anexo I
+        for idx in servidores_para_anexo2:
+            row = df.loc[idx]
+            escolha_a1 = row["escolha_anexo1"]  # Escolha original do Anexo I
+            escolha_a2 = row["escolha_anexo2"]  # Escolha do Anexo II
+            lotacao_origem = row["lotacao_atual"]
+            
+            # Registrar status inicial da origem (se ainda não registrado)
+            if lotacao_origem and not df.at[idx, "status_origem_inicial"]:
+                dados_origem = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao.get(lotacao_origem, 0))
+                if dados_origem:
+                    df.at[idx, "status_origem_inicial"] = dados_origem["status"]
+            
+            # Mapear escolha A1 para código A2 (mesma unidade) - usar cache
+            codigo_a1_no_a2 = mapeamento_a1_para_a2.get(escolha_a1) if escolha_a1 else None
+            
+            # Verificar disponibilidade das vagas
+            vaga_a1_disponivel = codigo_a1_no_a2 and codigo_a1_no_a2 in vagas_anexo2 and vagas_anexo2[codigo_a1_no_a2] > 0
+            vaga_a2_disponivel = escolha_a2 and escolha_a2 in vagas_anexo2 and vagas_anexo2[escolha_a2] > 0
+            
+            # Determinar qual vaga conceder (prioridade para A1 conforme item 3.11)
+            vaga_escolhida = None
+            origem_vaga = None  # "A1" ou "A2"
+            
+            if vaga_a1_disponivel and vaga_a2_disponivel:
+                # Ambas disponíveis: prioridade para A1 (item 3.11)
+                vaga_escolhida = codigo_a1_no_a2
+                origem_vaga = "ANEXO I (via A2)"
+            elif vaga_a1_disponivel:
+                # Apenas A1 disponível
+                vaga_escolhida = codigo_a1_no_a2
+                origem_vaga = "ANEXO I (via A2)"
+            elif vaga_a2_disponivel:
+                # Apenas A2 disponível
+                vaga_escolhida = escolha_a2
+                origem_vaga = "ANEXO II"
+            
+            if vaga_escolhida:
+                vagas_anexo2[vaga_escolhida] -= 1
+                df.at[idx, "status"] = "APROVADO"
+                df.at[idx, "resultado"] = origem_vaga
+                df.at[idx, "vaga_obtida"] = f"{ANEXO_II[vaga_escolhida]['comarca']} - {ANEXO_II[vaga_escolhida]['unidade']}"
+                
+                # Atualizar ajustes de lotação
+                if lotacao_origem and lotacao_origem != vaga_escolhida:
+                    # Servidor sai da origem (-1)
+                    ajustes_lotacao[lotacao_origem] = ajustes_lotacao.get(lotacao_origem, 0) - 1
+                    
+                    # Calcular status final da origem após saída
+                    dados_origem_final = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao[lotacao_origem])
+                    if dados_origem_final:
+                        df.at[idx, "status_origem_final"] = dados_origem_final["status"]
+                        
+                        # Determinar se precisa designação na origem
+                        # Conforme item 3.14 do Edital: designação apenas se a saída OCASIONAR DÉFICIT
+                        if dados_origem_final["status"] == "DEFICITÁRIA":
+                            df.at[idx, "designacao_origem"] = "SIM"
+                        else:
+                            df.at[idx, "designacao_origem"] = "NÃO"
+                    
+                    # Liberar vaga no Anexo II
+                    if lotacao_origem in vagas_anexo2:
+                        vagas_anexo2[lotacao_origem] += 1
+                    else:
+                        vagas_anexo2[lotacao_origem] = 1
+                else:
+                    df.at[idx, "designacao_origem"] = "-"
+            else:
+                # Nenhuma vaga disponível
+                df.at[idx, "status"] = "NÃO OBTEVE VAGA"
+                df.at[idx, "resultado"] = "Sem vaga"
+                
+                # Determinar motivo
+                if escolha_a1 and escolha_a2:
+                    df.at[idx, "observacao"] = "Vagas do Anexo I e II não disponíveis"
+                elif escolha_a1:
+                    df.at[idx, "observacao"] = "Vaga do Anexo I não foi liberada no Anexo II"
+                elif escolha_a2:
+                    if escolha_a2 in ANEXO_II:
+                        df.at[idx, "observacao"] = "Vaga do Anexo II não foi liberada"
+                    else:
+                        df.at[idx, "observacao"] = "Código Anexo II inválido"
+                else:
+                    df.at[idx, "observacao"] = "Não escolheu nenhuma vaga"
+                
+                df.at[idx, "designacao_origem"] = "-"
+        
+        return df, vagas_anexo1, vagas_anexo2, ajustes_lotacao
+    except Exception as e:
+        log_error(e, "calcular_resultado")
+        raise SimulationError(f"Erro ao calcular resultado: {e}")
+
+
+def calcular_demanda(df_inscricoes):
+    """
+    Calcula a demanda por vaga (quantos servidores escolheram cada vaga).
+    
+    Args:
+        df_inscricoes: DataFrame com inscrições
+        
+    Returns:
+        Dicionário com demanda por código de vaga
+    """
+    demanda_a1 = {}
+    demanda_a2 = {}
+    
+    for _, row in df_inscricoes.iterrows():
+        escolha_a1 = row.get("escolha_anexo1", "")
+        escolha_a2 = row.get("escolha_anexo2", "")
+        
+        if escolha_a1:
+            demanda_a1[escolha_a1] = demanda_a1.get(escolha_a1, 0) + 1
+        
+        if escolha_a2:
+            demanda_a2[escolha_a2] = demanda_a2.get(escolha_a2, 0) + 1
+    
+    return demanda_a1, demanda_a2
+
