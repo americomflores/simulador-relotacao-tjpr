@@ -148,6 +148,10 @@ class SessionService:
             success1 = self._remove_cookie("auth_token")
             success2 = self._remove_cookie("remember_me")
 
+            # Garantir que o cache foi limpo
+            if "cookies_cache" in st.session_state:
+                del st.session_state.cookies_cache
+
             if success1 or success2:
                 log_operation("limpar_sessao", "system", f"method={self.method}")
                 return True
@@ -155,6 +159,27 @@ class SessionService:
         except Exception as e:
             log_error(e, "limpar_sessao")
             return False
+
+    def _get_all_cookies(self) -> dict:
+        """
+        Obtém todos os cookies de uma vez (cacheable).
+
+        Returns:
+            Dicionário com todos os cookies
+        """
+        try:
+            if self.method == "stx" and self.cookie_manager:
+                # Usar session_state para cachear e evitar múltiplas chamadas
+                if "cookies_cache" not in st.session_state:
+                    st.session_state.cookies_cache = self.cookie_manager.get_all() or {}
+                return st.session_state.cookies_cache
+            elif self.method == "controller" and self.cookies:
+                # Controller não tem problema com múltiplas chamadas
+                return {}  # Controller usa get() direto
+            return {}
+        except Exception as e:
+            log_error(e, "_get_all_cookies")
+            return {}
 
     def _get_cookie(self, key: str) -> str | None:
         """
@@ -168,7 +193,8 @@ class SessionService:
         """
         try:
             if self.method == "stx" and self.cookie_manager:
-                cookies = self.cookie_manager.get_all()
+                # Usar cache para evitar múltiplas chamadas a get_all()
+                cookies = self._get_all_cookies()
                 return cookies.get(key) if cookies else None
             elif self.method == "controller" and self.cookies:
                 return self.cookies.get(key)
@@ -197,6 +223,11 @@ class SessionService:
                     self.cookie_manager.set(key, value, max_age=max_age)
                 else:
                     self.cookie_manager.set(key, value)
+
+                # Limpar cache para forçar reload
+                if "cookies_cache" in st.session_state:
+                    del st.session_state.cookies_cache
+
                 return True
             elif self.method == "controller" and self.cookies:
                 self.cookies.set(key, value, expires_days=expires_days)
@@ -219,6 +250,11 @@ class SessionService:
         try:
             if self.method == "stx" and self.cookie_manager:
                 self.cookie_manager.delete(key)
+
+                # Limpar cache para forçar reload
+                if "cookies_cache" in st.session_state:
+                    del st.session_state.cookies_cache
+
                 return True
             elif self.method == "controller" and self.cookies:
                 self.cookies.remove(key)

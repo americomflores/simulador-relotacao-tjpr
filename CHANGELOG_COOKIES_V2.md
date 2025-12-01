@@ -1,5 +1,22 @@
 # 🔄 Changelog - Sistema de Cookies V2.0
 
+## 📅 Versão 2.0.1 - Hotfix (2025-12-01)
+
+### 🐛 Bug Crítico Corrigido
+
+**Problema:** `StreamlitDuplicateElementKey: There are multiple elements with the same key='get_all'`
+
+**Causa:** Múltiplas chamadas a `cookie_manager.get_all()` criavam componentes duplicados
+
+**Solução:** Implementado cache de cookies usando `st.session_state`
+
+**Arquivos modificados:**
+- `services/session_service.py` (~40 linhas alteradas)
+
+**Detalhes:** Ver `HOTFIX_DUPLICATE_KEY.md`
+
+---
+
 ## 📅 Data: 2025-11-30
 
 ## 🎉 Versão 2.0 - Sistema de Login com Cookies Persistentes
