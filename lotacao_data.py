@@ -1,17 +1,18 @@
 """
 Dados de Lotação Paradigma - TJPR
-Atualizado em: 05/12/2025 11:29:58
+Atualizado em: 05/12/2025 11:33:55
 Fonte: Mesclagem de tabelabi.xlsx + dados anteriores + correções manuais
 
 Regras de mesclagem:
   - Unidades encontradas no tabelabi.xlsx: dados atualizados
   - Unidades não encontradas no tabelabi.xlsx: dados anteriores mantidos
-  - Correções manuais aplicadas: 4 unidades remapeadas
+  - Correções manuais: 4 varas com paradigma atualizado e lotação real mantida
 
 Correções aplicadas:
-  - Cascavel: 4ª Vara Cível (A2-059)
-  - Curitiba: 24ª Vara Cível (A2-110), 25ª Vara Cível (A2-111)
-  - Ponta Grossa: 1ª Vara Cível (A2-332)
+  - A2-059: Cascavel - 4ª Vara Cível (paradigma 0→7, real mantida: 7)
+  - A2-110: Curitiba - 24ª Vara Cível (paradigma 0→8, real mantida: 7)
+  - A2-111: Curitiba - 25ª Vara Cível (paradigma 0→8, real mantida: 7)
+  - A2-332: Ponta Grossa - 1ª Vara Cível (paradigma 0→7, real mantida: 6)
 
 Fórmulas (para dados do tabelabi.xlsx):
   - Lotação Paradigma = Analistas + Técnicos + Servidores Efetivos Gabinete (paradigma)
@@ -479,10 +480,10 @@ LOTACAO_POR_CODIGO = {
     "A2-059": {
         "comarca": "Cascavel",
         "unidade": "4ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 0,
+        "lotacao_real": 7,
         "lotacao_paradigma": 7,
-        "diferenca": -7,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     "A2-060": {
         "comarca": "CASCAVEL",
@@ -887,17 +888,17 @@ LOTACAO_POR_CODIGO = {
     "A2-110": {
         "comarca": "Curitiba",
         "unidade": "24ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 0,
+        "lotacao_real": 7,
         "lotacao_paradigma": 8,
-        "diferenca": -8,
+        "diferenca": -1,
         "status": "DEFICITÁRIA",
     },
     "A2-111": {
         "comarca": "Curitiba",
         "unidade": "25ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 0,
+        "lotacao_real": 7,
         "lotacao_paradigma": 8,
-        "diferenca": -8,
+        "diferenca": -1,
         "status": "DEFICITÁRIA",
     },
     "A2-112": {
@@ -2647,9 +2648,9 @@ LOTACAO_POR_CODIGO = {
     "A2-332": {
         "comarca": "Ponta Grossa",
         "unidade": "1ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 0,
+        "lotacao_real": 6,
         "lotacao_paradigma": 7,
-        "diferenca": -7,
+        "diferenca": -1,
         "status": "DEFICITÁRIA",
     },
     "A2-333": {
@@ -3925,10 +3926,10 @@ LOTACAO_COMPLETA = [
         "codigo": "A2-059",
         "comarca": "Cascavel",
         "unidade": "4ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 0,
+        "lotacao_real": 7,
         "lotacao_paradigma": 7,
-        "diferenca": -7,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     {
         "codigo": "A2-060",
@@ -4384,18 +4385,18 @@ LOTACAO_COMPLETA = [
         "codigo": "A2-110",
         "comarca": "Curitiba",
         "unidade": "24ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 0,
+        "lotacao_real": 7,
         "lotacao_paradigma": 8,
-        "diferenca": -8,
+        "diferenca": -1,
         "status": "DEFICITÁRIA",
     },
     {
         "codigo": "A2-111",
         "comarca": "Curitiba",
         "unidade": "25ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 0,
+        "lotacao_real": 7,
         "lotacao_paradigma": 8,
-        "diferenca": -8,
+        "diferenca": -1,
         "status": "DEFICITÁRIA",
     },
     {
@@ -6364,9 +6365,9 @@ LOTACAO_COMPLETA = [
         "codigo": "A2-332",
         "comarca": "Ponta Grossa",
         "unidade": "1ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 0,
+        "lotacao_real": 6,
         "lotacao_paradigma": 7,
-        "diferenca": -7,
+        "diferenca": -1,
         "status": "DEFICITÁRIA",
     },
     {
