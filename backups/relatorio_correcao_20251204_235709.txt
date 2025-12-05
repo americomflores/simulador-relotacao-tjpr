@@ -1,0 +1,164 @@
+================================================================================
+RELATÓRIO DE ATUALIZAÇÃO DE LOTAÇÃO
+================================================================================
+
+Data/Hora: 04/12/2025 23:57:09
+
+================================================================================
+ESTATÍSTICAS GERAIS
+================================================================================
+Total de unidades na planilha: 535
+Match exato: 398
+Match fuzzy (>=95%): 14
+Não encontrados: 123
+Total de códigos atualizados: 393
+Códigos mantidos (sem atualização): 11
+Novas entradas criadas: 19
+
+================================================================================
+[!] FUZZY MATCHES - REVISÃO MANUAL OBRIGATÓRIA (14)
+================================================================================
+
+Cód.    | Score | Planilha -> Anexo II
+--------------------------------------------------------------------------------
+A2-066  |  95.3% | 2ª Vara de Família, Sucessões e Aci
+        |        | -> 2ª VARA DE FAMÍLIA E SUCESSÕES E AC (ANEXO_II)
+
+A2-150  |  96.3% | Secretaria Unificada das 1ª e 2ª Va
+        |        | -> SECRETARIA UNIFICADA DA 1ª E 2ª VAR (ANEXO_II)
+
+A2-130  |  96.4% | Secretaria Unificada das 1ª e 2ª Va
+        |        | -> SECRETARIA UNIFICADA DA 1ª E 2ª VAR (ANEXO_II)
+
+A2-144  |  96.4% | Juizado Especial PUC - Cajuru
+        |        | -> JUIZADO ESPECIAL PUC-CAJURU (ANEXO_II)
+
+A2-143  |  96.6% | 1º Juizado Especial Cível – Matéria
+        |        | -> 1º JUIZADO ESPECIAL CÍVEL - MATÉRIA (ANEXO_II)
+
+A2-145  |  96.6% | 3º Juizado Especial Cível – Telecom
+        |        | -> 3º JUIZADO ESPECIAL CÍVEL - TELECOM (ANEXO_II)
+
+A2-152  |  96.6% | Secretaria Unificada das 1ª e 2ª Va
+        |        | -> SECRETARIA UNIFICADA DA 1ª E 2ª VAR (ANEXO_II)
+
+A2-155  |  96.7% | Secretaria Unificada das 1ª e 2ª Va
+        |        | -> SECRETARIA UNIFICADA DA 1ª E 2ª VAR (ANEXO_II)
+
+A2-149  |  97.1% | Secretaria Unificada das 1ª e 2ª Va
+        |        | -> SECRETARIA UNIFICADA DA 1ª E 2ª VAR (ANEXO_II)
+
+A2-065  |  97.1% | 1ª Vara de Família, Sucessões, Regi
+        |        | -> 1ª VARA DE FAMÍLIA E SUCESSÕES, REG (ANEXO_II)
+
+A2-214  |  98.2% | Juizado Especial Cível, Criminal e 
+        |        | -> JUIZADO ESPECIAL CÍVEL, CRIMINAL, D (ANEXO_II)
+
+A2-141  |  98.3% | 3º Juizado de Violência Doméstica e
+        |        | -> 3º JUIZADO DE VIOLÊNCIA DOMÉSTICA E (ANEXO_II)
+
+A2-345  |  98.6% | Vara Criminal, Família e Sucessões,
+        |        | -> VARA CRIMINAL, FAMÍLIA E SUCESSÕES, (ANEXO_II)
+
+A2-044  |  99.1% | Vara de Família e Sucessões, Regist
+        |        | -> VARA DE FAMÍLIA E SUCESSÕES, REGIST (ANEXO_II)
+
+
+================================================================================
+DIVERGÊNCIAS ENCONTRADAS (133)
+================================================================================
+
+Cód.    | Planilha | Atual | Diff | Match | Comarca - Unidade
+--------------------------------------------------------------------------------
+A2-161  |       23 |     3 |  +20 | exact | CURITIBA - SECRETARIA ESPECIALIZADA EM MOVIMENTAÇÕE
+A2-158  |       19 |     2 |  +17 | exact | CURITIBA - SECRETARIA ESPECIALIZADA EM MOVIMENTAÇÕE
+A2-005  |       10 |     1 |   +9 | exact | ALMIRANTE TAMANDARÉ - SECRETARIA ESPECIALIZADA DE MOVIMENTAÇÃO
+A2-021  |        9 |     0 |   +9 | exact | ARAPONGAS - Juizado Especial Cível, Criminal e da Fa
+A2-124  |        6 |     0 |   +6 | exact | CURITIBA - 1ª Vara de Infrações Penais contra Crian
+A2-238  |        6 |     0 |   +6 | exact | LONDRINA - 3ª Vara de Família
+A2-017  |        5 |     0 |   +5 | exact | ARAPONGAS - 2ª Vara Cível e da Fazenda Pública
+A2-020  |        5 |     0 |   +5 | exact | ARAPONGAS - Vara de Família e Sucessões, Infância e 
+A2-249  |        5 |     0 |   +5 | exact | LONDRINA - Vara da Fazenda Pública
+A2-018  |        4 |     0 |   +4 | exact | ARAPONGAS - 1ª Vara Criminal
+A2-019  |        4 |     0 |   +4 | exact | ARAPONGAS - 2ª Vara Criminal
+A2-056  |        7 |     3 |   +4 | exact | CAPANEMA - Vara Criminal, Família e Sucessões, Infâ
+A2-074  |        5 |     1 |   +4 | exact | CASTRO - Vara Criminal
+A2-298  |        4 |     0 |   +4 | exact | PALMAS - Vara de Família e Sucessões, Juizado Esp
+A2-041  |        4 |     1 |   +3 | exact | CAMPINA DA LAGOA - Juízo Único
+A2-130  |       15 |    12 |   +3 | fuzzy | CURITIBA - Secretaria Unificada das 1ª e 2ª Varas D
+A2-036  |        5 |     3 |   +2 | exact | CAMBARÁ - Juízo Único
+A2-075  |        6 |     4 |   +2 | exact | CASTRO - Vara de Família e Sucessões, Infância e 
+A2-085  |        5 |     3 |   +2 | exact | CIDADE GAÚCHA - Juízo Único
+A2-088  |        6 |     4 |   +2 | exact | COLOMBO - 1ª Vara Criminal
+A2-091  |        7 |     5 |   +2 | exact | COLOMBO - Vara de Família e Sucessões
+A2-115  |        5 |     7 |   -2 | exact | CURITIBA - 3ª Vara de Família
+A2-152  |       14 |    12 |   +2 | fuzzy | CURITIBA - Secretaria Unificada das 1ª e 2ª Varas D
+A2-241  |       11 |     9 |   +2 | exact | LONDRINA - Vara de Execuções Penais, Medidas Altern
+A2-256  |       11 |     9 |   +2 | exact | MANDAGUARI - Vara Criminal, Família e Sucessões, Infâ
+A2-255  |       11 |     9 |   +2 | exact | MANDAGUAÇU - Juízo Único
+A2-258  |        4 |     2 |   +2 | exact | MANOEL RIBAS - Juízo Único
+A2-263  |        6 |     4 |   +2 | exact | MARILÂNDIA DO SUL - Juízo Único
+A2-285  |        5 |     7 |   -2 | exact | MATINHOS - Vara Criminal, Família e Sucessões, Infâ
+A2-286  |        8 |     6 |   +2 | exact | MEDIANEIRA - Vara Criminal, Família e Sucessões, Infâ
+A2-305  |        4 |     2 |   +2 | exact | PARANAGUÁ - 2ª Vara Cível
+A2-316  |       11 |     9 |   +2 | exact | PATO BRANCO - Vara Criminal
+A2-333  |        6 |     4 |   +2 | exact | PONTA GROSSA - 1ª Vara Criminal
+A2-374  |        5 |     3 |   +2 | exact | SÃO JOÃO - Juízo Único
+A2-406  |        4 |     6 |   -2 | exact | TOLEDO - 1ª Vara Criminal
+A2-422  |        9 |     7 |   +2 | exact | UNIÃO DA VITÓRIA - Vara de Família e Sucessões, Infância e 
+A2-007  |        4 |     3 |   +1 | exact | ALTO PIQUIRI - Juízo Único
+A2-008  |        5 |     4 |   +1 | exact | ALTÔNIA - Juízo Único
+A2-009  |        6 |     5 |   +1 | exact | AMPÉRE - Juízo Único
+A2-011  |        6 |     5 |   +1 | exact | ANTONINA - Vara Cível, da Fazenda Pública, Acidente
+A2-013  |        6 |     5 |   +1 | exact | APUCARANA - 1ª Vara Criminal
+A2-024  |        8 |     9 |   -1 | exact | ARAUCÁRIA - Vara Criminal
+A2-025  |        7 |     6 |   +1 | exact | ARAUCÁRIA - Vara de Família e Sucessões, Infância e 
+A2-029  |        6 |     7 |   -1 | exact | ASTORGA - Vara Criminal, Família e Sucessões, Infâ
+A2-032  |        2 |     3 |   -1 | exact | BARBOSA FERRAZ - Juízo Único
+A2-037  |        7 |     6 |   +1 | exact | CAMBÉ - 2ª Vara Cível e da Fazenda Pública
+A2-039  |        7 |     6 |   +1 | exact | CAMBÉ - Vara de Família e Sucessões, Infância e 
+A2-043  |        5 |     4 |   +1 | exact | CAMPINA GRANDE DO SUL - Vara Criminal
+A2-053  |        6 |     5 |   +1 | exact | CAMPO MOURÃO - Juizado Especial Cível, Criminal e da Fa
+A2-055  |        8 |     7 |   +1 | exact | CANTAGALO - Juízo Único
+
+... e mais 83 divergências
+
+================================================================================
+UNIDADES NÃO MAPEADAS (123)
+================================================================================
+- ANDIRÁ - Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Regis (LR_Efet=0)
+- APUCARANA - 1ª Vara Cível e da Fazenda Pública (LR_Efet=0)
+- APUCARANA - 2ª Vara Cível e da Fazenda Pública (LR_Efet=0)
+- ARAPONGAS - 1ª Vara Cível e da Fazenda Pública (LR_Efet=0)
+- ARAUCÁRIA - 1ª Vara Cível e da Fazenda Pública (LR_Efet=0)
+- ASSAÍ - Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Regis (LR_Efet=1)
+- ASSIS CHATEAUBRIAND - Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Regis (LR_Efet=1)
+- ASTORGA - Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Regis (LR_Efet=0)
+- BANDEIRANTES - 1ª Vara Cível e da Fazenda Pública, Acidentes do Trabalho, R (LR_Efet=0)
+- BANDEIRANTES - 2ª Vara Cível e da Fazenda Pública, Juizado Especial Cível e (LR_Efet=6)
+- BANDEIRANTES - Vara Criminal, Infância e Juventude, Família e Sucessões e J (LR_Efet=5)
+- CAMPO MOURÃO - 1ª Vara Cível e da Fazenda Pública (LR_Efet=0)
+- CAMPO MOURÃO - 2ª Vara Cível e da Fazenda Pública (LR_Efet=1)
+- CAPANEMA - Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Regis (LR_Efet=0)
+- CASCAVEL - 1ª Vara Cível (LR_Efet=0)
+- CASCAVEL - 2ª Vara Cível (LR_Efet=0)
+- CASCAVEL - 2º Juizado de Violência Doméstica e Familiar contra a Mulher (LR_Efet=8)
+- CASCAVEL - 3ª Vara Cível (LR_Efet=1)
+- CASTRO - Vara Cível e da Fazenda Pública (LR_Efet=0)
+- CHOPINZINHO - Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Regis (LR_Efet=0)
+- CIANORTE - 1ª Vara Cível e da Fazenda Pública (LR_Efet=0)
+- COLOMBO - 1ª Vara Cível (LR_Efet=0)
+- COLORADO - Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Regis (LR_Efet=1)
+- CORBÉLIA - Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Regis (LR_Efet=0)
+- CORNÉLIO PROCÓPIO - 1ª Vara Cível e da Fazenda Pública (LR_Efet=0)
+- CRUZEIRO DO OESTE - Vara Criminal, Infância e Juventude, Família e Sucessões e J (LR_Efet=9)
+- CRUZEIRO DO OESTE - Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Regis (LR_Efet=0)
+- CURITIBA - 11ª Vara Cível (LR_Efet=0)
+- CURITIBA - 13ª Vara Cível (LR_Efet=1)
+- CURITIBA - 14ª Vara Cível (LR_Efet=0)
+
+... e mais 93 não mapeados
+
+================================================================================
+FIM DO RELATÓRIO
+================================================================================
