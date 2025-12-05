@@ -1,0 +1,115 @@
+================================================================================
+RELATÓRIO DE UNIDADES COM LOTAÇÃO ZERADA
+================================================================================
+Data: 05/12/2025 08:47:24
+Total de unidades: 423
+
+================================================================================
+ESTATÍSTICAS
+================================================================================
+Unidades com PARADIGMA = 0: 15
+Unidades com REAL = 0: 2
+Unidades com AMBOS = 0: 0
+Unidades normais (sem zeros): 406
+
+================================================================================
+UNIDADES COM PARADIGMA = 0 (mas real > 0) (15)
+================================================================================
+
+Cód.    | Real | Status        | Comarca - Unidade
+--------------------------------------------------------------------------------
+A2-059  |    7 | SUPERAVITÁRIA | Cascavel - 4ª VARA CÍVEL E EMPRESARIAL REGIONAL
+PARADIGMA: 8
+A2-110  |    7 | SUPERAVITÁRIA | Curitiba - 24ª VARA CÍVEL E EMPRESARIAL REGIONAL
+PARADIGMA: 8
+A2-111  |    7 | SUPERAVITÁRIA | Curitiba - 25ª VARA CÍVEL E EMPRESARIAL REGIONAL
+PARADIGMA: 8
+A2-112  |    5 | SUPERAVITÁRIA | Curitiba - 26ª VARA CÍVEL E EMPRESARIAL REGIONAL
+PARADIGMA: desconhecido
+A2-113  |    5 | SUPERAVITÁRIA | Curitiba - 27ª VARA CÍVEL E EMPRESARIAL REGIONAL
+PARADIGMA: desconhecido
+A2-135  |    6 | SUPERAVITÁRIA | Curitiba - 2ª VARA DE INFRAÇÕES PENAIS CONTRA CRIAN
+PARADIGMA: 6
+A2-157  |   43 | SUPERAVITÁRIA | Curitiba - SECRETARIA ESPECIALIZADA DE MOVIMENTAÇÃO
+PARADIGMA: desconhecido
+A2-160  |   13 | SUPERAVITÁRIA | Curitiba - SECRETARIA ESPECIALIZADA EM MOVIMENTAÇÕE
+PARADIGMA: desconhecido
+A2-159  |   31 | SUPERAVITÁRIA | Curitiba - SECRETARIA ESPECIALIZADA EM MOVIMENTAÇÕE
+PARADIGMA: desconhecido
+A2-215  |    7 | SUPERAVITÁRIA | Irati - SECRETARIA ESPECIALIZADA DE MOVIMENTAÇÃO
+PARADIGMA: desconhecido
+A2-250  |    6 | SUPERAVITÁRIA | Londrina - 11ª VARA CÍVEL E EMPRESARIAL REGIONAL
+PARADIGMA: desconhecido
+A2-240  |    5 | SUPERAVITÁRIA | Londrina - VARA DE SUCESSÕES, ACIDENTES DO TRABALHO
+PARADIGMA: desconhecido
+A2-297  |    5 | SUPERAVITÁRIA | Palmas - VARA CRIMINAL E DA INFÂNCIA E JUVENTUDE
+PARADIGMA: 8
+A2-332  |    6 | SUPERAVITÁRIA | Ponta Grossa - 1ª VARA CÍVEL E EMPRESARIAL REGIONAL
+PARADIGMA: desconhecido
+A2-336  |    9 | SUPERAVITÁRIA | Ponta Grossa - 1º JUIZADO DE VIOLÊNCIA DOMÉSTICA E FAMI
+PARADIGMA: 13d
+
+================================================================================
+UNIDADES COM REAL = 0 (mas paradigma > 0) (2)
+================================================================================
+
+Cód.    | Parad | Status        | Comarca - Unidade
+--------------------------------------------------------------------------------
+A2-062  |     8 | DEFICITÁRIA   | Cascavel - Juizado de Violência Doméstica e Familia
+A2-334  |    13 | DEFICITÁRIA   | Ponta Grossa - Juizado de Violência Doméstica e Familia
+
+================================================================================
+ANÁLISE POR COMARCA (comarcas com unidades zeradas)
+================================================================================
+
+Comarca                     | P=0 | R=0 | Ambos | Total Afetadas
+--------------------------------------------------------------------------------
+Cascavel                    |   1 |   1 |     0 |              2
+Curitiba                    |   8 |   0 |     0 |              8
+Irati                       |   1 |   0 |     0 |              1
+Londrina                    |   2 |   0 |     0 |              2
+Palmas                      |   1 |   0 |     0 |              1
+Ponta Grossa                |   2 |   1 |     0 |              3
+
+================================================================================
+DETALHAMENTO POR COMARCA
+================================================================================
+
+Cascavel
+--------------------------------------------------------------------------------
+  A2-059 [PARAD=0]   R:  7 P:  0 - 4ª VARA CÍVEL E EMPRESARIAL REGIONAL
+  A2-062 [REAL=0]    R:  0 P:  8 - Juizado de Violência Doméstica e Familiar contra a
+
+Curitiba
+--------------------------------------------------------------------------------
+  A2-110 [PARAD=0]   R:  7 P:  0 - 24ª VARA CÍVEL E EMPRESARIAL REGIONAL
+  A2-111 [PARAD=0]   R:  7 P:  0 - 25ª VARA CÍVEL E EMPRESARIAL REGIONAL
+  A2-112 [PARAD=0]   R:  5 P:  0 - 26ª VARA CÍVEL E EMPRESARIAL REGIONAL
+  A2-113 [PARAD=0]   R:  5 P:  0 - 27ª VARA CÍVEL E EMPRESARIAL REGIONAL
+  A2-135 [PARAD=0]   R:  6 P:  0 - 2ª VARA DE INFRAÇÕES PENAIS CONTRA CRIANÇAS, ADOLE
+  A2-157 [PARAD=0]   R: 43 P:  0 - SECRETARIA ESPECIALIZADA DE MOVIMENTAÇÃO PROCESSUA
+  A2-160 [PARAD=0]   R: 13 P:  0 - SECRETARIA ESPECIALIZADA EM MOVIMENTAÇÕES PROCESSU
+  A2-159 [PARAD=0]   R: 31 P:  0 - SECRETARIA ESPECIALIZADA EM MOVIMENTAÇÕES PROCESSU
+
+Irati
+--------------------------------------------------------------------------------
+  A2-215 [PARAD=0]   R:  7 P:  0 - SECRETARIA ESPECIALIZADA DE MOVIMENTAÇÃO PROCESSUA
+
+Londrina
+--------------------------------------------------------------------------------
+  A2-250 [PARAD=0]   R:  6 P:  0 - 11ª VARA CÍVEL E EMPRESARIAL REGIONAL
+  A2-240 [PARAD=0]   R:  5 P:  0 - VARA DE SUCESSÕES, ACIDENTES DO TRABALHO, REGISTRO
+
+Palmas
+--------------------------------------------------------------------------------
+  A2-297 [PARAD=0]   R:  5 P:  0 - VARA CRIMINAL E DA INFÂNCIA E JUVENTUDE
+
+Ponta Grossa
+--------------------------------------------------------------------------------
+  A2-332 [PARAD=0]   R:  6 P:  0 - 1ª VARA CÍVEL E EMPRESARIAL REGIONAL
+  A2-336 [PARAD=0]   R:  9 P:  0 - 1º JUIZADO DE VIOLÊNCIA DOMÉSTICA E FAMILIAR CONTR
+  A2-334 [REAL=0]    R:  0 P: 13 - Juizado de Violência Doméstica e Familiar contra a
+
+================================================================================
+FIM DO RELATÓRIO
+================================================================================

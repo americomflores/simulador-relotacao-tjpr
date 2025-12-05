@@ -3,7 +3,13 @@
     "allow": [
       "Bash(.venv/Scripts/python.exe:*)",
       "Bash(del:*)",
-      "Bash(python -m py_compile:*)"
+      "Bash(python -m py_compile:*)",
+      "mcp__ide__executeCode",
+      "Bash(python:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "WebFetch(domain:www.tjpr.jus.br)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []
