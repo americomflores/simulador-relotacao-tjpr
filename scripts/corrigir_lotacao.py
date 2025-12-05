@@ -1,6 +1,8 @@
 """
 Script de Correção de Dados de Lotação
-Atualiza lotacao_data.py com dados da planilha oficial do TJPR.
+Atualiza lotacao_data.py com:
+  - Lotação REAL: Planilha BI (Tabela de Lotação de Pessoal das Unidades - BI.xlsx)
+  - Lotação PARADIGMA: Mapeamento PDF (anexo-i-quadros-tjpr.pdf via mapeamento_pdf_anexo2.xlsx)
 
 Uso:
     python scripts/corrigir_lotacao.py [--dry-run] [--backup-dir DIR]
@@ -31,6 +33,7 @@ from lotacao_data import LOTACAO_POR_CODIGO
 # ============================================================================
 
 CAMINHO_PLANILHA = "planilhas/Tabela de Lotação de Pessoal das Unidades - BI.xlsx"
+CAMINHO_PDF_MAPPING = "planilhas/mapeamento_pdf_anexo2.xlsx"  # Mapeamento PDF -> ANEXO_II
 FUZZY_THRESHOLD = 95  # Percentual mínimo para fuzzy matching (ajustado de 85% para 95%)
 ARQUIVO_SAIDA = "lotacao_data.py"
 DIR_BACKUP = "backups"
@@ -72,17 +75,23 @@ def validar_dados_entrada():
 
     checks = {}
 
-    # Verificar planilha
+    # Verificar planilha BI
     checks['planilha_existe'] = os.path.exists(CAMINHO_PLANILHA)
     if not checks['planilha_existe']:
-        raise ValidationError(f"Planilha não encontrada: {CAMINHO_PLANILHA}")
+        raise ValidationError(f"Planilha BI não encontrada: {CAMINHO_PLANILHA}")
+
+    # Verificar mapeamento PDF
+    checks['pdf_mapping_existe'] = os.path.exists(CAMINHO_PDF_MAPPING)
+    if not checks['pdf_mapping_existe']:
+        raise ValidationError(f"Mapeamento PDF não encontrado: {CAMINHO_PDF_MAPPING}")
 
     # Verificar ANEXO_II
     checks['anexo2_carregado'] = len(ANEXO_II) > 0
     if not checks['anexo2_carregado']:
         raise ValidationError("ANEXO_II não foi carregado corretamente")
 
-    print(f"  [OK] Planilha encontrada: {CAMINHO_PLANILHA}")
+    print(f"  [OK] Planilha BI encontrada: {CAMINHO_PLANILHA}")
+    print(f"  [OK] Mapeamento PDF encontrado: {CAMINHO_PDF_MAPPING}")
     print(f"  [OK] ANEXO_II carregado: {len(ANEXO_II)} códigos")
 
     # Verificar LOTACAO_POR_CODIGO
@@ -233,24 +242,68 @@ def carregar_e_agregar_planilha(caminho_excel):
     # Filtrar linhas onde LR_Efet == "-"
     df_clean = df[df['LR_Efet'] != '-'].copy()
 
-    # Converter LR_Efet para numérico
+    # Converter LR_Efet e LP Unid Jud para numérico
     df_clean['LR_Efet_num'] = pd.to_numeric(df_clean['LR_Efet'], errors='coerce')
+    df_clean['LP_Unid_Jud_num'] = pd.to_numeric(df_clean['LP Unid Jud'], errors='coerce')
 
-    # Remover NaN
+    # Remover NaN de LR_Efet
     df_clean = df_clean.dropna(subset=['LR_Efet_num'])
 
     print(f"  [OK] {len(df_clean)} linhas válidas após filtrar valores '-' e inválidos")
 
-    # Agrupar por (Comarca, Unidade Judicial) e somar LR_Efet
-    df_agregado = df_clean.groupby(['Comarca', 'Unidade Judicial'])['LR_Efet_num'].sum().reset_index()
-    df_agregado.rename(columns={'LR_Efet_num': 'LR_Efet_Total'}, inplace=True)
+    # Agrupar por (Comarca, Unidade Judicial) e somar LR_Efet + pegar max de LP
+    df_agregado = df_clean.groupby(['Comarca', 'Unidade Judicial']).agg({
+        'LR_Efet_num': 'sum',
+        'LP_Unid_Jud_num': 'max'  # Pegar o máximo (geralmente é o mesmo valor)
+    }).reset_index()
+
+    df_agregado.rename(columns={
+        'LR_Efet_num': 'LR_Efet_Total',
+        'LP_Unid_Jud_num': 'LP_Total'
+    }, inplace=True)
 
     # Converter para int
     df_agregado['LR_Efet_Total'] = df_agregado['LR_Efet_Total'].astype(int)
+    df_agregado['LP_Total'] = df_agregado['LP_Total'].fillna(0).astype(int)  # Se NaN, usar 0
 
     print(f"  [OK] {len(df_agregado)} unidades únicas após agregação")
 
     return df_agregado
+
+def carregar_mapeamento_pdf(caminho_excel):
+    """
+    Carrega mapeamento PDF -> ANEXO_II com dados de lotação paradigma.
+
+    Returns:
+        Dict: {codigo_anexo2: {'paradigma': X, 'bal_direito': Y, 'tecnicos': Z, 'gab_efet': W}}
+    """
+    print(f"\nCarregando mapeamento PDF: {caminho_excel}")
+
+    # Carregar Excel
+    df = pd.read_excel(caminho_excel)
+
+    print(f"  [OK] {len(df)} unidades mapeadas carregadas")
+
+    # Verificar colunas necessárias
+    required_cols = ['codigo_anexo2', 'paradigma', 'bal_direito', 'tecnicos', 'gab_efet']
+    missing = [c for c in required_cols if c not in df.columns]
+    if missing:
+        raise ValidationError(f"Colunas faltando no mapeamento PDF: {missing}")
+
+    # Criar dicionário de paradigma por código
+    paradigma_dict = {}
+    for _, row in df.iterrows():
+        codigo = row['codigo_anexo2']
+        paradigma_dict[codigo] = {
+            'paradigma': int(row['paradigma']),
+            'bal_direito': int(row['bal_direito']),
+            'tecnicos': int(row['tecnicos']),
+            'gab_efet': int(row['gab_efet'])
+        }
+
+    print(f"  [OK] {len(paradigma_dict)} códigos com dados de paradigma do PDF")
+
+    return paradigma_dict
 
 def calcular_status(lotacao_real, lotacao_paradigma):
     """Calcula status da unidade baseado na diferença."""
@@ -263,9 +316,13 @@ def calcular_status(lotacao_real, lotacao_paradigma):
     else:
         return "DEFICITÁRIA"
 
-def processar_atualizacao(df_planilha):
+def processar_atualizacao(df_planilha, paradigma_dict):
     """
     Lógica principal de atualização.
+
+    Args:
+        df_planilha: DataFrame com lotação real (BI.xlsx)
+        paradigma_dict: Dict com lotação paradigma (PDF)
 
     Returns:
         (novos_dados, estatisticas, divergencias, nao_mapeados, fuzzy_matches)
@@ -301,7 +358,7 @@ def processar_atualizacao(df_planilha):
     nao_mapeados = []
     fuzzy_matches = []
 
-    # Processar cada linha da planilha
+    # Processar cada linha da planilha (para lotação REAL)
     for idx, row in df_planilha.iterrows():
         comarca = row['Comarca']
         unidade = row['Unidade Judicial']
@@ -336,20 +393,32 @@ def processar_atualizacao(df_planilha):
         # Processar código encontrado
         codigos_atualizados.add(codigo)
 
+        # Obter paradigma do PDF (se disponível) ou manter atual
+        if codigo in paradigma_dict:
+            lp_paradigma = paradigma_dict[codigo]['paradigma']
+        elif codigo in LOTACAO_POR_CODIGO:
+            lp_paradigma = LOTACAO_POR_CODIGO[codigo]['lotacao_paradigma']
+        else:
+            lp_paradigma = 0  # Nova unidade sem paradigma no PDF
+
         # Verificar se código existe em LOTACAO_POR_CODIGO
         if codigo in LOTACAO_POR_CODIGO:
             dados_atuais = LOTACAO_POR_CODIGO[codigo]
             lotacao_antiga = dados_atuais['lotacao_real']
+            paradigma_antigo = dados_atuais['lotacao_paradigma']
 
             # Registrar divergência se houver diferença
-            if lotacao_antiga != lr_efet:
+            if lotacao_antiga != lr_efet or paradigma_antigo != lp_paradigma:
                 divergencias.append({
                     'codigo': codigo,
                     'comarca': comarca,
                     'unidade': unidade,
-                    'planilha': lr_efet,
+                    'planilha_real': lr_efet,
+                    'pdf_paradigma': lp_paradigma,
                     'lotacao_atual': lotacao_antiga,
-                    'diferenca': lr_efet - lotacao_antiga,
+                    'paradigma_atual': paradigma_antigo,
+                    'diferenca_real': lr_efet - lotacao_antiga,
+                    'diferenca_paradigma': lp_paradigma - paradigma_antigo,
                     'match_type': match_type
                 })
 
@@ -357,25 +426,60 @@ def processar_atualizacao(df_planilha):
             novos_dados[codigo] = {
                 'comarca': ANEXO_II[codigo]['comarca'],  # Usar nome oficial do ANEXO_II
                 'unidade': ANEXO_II[codigo]['unidade'],  # Usar nome oficial do ANEXO_II
-                'lotacao_real': lr_efet,  # ATUALIZADO
-                'lotacao_paradigma': dados_atuais['lotacao_paradigma'],  # MANTIDO
-                'diferenca': lr_efet - dados_atuais['lotacao_paradigma'],  # RECALCULADO
-                'status': calcular_status(lr_efet, dados_atuais['lotacao_paradigma'])  # RECALCULADO
+                'lotacao_real': lr_efet,  # ATUALIZADO do BI.xlsx
+                'lotacao_paradigma': lp_paradigma,  # ATUALIZADO do PDF ou mantido
+                'diferenca': lr_efet - lp_paradigma,  # RECALCULADO
+                'status': calcular_status(lr_efet, lp_paradigma)  # RECALCULADO
             }
 
             estatisticas['atualizados'] += 1
         else:
-            # Criar nova entrada (placeholder para lotacao_paradigma)
+            # Criar nova entrada
             novos_dados[codigo] = {
                 'comarca': ANEXO_II[codigo]['comarca'],
                 'unidade': ANEXO_II[codigo]['unidade'],
                 'lotacao_real': lr_efet,
-                'lotacao_paradigma': 0,  # Placeholder - precisa correção manual
-                'diferenca': lr_efet,
-                'status': calcular_status(lr_efet, 0)
+                'lotacao_paradigma': lp_paradigma,
+                'diferenca': lr_efet - lp_paradigma,
+                'status': calcular_status(lr_efet, lp_paradigma)
             }
 
             estatisticas['novos'] += 1
+
+    # Processar códigos que só estão no PDF (atualizar apenas paradigma)
+    for codigo, paradigma_info in paradigma_dict.items():
+        if codigo not in codigos_atualizados and codigo in LOTACAO_POR_CODIGO:
+            dados_atuais = LOTACAO_POR_CODIGO[codigo]
+            lp_paradigma = paradigma_info['paradigma']
+            lr_efet = dados_atuais['lotacao_real']  # Manter lotacao_real atual
+
+            # Atualizar apenas paradigma
+            novos_dados[codigo] = {
+                'comarca': dados_atuais['comarca'],
+                'unidade': dados_atuais['unidade'],
+                'lotacao_real': lr_efet,  # MANTIDO
+                'lotacao_paradigma': lp_paradigma,  # ATUALIZADO do PDF
+                'diferenca': lr_efet - lp_paradigma,
+                'status': calcular_status(lr_efet, lp_paradigma)
+            }
+
+            codigos_atualizados.add(codigo)
+            estatisticas['atualizados'] += 1
+
+            # Registrar divergência se houver mudança no paradigma
+            if dados_atuais['lotacao_paradigma'] != lp_paradigma:
+                divergencias.append({
+                    'codigo': codigo,
+                    'comarca': dados_atuais['comarca'],
+                    'unidade': dados_atuais['unidade'],
+                    'planilha_real': lr_efet,
+                    'pdf_paradigma': lp_paradigma,
+                    'lotacao_atual': lr_efet,
+                    'paradigma_atual': dados_atuais['lotacao_paradigma'],
+                    'diferenca_real': 0,
+                    'diferenca_paradigma': lp_paradigma - dados_atuais['lotacao_paradigma'],
+                    'match_type': 'pdf_only'
+                })
 
     # Processar códigos não atualizados (manter dados atuais)
     for codigo, dados_atuais in LOTACAO_POR_CODIGO.items():
@@ -463,14 +567,17 @@ def gerar_relatorio_completo(estatisticas, divergencias, nao_mapeados, fuzzy_mat
         relatorio.append("\n" + "=" * 80)
         relatorio.append(f"DIVERGÊNCIAS ENCONTRADAS ({len(divergencias)})")
         relatorio.append("=" * 80)
-        relatorio.append("\nCód.    | Planilha | Atual | Diff | Match | Comarca - Unidade")
+        relatorio.append("\nCod.    | Real P->A (d) | Parad P->A (d) | Match    | Comarca - Unidade")
         relatorio.append("-" * 80)
 
-        for div in sorted(divergencias, key=lambda x: abs(x['diferenca']), reverse=True)[:50]:
+        for div in sorted(divergencias, key=lambda x: abs(x.get('diferenca_real', 0)), reverse=True)[:50]:
             relatorio.append(
-                f"{div['codigo']:7} | {div['planilha']:8} | {div['lotacao_atual']:5} | "
-                f"{div['diferenca']:+4} | {div['match_type']:5} | "
-                f"{div['comarca']} - {div['unidade'][:40]}"
+                f"{div['codigo']:7} | {div['planilha_real']:3}->{div['lotacao_atual']:3} "
+                f"({div['diferenca_real']:+2}) | "
+                f"{div['pdf_paradigma']:3}->{div['paradigma_atual']:3} "
+                f"({div['diferenca_paradigma']:+2}) | "
+                f"{div['match_type']:8} | "
+                f"{div['comarca']} - {div['unidade'][:30]}"
             )
 
         if len(divergencias) > 50:
@@ -573,37 +680,42 @@ def main():
     print("SCRIPT DE CORREÇÃO DE DADOS DE LOTAÇÃO")
     print("=" * 80)
     print(f"\nModo: {'DRY-RUN (sem alterações)' if args.dry_run else 'PRODUÇÃO (vai sobrescrever)'}")
-    print(f"Planilha: {CAMINHO_PLANILHA}")
+    print(f"Planilha BI (Lotação REAL): {CAMINHO_PLANILHA}")
+    print(f"Mapeamento PDF (Lotação PARADIGMA): {CAMINHO_PDF_MAPPING}")
     print(f"Arquivo saída: {args.output}")
 
     try:
         # 1. Validar dados de entrada
-        print("\n[1/7] Validando dados de entrada...")
+        print("\n[1/8] Validando dados de entrada...")
         validar_dados_entrada()
 
-        # 2. Carregar e agregar planilha
-        print("\n[2/7] Carregando e agregando planilha...")
+        # 2. Carregar e agregar planilha (lotação REAL)
+        print("\n[2/8] Carregando e agregando planilha BI (lotação REAL)...")
         df_agregado = carregar_e_agregar_planilha(CAMINHO_PLANILHA)
 
-        # 3. Processar atualização
-        print("\n[3/7] Processando matching e atualização...")
-        novos_dados, estatisticas, divergencias, nao_mapeados, fuzzy_matches = processar_atualizacao(df_agregado)
+        # 3. Carregar mapeamento PDF (lotação PARADIGMA)
+        print("\n[3/8] Carregando mapeamento PDF (lotação PARADIGMA)...")
+        paradigma_dict = carregar_mapeamento_pdf(CAMINHO_PDF_MAPPING)
 
-        # 4. Gerar LOTACAO_COMPLETA
-        print("\n[4/7] Gerando LOTACAO_COMPLETA...")
+        # 4. Processar atualização
+        print("\n[4/8] Processando matching e atualização...")
+        novos_dados, estatisticas, divergencias, nao_mapeados, fuzzy_matches = processar_atualizacao(df_agregado, paradigma_dict)
+
+        # 5. Gerar LOTACAO_COMPLETA
+        print("\n[5/8] Gerando LOTACAO_COMPLETA...")
         lotacao_completa = gerar_lotacao_completa(novos_dados)
         print(f"  [OK] {len(lotacao_completa)} entradas (100% sincronizado)")
 
-        # 5. Validar dados de saída
-        print("\n[5/7] Validando dados de saída...")
+        # 6. Validar dados de saída
+        print("\n[6/8] Validando dados de saída...")
         warnings = validar_dados_saida(novos_dados, lotacao_completa)
         if warnings:
             print(f"  [AVISO] {len(warnings)} avisos")
             for w in warnings[:5]:  # Mostrar apenas primeiros 5
                 print(f"    - {w}")
 
-        # 6. Gerar relatório
-        print("\n[6/7] Gerando relatório...")
+        # 7. Gerar relatório
+        print("\n[7/8] Gerando relatório...")
         relatorio = gerar_relatorio_completo(estatisticas, divergencias, nao_mapeados, fuzzy_matches, warnings)
 
         # Salvar relatório
@@ -614,9 +726,9 @@ def main():
             f.write(relatorio)
         print(f"  [OK] Relatório salvo: {arquivo_relatorio}")
 
-        # 7. Backup e sobrescrita
+        # 8. Backup e sobrescrita
         if not args.dry_run:
-            print("\n[7/7] Criando backup e sobrescrevendo arquivo...")
+            print("\n[8/8] Criando backup e sobrescrevendo arquivo...")
 
             # Backup
             if os.path.exists(args.output):
@@ -641,7 +753,7 @@ def main():
                 print(f"\n[ATENCAO] {len(fuzzy_matches)} fuzzy matches foram aplicados.")
                 print(f"    Revise o relatório para verificar se estão corretos!")
         else:
-            print("\n[7/7] MODO DRY-RUN - Nenhum arquivo foi modificado")
+            print("\n[8/8] MODO DRY-RUN - Nenhum arquivo foi modificado")
             print("\n" + "=" * 80)
             print("SIMULAÇÃO CONCLUÍDA")
             print("=" * 80)
