@@ -1,12 +1,17 @@
 """
 Dados de Lotação Paradigma - TJPR
-Atualizado em: 05/12/2025 11:19:06
-Fonte: Mesclagem de tabelabi.xlsx + dados anteriores
+Atualizado em: 05/12/2025 11:29:58
+Fonte: Mesclagem de tabelabi.xlsx + dados anteriores + correções manuais
 
 Regras de mesclagem:
   - Unidades encontradas no tabelabi.xlsx: dados atualizados
-  - Secretarias de Direção: dados anteriores mantidos (não estão no BI)
   - Unidades não encontradas no tabelabi.xlsx: dados anteriores mantidos
+  - Correções manuais aplicadas: 4 unidades remapeadas
+
+Correções aplicadas:
+  - Cascavel: 4ª Vara Cível (A2-059)
+  - Curitiba: 24ª Vara Cível (A2-110), 25ª Vara Cível (A2-111)
+  - Ponta Grossa: 1ª Vara Cível (A2-332)
 
 Fórmulas (para dados do tabelabi.xlsx):
   - Lotação Paradigma = Analistas + Técnicos + Servidores Efetivos Gabinete (paradigma)
@@ -474,10 +479,10 @@ LOTACAO_POR_CODIGO = {
     "A2-059": {
         "comarca": "Cascavel",
         "unidade": "4ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 7,
-        "lotacao_paradigma": 0,
-        "diferenca": 7,
-        "status": "SUPERAVITÁRIA",
+        "lotacao_real": 0,
+        "lotacao_paradigma": 7,
+        "diferenca": -7,
+        "status": "DEFICITÁRIA",
     },
     "A2-060": {
         "comarca": "CASCAVEL",
@@ -882,18 +887,18 @@ LOTACAO_POR_CODIGO = {
     "A2-110": {
         "comarca": "Curitiba",
         "unidade": "24ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 7,
-        "lotacao_paradigma": 0,
-        "diferenca": 7,
-        "status": "SUPERAVITÁRIA",
+        "lotacao_real": 0,
+        "lotacao_paradigma": 8,
+        "diferenca": -8,
+        "status": "DEFICITÁRIA",
     },
     "A2-111": {
         "comarca": "Curitiba",
         "unidade": "25ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 7,
-        "lotacao_paradigma": 0,
-        "diferenca": 7,
-        "status": "SUPERAVITÁRIA",
+        "lotacao_real": 0,
+        "lotacao_paradigma": 8,
+        "diferenca": -8,
+        "status": "DEFICITÁRIA",
     },
     "A2-112": {
         "comarca": "Curitiba",
@@ -2642,10 +2647,10 @@ LOTACAO_POR_CODIGO = {
     "A2-332": {
         "comarca": "Ponta Grossa",
         "unidade": "1ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 6,
-        "lotacao_paradigma": 0,
-        "diferenca": 6,
-        "status": "SUPERAVITÁRIA",
+        "lotacao_real": 0,
+        "lotacao_paradigma": 7,
+        "diferenca": -7,
+        "status": "DEFICITÁRIA",
     },
     "A2-333": {
         "comarca": "PONTA GROSSA",
@@ -3920,10 +3925,10 @@ LOTACAO_COMPLETA = [
         "codigo": "A2-059",
         "comarca": "Cascavel",
         "unidade": "4ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 7,
-        "lotacao_paradigma": 0,
-        "diferenca": 7,
-        "status": "SUPERAVITÁRIA",
+        "lotacao_real": 0,
+        "lotacao_paradigma": 7,
+        "diferenca": -7,
+        "status": "DEFICITÁRIA",
     },
     {
         "codigo": "A2-060",
@@ -4379,19 +4384,19 @@ LOTACAO_COMPLETA = [
         "codigo": "A2-110",
         "comarca": "Curitiba",
         "unidade": "24ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 7,
-        "lotacao_paradigma": 0,
-        "diferenca": 7,
-        "status": "SUPERAVITÁRIA",
+        "lotacao_real": 0,
+        "lotacao_paradigma": 8,
+        "diferenca": -8,
+        "status": "DEFICITÁRIA",
     },
     {
         "codigo": "A2-111",
         "comarca": "Curitiba",
         "unidade": "25ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 7,
-        "lotacao_paradigma": 0,
-        "diferenca": 7,
-        "status": "SUPERAVITÁRIA",
+        "lotacao_real": 0,
+        "lotacao_paradigma": 8,
+        "diferenca": -8,
+        "status": "DEFICITÁRIA",
     },
     {
         "codigo": "A2-112",
@@ -6359,10 +6364,10 @@ LOTACAO_COMPLETA = [
         "codigo": "A2-332",
         "comarca": "Ponta Grossa",
         "unidade": "1ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 6,
-        "lotacao_paradigma": 0,
-        "diferenca": 6,
-        "status": "SUPERAVITÁRIA",
+        "lotacao_real": 0,
+        "lotacao_paradigma": 7,
+        "diferenca": -7,
+        "status": "DEFICITÁRIA",
     },
     {
         "codigo": "A2-333",
