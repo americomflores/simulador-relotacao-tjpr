@@ -1,8 +1,7 @@
 """
 Dados de Lotação Paradigma - TJPR
-Atualizado em: 05/12/2025 08:37:31
-Fonte: Tabela de Lotação de Pessoal das Unidades - BI.xlsx
-Script: scripts/corrigir_lotacao.py
+Atualizado em: 05/12/2025 08:46:06
+Comarcas normalizadas para Title Case
 """
 
 # Mapeamento: Código Anexo II -> Dados de Lotação
@@ -240,7 +239,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-030": {
-        "comarca": "BANDEIRANTES",
+        "comarca": "Bandeirantes",
         "unidade": "2ª Vara Cível e da Fazenda Pública, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -264,7 +263,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-034": {
-        "comarca": "Bela Vista do Paraíso",
+        "comarca": "Bela Vista Do Paraíso",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -272,7 +271,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-035": {
-        "comarca": "Bocaiúva do Sul",
+        "comarca": "Bocaiúva Do Sul",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -320,7 +319,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-041": {
-        "comarca": "Campina da Lagoa",
+        "comarca": "Campina Da Lagoa",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -328,7 +327,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-042": {
-        "comarca": "Campina Grande do Sul",
+        "comarca": "Campina Grande Do Sul",
         "unidade": "VARA CÍVEL E DA FAZENDA PÚBLICA",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -336,7 +335,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-043": {
-        "comarca": "Campina Grande do Sul",
+        "comarca": "Campina Grande Do Sul",
         "unidade": "VARA CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -344,7 +343,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-044": {
-        "comarca": "Campina Grande do Sul",
+        "comarca": "Campina Grande Do Sul",
         "unidade": "VARA DE FAMÍLIA E SUCESSÕES, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL, JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA E DA INFÂNCIA E JUVENTUDE",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
@@ -424,7 +423,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-054": {
-        "comarca": "Cândido de Abreu",
+        "comarca": "Cândido De Abreu",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -488,7 +487,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-062": {
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 0,
         "lotacao_paradigma": 8,
@@ -616,7 +615,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-078": {
-        "comarca": "Centenário do Sul",
+        "comarca": "Centenário Do Sul",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -808,7 +807,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-102": {
-        "comarca": "CRUZEIRO DO OESTE",
+        "comarca": "Cruzeiro Do Oeste",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
@@ -816,7 +815,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-103": {
-        "comarca": "Cruzeiro do Oeste",
+        "comarca": "Cruzeiro Do Oeste",
         "unidade": "VARA DE EXECUÇÕES PENAIS E CORREGEDORIA DOS PRESÍDIOS",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -848,7 +847,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-107": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "15ª Vara Cível",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
@@ -1232,7 +1231,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-156": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara de Execuções Penais, Medidas Alternativas e Corregedoria dos Presídios",
         "lotacao_real": 1,
         "lotacao_paradigma": 22,
@@ -1344,7 +1343,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-170": {
-        "comarca": "Formosa do Oeste",
+        "comarca": "Formosa Do Oeste",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -1352,7 +1351,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-171": {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "1ª VARA CRIMINAL",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1360,7 +1359,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-172": {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "2ª VARA CRIMINAL",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1368,7 +1367,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-173": {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "3ª VARA CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1376,7 +1375,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-174": {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "JUIZADO DE VIOLÊNCIA DOMÉSTICA E FAMILIAR CONTRA A MULHER, VARA DE CRIMES CONTRA CRIANÇAS, ADOLESCENTES E IDOSOS",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
@@ -1384,7 +1383,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-175": {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "2ª VARA DE FAMÍLIA E SUCESSÕES E ACIDENTES DO TRABALHO",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -1392,7 +1391,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-176": {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "VARA DA INFÂNCIA E JUVENTUDE",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -1400,7 +1399,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-177": {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "VARA DE EXECUÇÕES PENAIS E CORREGEDORIA DOS PRESÍDIOS",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
@@ -1408,7 +1407,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-178": {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "1ª VARA DA FAZENDA PÚBLICA",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1416,7 +1415,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-179": {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "2ª VARA DA FAZENDA PÚBLICA",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1424,7 +1423,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-180": {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "1º JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1432,7 +1431,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-181": {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "2º JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1440,7 +1439,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-182": {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "3º JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1784,7 +1783,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-225": {
-        "comarca": "Jandaia do Sul",
+        "comarca": "Jandaia Do Sul",
         "unidade": "VARA CÍVEL, DA FAZENDA PÚBLICA, ACIDENTES DO TRABALHO, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL, JUIZADO ESPECIAL CÍVEL E JUIZADO ESPECIAL DA FAZENDA PÚBLICA",
         "lotacao_real": 8,
         "lotacao_paradigma": 10,
@@ -1792,7 +1791,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-226": {
-        "comarca": "Jandaia do Sul",
+        "comarca": "Jandaia Do Sul",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CRIMINAL",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -1824,7 +1823,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-230": {
-        "comarca": "Laranjeiras do Sul",
+        "comarca": "Laranjeiras Do Sul",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -1888,7 +1887,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-239": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "Vara da Infância e da Juventude",
         "lotacao_real": 7,
         "lotacao_paradigma": 6,
@@ -2080,7 +2079,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-263": {
-        "comarca": "Marilândia do Sul",
+        "comarca": "Marilândia Do Sul",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 6,
         "lotacao_paradigma": 9,
@@ -2392,7 +2391,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-302": {
-        "comarca": "Paraíso do Norte",
+        "comarca": "Paraíso Do Norte",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2584,7 +2583,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-326": {
-        "comarca": "Piraí do Sul",
+        "comarca": "Piraí Do Sul",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 8,
@@ -2624,7 +2623,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-331": {
-        "comarca": "PITANGA",
+        "comarca": "Pitanga",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -2648,7 +2647,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-334": {
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 0,
         "lotacao_paradigma": 13,
@@ -2728,7 +2727,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-344": {
-        "comarca": "Pontal do Paraná",
+        "comarca": "Pontal Do Paraná",
         "unidade": "VARA CÍVEL, DA FAZENDA PÚBLICA, ACIDENTES DO TRABALHO, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL E JUIZADO ESPECIAL DA FAZENDA PÚBLICA",
         "lotacao_real": 6,
         "lotacao_paradigma": 8,
@@ -2736,7 +2735,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-345": {
-        "comarca": "Pontal do Paraná",
+        "comarca": "Pontal Do Paraná",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CÍVEL E JUIZADO ESPECIAL CRIMINAL",
         "lotacao_real": 6,
         "lotacao_paradigma": 10,
@@ -2760,7 +2759,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-348": {
-        "comarca": "Primeiro de Maio",
+        "comarca": "Primeiro De Maio",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2792,7 +2791,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-352": {
-        "comarca": "Quedas do Iguaçu",
+        "comarca": "Quedas Do Iguaçu",
         "unidade": "VARA CÍVEL, DA FAZENDA PÚBLICA, ACIDENTES DO TRABALHO, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL, JUIZADO ESPECIAL CÍVEL E JUIZADO ESPECIAL DA FAZENDA PÚBLICA",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
@@ -2800,7 +2799,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-353": {
-        "comarca": "Quedas do Iguaçu",
+        "comarca": "Quedas Do Iguaçu",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CRIMINAL",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
@@ -2840,7 +2839,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-358": {
-        "comarca": "Ribeirão do Pinhal",
+        "comarca": "Ribeirão Do Pinhal",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -2848,7 +2847,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-359": {
-        "comarca": "Rio Branco do Sul",
+        "comarca": "Rio Branco Do Sul",
         "unidade": "VARA CRIMINAL E INFÂNCIA E JUVENTUDE",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
@@ -2856,7 +2855,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-360": {
-        "comarca": "RIO BRANCO DO SUL",
+        "comarca": "Rio Branco Do Sul",
         "unidade": "Juizado Especial Cível, Criminal, da Fazenda Pública e Família e Sucessões",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -2888,7 +2887,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-365": {
-        "comarca": "Salto do Lontra",
+        "comarca": "Salto Do Lontra",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -2912,7 +2911,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-368": {
-        "comarca": "Santa Isabel do Ivaí",
+        "comarca": "Santa Isabel Do Ivaí",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
@@ -2928,7 +2927,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-370": {
-        "comarca": "Santo Antônio da Platina",
+        "comarca": "Santo Antônio Da Platina",
         "unidade": "VARA CRIMINAL, INFÂNCIA E JUVENTUDE E FAMÍLIA E SUCESSÕES",
         "lotacao_real": 6,
         "lotacao_paradigma": 9,
@@ -2936,7 +2935,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-371": {
-        "comarca": "Santo Antônio da Platina",
+        "comarca": "Santo Antônio Da Platina",
         "unidade": "JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
@@ -2944,7 +2943,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-372": {
-        "comarca": "Santo Antônio do Sudoeste",
+        "comarca": "Santo Antônio Do Sudoeste",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
@@ -2952,7 +2951,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-373": {
-        "comarca": "São Jerônimo da Serra",
+        "comarca": "São Jerônimo Da Serra",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 3,
         "lotacao_paradigma": 7,
@@ -2968,7 +2967,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-375": {
-        "comarca": "São João do Ivaí",
+        "comarca": "São João Do Ivaí",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2976,7 +2975,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-376": {
-        "comarca": "São João do Triunfo",
+        "comarca": "São João Do Triunfo",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2984,7 +2983,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-377": {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "3ª VARA CÍVEL",
         "lotacao_real": 7,
         "lotacao_paradigma": 11,
@@ -2992,7 +2991,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-378": {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "1ª VARA CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -3000,7 +2999,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-379": {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "2ª VARA CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 8,
@@ -3008,7 +3007,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-380": {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "VARA DA INFÂNCIA E JUVENTUDE",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -3016,7 +3015,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-381": {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "VARA DE FAMÍLIA E SUCESSÕES, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
@@ -3024,7 +3023,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-382": {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "VARA DA FAZENDA PÚBLICA",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
@@ -3032,7 +3031,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-383": {
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José Dos Pinhais",
         "unidade": "1º Juizado Especial Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3040,7 +3039,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-384": {
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José Dos Pinhais",
         "unidade": "2º Juizado Especial Cível e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -3048,7 +3047,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-385": {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "VARA DESCENTRALIZADA DO AFONSO PENA",
         "lotacao_real": 6,
         "lotacao_paradigma": 9,
@@ -3056,7 +3055,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-386": {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "JUIZADO DE VIOLÊNCIA DOMÉSTICA E FAMILIAR CONTRA A MULHER, VARA DE CRIMES CONTRA CRIANÇAS, ADOLESCENTES E IDOSOS",
         "lotacao_real": 8,
         "lotacao_paradigma": 11,
@@ -3064,7 +3063,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-387": {
-        "comarca": "São Mateus do Sul",
+        "comarca": "São Mateus Do Sul",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CRIMINAL",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -3072,7 +3071,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-388": {
-        "comarca": "São Miguel do Iguaçu",
+        "comarca": "São Miguel Do Iguaçu",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -3320,7 +3319,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-419": {
-        "comarca": "União da Vitória",
+        "comarca": "União Da Vitória",
         "unidade": "2ª VARA CÍVEL E DA FAZENDA PÚBLICA",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
@@ -3328,7 +3327,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-420": {
-        "comarca": "União da Vitória",
+        "comarca": "União Da Vitória",
         "unidade": "1ª VARA CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -3336,7 +3335,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-421": {
-        "comarca": "União da Vitória",
+        "comarca": "União Da Vitória",
         "unidade": "2ª VARA CRIMINAL",
         "lotacao_real": 3,
         "lotacao_paradigma": 8,
@@ -3344,7 +3343,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-422": {
-        "comarca": "União da Vitória",
+        "comarca": "União Da Vitória",
         "unidade": "VARA DE FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE, ACIDENTES DO TRABALHO, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL",
         "lotacao_real": 9,
         "lotacao_paradigma": 9,
@@ -3352,7 +3351,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-423": {
-        "comarca": "União da Vitória",
+        "comarca": "União Da Vitória",
         "unidade": "JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -3402,7 +3401,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-001"
     },
     {
         "comarca": "Almirante Tamandaré",
@@ -3411,7 +3409,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-002"
     },
     {
         "comarca": "Almirante Tamandaré",
@@ -3420,7 +3417,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-003"
     },
     {
         "comarca": "Almirante Tamandaré",
@@ -3429,7 +3425,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-004"
     },
     {
         "comarca": "Almirante Tamandaré",
@@ -3438,7 +3433,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 11,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-005"
     },
     {
         "comarca": "Alto Paraná",
@@ -3447,7 +3441,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-006"
     },
     {
         "comarca": "Alto Piquiri",
@@ -3456,7 +3449,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-007"
     },
     {
         "comarca": "Altônia",
@@ -3465,7 +3457,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-008"
     },
     {
         "comarca": "Ampére",
@@ -3474,7 +3465,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-009"
     },
     {
         "comarca": "Andirá",
@@ -3483,7 +3473,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-010"
     },
     {
         "comarca": "Antonina",
@@ -3492,7 +3481,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-011"
     },
     {
         "comarca": "Antonina",
@@ -3501,7 +3489,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-012"
     },
     {
         "comarca": "Apucarana",
@@ -3510,7 +3497,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-013"
     },
     {
         "comarca": "Apucarana",
@@ -3519,7 +3505,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-014"
     },
     {
         "comarca": "Apucarana",
@@ -3528,7 +3513,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-015"
     },
     {
         "comarca": "Apucarana",
@@ -3537,7 +3521,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-016"
     },
     {
         "comarca": "Arapongas",
@@ -3546,7 +3529,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-017"
     },
     {
         "comarca": "Arapongas",
@@ -3555,7 +3537,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-018"
     },
     {
         "comarca": "Arapongas",
@@ -3564,7 +3545,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-019"
     },
     {
         "comarca": "Arapongas",
@@ -3573,7 +3553,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-020"
     },
     {
         "comarca": "Arapongas",
@@ -3582,7 +3561,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-021"
     },
     {
         "comarca": "Arapoti",
@@ -3591,7 +3569,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-022"
     },
     {
         "comarca": "Araucária",
@@ -3600,7 +3577,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-023"
     },
     {
         "comarca": "Araucária",
@@ -3609,7 +3585,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 11,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-024"
     },
     {
         "comarca": "Araucária",
@@ -3618,7 +3593,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-025"
     },
     {
         "comarca": "Araucária",
@@ -3627,7 +3601,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-026"
     },
     {
         "comarca": "Assaí",
@@ -3636,7 +3609,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-027"
     },
     {
         "comarca": "Assis Chateaubriand",
@@ -3645,7 +3617,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-028"
     },
     {
         "comarca": "Astorga",
@@ -3654,16 +3625,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-029"
     },
     {
-        "comarca": "BANDEIRANTES",
+        "comarca": "Bandeirantes",
         "unidade": "2ª Vara Cível e da Fazenda Pública, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-030"
     },
     {
         "comarca": "Barbosa Ferraz",
@@ -3672,7 +3641,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-032"
     },
     {
         "comarca": "Barracão",
@@ -3681,25 +3649,22 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-033"
     },
     {
-        "comarca": "Bela Vista do Paraíso",
+        "comarca": "Bela Vista Do Paraíso",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-034"
     },
     {
-        "comarca": "Bocaiúva do Sul",
+        "comarca": "Bocaiúva Do Sul",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-035"
     },
     {
         "comarca": "Cambará",
@@ -3708,7 +3673,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-036"
     },
     {
         "comarca": "Cambé",
@@ -3717,7 +3681,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-037"
     },
     {
         "comarca": "Cambé",
@@ -3726,7 +3689,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-038"
     },
     {
         "comarca": "Cambé",
@@ -3735,7 +3697,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-039"
     },
     {
         "comarca": "Cambé",
@@ -3744,43 +3705,38 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-040"
     },
     {
-        "comarca": "Campina da Lagoa",
+        "comarca": "Campina Da Lagoa",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-041"
     },
     {
-        "comarca": "Campina Grande do Sul",
+        "comarca": "Campina Grande Do Sul",
         "unidade": "VARA CÍVEL E DA FAZENDA PÚBLICA",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-042"
     },
     {
-        "comarca": "Campina Grande do Sul",
+        "comarca": "Campina Grande Do Sul",
         "unidade": "VARA CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-043"
     },
     {
-        "comarca": "Campina Grande do Sul",
+        "comarca": "Campina Grande Do Sul",
         "unidade": "VARA DE FAMÍLIA E SUCESSÕES, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL, JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA E DA INFÂNCIA E JUVENTUDE",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-044"
     },
     {
         "comarca": "Campo Largo",
@@ -3789,7 +3745,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-045"
     },
     {
         "comarca": "Campo Largo",
@@ -3798,7 +3753,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-046"
     },
     {
         "comarca": "Campo Largo",
@@ -3807,7 +3761,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-047"
     },
     {
         "comarca": "Campo Largo",
@@ -3816,7 +3769,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-048"
     },
     {
         "comarca": "Campo Largo",
@@ -3825,7 +3777,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-049"
     },
     {
         "comarca": "Campo Mourão",
@@ -3834,7 +3785,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-050"
     },
     {
         "comarca": "Campo Mourão",
@@ -3843,7 +3793,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-051"
     },
     {
         "comarca": "Campo Mourão",
@@ -3852,7 +3801,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-052"
     },
     {
         "comarca": "Campo Mourão",
@@ -3861,16 +3809,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-053"
     },
     {
-        "comarca": "Cândido de Abreu",
+        "comarca": "Cândido De Abreu",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-054"
     },
     {
         "comarca": "Cantagalo",
@@ -3879,7 +3825,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-055"
     },
     {
         "comarca": "Capanema",
@@ -3888,7 +3833,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 2,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-056"
     },
     {
         "comarca": "Capitão Leônidas Marques",
@@ -3897,7 +3841,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-057"
     },
     {
         "comarca": "Carlópolis",
@@ -3906,7 +3849,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-058"
     },
     {
         "comarca": "Cascavel",
@@ -3915,7 +3857,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 0,
         "diferenca": 7,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-059"
     },
     {
         "comarca": "Cascavel",
@@ -3924,7 +3865,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-060"
     },
     {
         "comarca": "Cascavel",
@@ -3933,16 +3873,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-061"
     },
     {
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 0,
         "lotacao_paradigma": 8,
         "diferenca": -8,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-062"
     },
     {
         "comarca": "Cascavel",
@@ -3951,7 +3889,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-063"
     },
     {
         "comarca": "Cascavel",
@@ -3960,7 +3897,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-064"
     },
     {
         "comarca": "Cascavel",
@@ -3969,7 +3905,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-065"
     },
     {
         "comarca": "Cascavel",
@@ -3978,7 +3913,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-066"
     },
     {
         "comarca": "Cascavel",
@@ -3987,7 +3921,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 13,
         "diferenca": -5,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-067"
     },
     {
         "comarca": "Cascavel",
@@ -3996,7 +3929,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-068"
     },
     {
         "comarca": "Cascavel",
@@ -4005,7 +3937,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-069"
     },
     {
         "comarca": "Cascavel",
@@ -4014,7 +3945,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-070"
     },
     {
         "comarca": "Cascavel",
@@ -4023,7 +3953,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-071"
     },
     {
         "comarca": "Cascavel",
@@ -4032,7 +3961,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-072"
     },
     {
         "comarca": "Cascavel",
@@ -4041,7 +3969,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-073"
     },
     {
         "comarca": "Castro",
@@ -4050,7 +3977,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-074"
     },
     {
         "comarca": "Castro",
@@ -4059,7 +3985,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-075"
     },
     {
         "comarca": "Castro",
@@ -4068,7 +3993,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-076"
     },
     {
         "comarca": "Catanduvas",
@@ -4077,16 +4001,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-077"
     },
     {
-        "comarca": "Centenário do Sul",
+        "comarca": "Centenário Do Sul",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-078"
     },
     {
         "comarca": "Cerro Azul",
@@ -4095,7 +4017,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-079"
     },
     {
         "comarca": "Chopinzinho",
@@ -4104,7 +4025,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-080"
     },
     {
         "comarca": "Cianorte",
@@ -4113,7 +4033,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-081"
     },
     {
         "comarca": "Cianorte",
@@ -4122,7 +4041,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-082"
     },
     {
         "comarca": "Cianorte",
@@ -4131,7 +4049,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-083"
     },
     {
         "comarca": "Cianorte",
@@ -4140,7 +4057,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-084"
     },
     {
         "comarca": "Cidade Gaúcha",
@@ -4149,7 +4065,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-085"
     },
     {
         "comarca": "Clevelândia",
@@ -4158,7 +4073,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-086"
     },
     {
         "comarca": "Colombo",
@@ -4167,7 +4081,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-087"
     },
     {
         "comarca": "Colombo",
@@ -4176,7 +4089,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-088"
     },
     {
         "comarca": "Colombo",
@@ -4185,7 +4097,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -5,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-089"
     },
     {
         "comarca": "Colombo",
@@ -4194,7 +4105,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-090"
     },
     {
         "comarca": "Colombo",
@@ -4203,7 +4113,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-091"
     },
     {
         "comarca": "Colombo",
@@ -4212,7 +4121,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-092"
     },
     {
         "comarca": "Colombo",
@@ -4221,7 +4129,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-093"
     },
     {
         "comarca": "Colorado",
@@ -4230,7 +4137,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-094"
     },
     {
         "comarca": "Congonhinhas",
@@ -4239,7 +4145,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-095"
     },
     {
         "comarca": "Corbélia",
@@ -4248,7 +4153,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-096"
     },
     {
         "comarca": "Cornélio Procópio",
@@ -4257,7 +4161,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-097"
     },
     {
         "comarca": "Cornélio Procópio",
@@ -4266,7 +4169,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-098"
     },
     {
         "comarca": "Cornélio Procópio",
@@ -4275,7 +4177,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-099"
     },
     {
         "comarca": "Cornélio Procópio",
@@ -4284,7 +4185,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-100"
     },
     {
         "comarca": "Coronel Vivida",
@@ -4293,25 +4193,22 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-101"
     },
     {
-        "comarca": "CRUZEIRO DO OESTE",
+        "comarca": "Cruzeiro Do Oeste",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-102"
     },
     {
-        "comarca": "Cruzeiro do Oeste",
+        "comarca": "Cruzeiro Do Oeste",
         "unidade": "VARA DE EXECUÇÕES PENAIS E CORREGEDORIA DOS PRESÍDIOS",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-103"
     },
     {
         "comarca": "Curitiba",
@@ -4320,7 +4217,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-104"
     },
     {
         "comarca": "Curitiba",
@@ -4329,7 +4225,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-105"
     },
     {
         "comarca": "Curitiba",
@@ -4338,16 +4233,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-106"
     },
     {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "15ª Vara Cível",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-107"
     },
     {
         "comarca": "Curitiba",
@@ -4356,7 +4249,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-108"
     },
     {
         "comarca": "Curitiba",
@@ -4365,7 +4257,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-109"
     },
     {
         "comarca": "Curitiba",
@@ -4374,7 +4265,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 0,
         "diferenca": 7,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-110"
     },
     {
         "comarca": "Curitiba",
@@ -4383,7 +4273,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 0,
         "diferenca": 7,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-111"
     },
     {
         "comarca": "Curitiba",
@@ -4392,7 +4281,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 0,
         "diferenca": 5,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-112"
     },
     {
         "comarca": "Curitiba",
@@ -4401,7 +4289,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 0,
         "diferenca": 5,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-113"
     },
     {
         "comarca": "Curitiba",
@@ -4410,7 +4297,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 3,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-114"
     },
     {
         "comarca": "Curitiba",
@@ -4419,7 +4305,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-115"
     },
     {
         "comarca": "Curitiba",
@@ -4428,7 +4313,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-116"
     },
     {
         "comarca": "Curitiba",
@@ -4437,7 +4321,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-117"
     },
     {
         "comarca": "Curitiba",
@@ -4446,7 +4329,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-118"
     },
     {
         "comarca": "Curitiba",
@@ -4455,7 +4337,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-119"
     },
     {
         "comarca": "Curitiba",
@@ -4464,7 +4345,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-120"
     },
     {
         "comarca": "Curitiba",
@@ -4473,7 +4353,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 13,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-121"
     },
     {
         "comarca": "Curitiba",
@@ -4482,7 +4361,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-122"
     },
     {
         "comarca": "Curitiba",
@@ -4491,7 +4369,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-123"
     },
     {
         "comarca": "Curitiba",
@@ -4500,7 +4377,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-124"
     },
     {
         "comarca": "Curitiba",
@@ -4509,7 +4385,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-125"
     },
     {
         "comarca": "Curitiba",
@@ -4518,7 +4393,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-126"
     },
     {
         "comarca": "Curitiba",
@@ -4527,7 +4401,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-127"
     },
     {
         "comarca": "Curitiba",
@@ -4536,7 +4409,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-128"
     },
     {
         "comarca": "Curitiba",
@@ -4545,7 +4417,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 14,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-130"
     },
     {
         "comarca": "Curitiba",
@@ -4554,7 +4425,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-131"
     },
     {
         "comarca": "Curitiba",
@@ -4563,7 +4433,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-132"
     },
     {
         "comarca": "Curitiba",
@@ -4572,7 +4441,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-133"
     },
     {
         "comarca": "Curitiba",
@@ -4581,7 +4449,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-134"
     },
     {
         "comarca": "Curitiba",
@@ -4590,7 +4457,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 0,
         "diferenca": 6,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-135"
     },
     {
         "comarca": "Curitiba",
@@ -4599,7 +4465,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-136"
     },
     {
         "comarca": "Curitiba",
@@ -4608,7 +4473,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-137"
     },
     {
         "comarca": "Curitiba",
@@ -4617,7 +4481,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-138"
     },
     {
         "comarca": "Curitiba",
@@ -4626,7 +4489,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-139"
     },
     {
         "comarca": "Curitiba",
@@ -4635,7 +4497,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-140"
     },
     {
         "comarca": "Curitiba",
@@ -4644,7 +4505,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 11,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-141"
     },
     {
         "comarca": "Curitiba",
@@ -4653,7 +4513,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 3,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-142"
     },
     {
         "comarca": "Curitiba",
@@ -4662,7 +4521,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-143"
     },
     {
         "comarca": "Curitiba",
@@ -4671,7 +4529,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-144"
     },
     {
         "comarca": "Curitiba",
@@ -4680,7 +4537,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-145"
     },
     {
         "comarca": "Curitiba",
@@ -4689,7 +4545,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-146"
     },
     {
         "comarca": "Curitiba",
@@ -4698,7 +4553,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-147"
     },
     {
         "comarca": "Curitiba",
@@ -4707,7 +4561,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-148"
     },
     {
         "comarca": "Curitiba",
@@ -4716,7 +4569,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 11,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-149"
     },
     {
         "comarca": "Curitiba",
@@ -4725,7 +4577,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 14,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-150"
     },
     {
         "comarca": "Curitiba",
@@ -4734,7 +4585,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-151"
     },
     {
         "comarca": "Curitiba",
@@ -4743,7 +4593,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 14,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-152"
     },
     {
         "comarca": "Curitiba",
@@ -4752,7 +4601,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-153"
     },
     {
         "comarca": "Curitiba",
@@ -4761,7 +4609,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-154"
     },
     {
         "comarca": "Curitiba",
@@ -4770,16 +4617,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 14,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-155"
     },
     {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara de Execuções Penais, Medidas Alternativas e Corregedoria dos Presídios",
         "lotacao_real": 1,
         "lotacao_paradigma": 22,
         "diferenca": -21,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-156"
     },
     {
         "comarca": "Curitiba",
@@ -4788,7 +4633,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 0,
         "diferenca": 43,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-157"
     },
     {
         "comarca": "Curitiba",
@@ -4797,7 +4641,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 19,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-158"
     },
     {
         "comarca": "Curitiba",
@@ -4806,7 +4649,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 0,
         "diferenca": 31,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-159"
     },
     {
         "comarca": "Curitiba",
@@ -4815,7 +4657,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 0,
         "diferenca": 13,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-160"
     },
     {
         "comarca": "Curitiba",
@@ -4824,7 +4665,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 24,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-161"
     },
     {
         "comarca": "Curiúva",
@@ -4833,7 +4673,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-162"
     },
     {
         "comarca": "Dois Vizinhos",
@@ -4842,7 +4681,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-163"
     },
     {
         "comarca": "Engenheiro Beltrão",
@@ -4851,7 +4689,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-164"
     },
     {
         "comarca": "Faxinal",
@@ -4860,7 +4697,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-165"
     },
     {
         "comarca": "Fazenda Rio Grande",
@@ -4869,7 +4705,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -5,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-166"
     },
     {
         "comarca": "Fazenda Rio Grande",
@@ -4878,7 +4713,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -5,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-167"
     },
     {
         "comarca": "Fazenda Rio Grande",
@@ -4887,7 +4721,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-168"
     },
     {
         "comarca": "Fazenda Rio Grande",
@@ -4896,124 +4729,110 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-169"
     },
     {
-        "comarca": "Formosa do Oeste",
+        "comarca": "Formosa Do Oeste",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-170"
     },
     {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "1ª VARA CRIMINAL",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-171"
     },
     {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "2ª VARA CRIMINAL",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-172"
     },
     {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "3ª VARA CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-173"
     },
     {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "JUIZADO DE VIOLÊNCIA DOMÉSTICA E FAMILIAR CONTRA A MULHER, VARA DE CRIMES CONTRA CRIANÇAS, ADOLESCENTES E IDOSOS",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-174"
     },
     {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "2ª VARA DE FAMÍLIA E SUCESSÕES E ACIDENTES DO TRABALHO",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-175"
     },
     {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "VARA DA INFÂNCIA E JUVENTUDE",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-176"
     },
     {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "VARA DE EXECUÇÕES PENAIS E CORREGEDORIA DOS PRESÍDIOS",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-177"
     },
     {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "1ª VARA DA FAZENDA PÚBLICA",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-178"
     },
     {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "2ª VARA DA FAZENDA PÚBLICA",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-179"
     },
     {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "1º JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-180"
     },
     {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "2º JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-181"
     },
     {
-        "comarca": "Foz do Iguaçu",
+        "comarca": "Foz Do Iguaçu",
         "unidade": "3º JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-182"
     },
     {
         "comarca": "Francisco Beltrão",
@@ -5022,7 +4841,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-183"
     },
     {
         "comarca": "Francisco Beltrão",
@@ -5031,7 +4849,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 11,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-184"
     },
     {
         "comarca": "Francisco Beltrão",
@@ -5040,7 +4857,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-185"
     },
     {
         "comarca": "Francisco Beltrão",
@@ -5049,7 +4865,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-186"
     },
     {
         "comarca": "Francisco Beltrão",
@@ -5058,7 +4873,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-187"
     },
     {
         "comarca": "Goioerê",
@@ -5067,7 +4881,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-188"
     },
     {
         "comarca": "Goioerê",
@@ -5076,7 +4889,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-189"
     },
     {
         "comarca": "Grandes Rios",
@@ -5085,7 +4897,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-190"
     },
     {
         "comarca": "Guaíra",
@@ -5094,7 +4905,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-191"
     },
     {
         "comarca": "Guaíra",
@@ -5103,7 +4913,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-192"
     },
     {
         "comarca": "Guaraniaçu",
@@ -5112,7 +4921,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-193"
     },
     {
         "comarca": "Guarapuava",
@@ -5121,7 +4929,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-194"
     },
     {
         "comarca": "Guarapuava",
@@ -5130,7 +4937,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-195"
     },
     {
         "comarca": "Guarapuava",
@@ -5139,7 +4945,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-196"
     },
     {
         "comarca": "Guarapuava",
@@ -5148,7 +4953,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-197"
     },
     {
         "comarca": "Guarapuava",
@@ -5157,7 +4961,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-198"
     },
     {
         "comarca": "Guarapuava",
@@ -5166,7 +4969,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-199"
     },
     {
         "comarca": "Guarapuava",
@@ -5175,7 +4977,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-200"
     },
     {
         "comarca": "Guarapuava",
@@ -5184,7 +4985,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-201"
     },
     {
         "comarca": "Guarapuava",
@@ -5193,7 +4993,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-202"
     },
     {
         "comarca": "Guarapuava",
@@ -5202,7 +5001,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-203"
     },
     {
         "comarca": "Guaratuba",
@@ -5211,7 +5009,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-204"
     },
     {
         "comarca": "Ibaiti",
@@ -5220,7 +5017,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-205"
     },
     {
         "comarca": "Ibiporã",
@@ -5229,7 +5025,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-206"
     },
     {
         "comarca": "Ibiporã",
@@ -5238,7 +5033,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-207"
     },
     {
         "comarca": "Ibiporã",
@@ -5247,7 +5041,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-208"
     },
     {
         "comarca": "Icaraíma",
@@ -5256,7 +5049,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-209"
     },
     {
         "comarca": "Imbituva",
@@ -5265,7 +5057,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 11,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-210"
     },
     {
         "comarca": "Ipiranga",
@@ -5274,7 +5065,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-211"
     },
     {
         "comarca": "Iporã",
@@ -5283,7 +5073,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-212"
     },
     {
         "comarca": "Irati",
@@ -5292,7 +5081,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-213"
     },
     {
         "comarca": "Irati",
@@ -5301,7 +5089,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-214"
     },
     {
         "comarca": "Irati",
@@ -5310,7 +5097,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 0,
         "diferenca": 7,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-215"
     },
     {
         "comarca": "Iretama",
@@ -5319,7 +5105,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-216"
     },
     {
         "comarca": "Ivaiporã",
@@ -5328,7 +5113,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-217"
     },
     {
         "comarca": "Ivaiporã",
@@ -5337,7 +5121,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-218"
     },
     {
         "comarca": "Jacarezinho",
@@ -5346,7 +5129,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-219"
     },
     {
         "comarca": "Jacarezinho",
@@ -5355,7 +5137,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-220"
     },
     {
         "comarca": "Jacarezinho",
@@ -5364,7 +5145,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-221"
     },
     {
         "comarca": "Jacarezinho",
@@ -5373,7 +5153,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-222"
     },
     {
         "comarca": "Jaguapitã",
@@ -5382,7 +5161,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-223"
     },
     {
         "comarca": "Jaguariaíva",
@@ -5391,25 +5169,22 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-224"
     },
     {
-        "comarca": "Jandaia do Sul",
+        "comarca": "Jandaia Do Sul",
         "unidade": "VARA CÍVEL, DA FAZENDA PÚBLICA, ACIDENTES DO TRABALHO, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL, JUIZADO ESPECIAL CÍVEL E JUIZADO ESPECIAL DA FAZENDA PÚBLICA",
         "lotacao_real": 8,
         "lotacao_paradigma": 10,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-225"
     },
     {
-        "comarca": "Jandaia do Sul",
+        "comarca": "Jandaia Do Sul",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CRIMINAL",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-226"
     },
     {
         "comarca": "Joaquim Távora",
@@ -5418,7 +5193,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-227"
     },
     {
         "comarca": "Lapa",
@@ -5427,7 +5201,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-228"
     },
     {
         "comarca": "Lapa",
@@ -5436,16 +5209,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-229"
     },
     {
-        "comarca": "Laranjeiras do Sul",
+        "comarca": "Laranjeiras Do Sul",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-230"
     },
     {
         "comarca": "Loanda",
@@ -5454,7 +5225,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-231"
     },
     {
         "comarca": "Londrina",
@@ -5463,7 +5233,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-233"
     },
     {
         "comarca": "Londrina",
@@ -5472,7 +5241,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-234"
     },
     {
         "comarca": "Londrina",
@@ -5481,7 +5249,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-235"
     },
     {
         "comarca": "Londrina",
@@ -5490,7 +5257,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-236"
     },
     {
         "comarca": "Londrina",
@@ -5499,7 +5265,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-237"
     },
     {
         "comarca": "Londrina",
@@ -5508,16 +5273,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-238"
     },
     {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "Vara da Infância e da Juventude",
         "lotacao_real": 7,
         "lotacao_paradigma": 6,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-239"
     },
     {
         "comarca": "Londrina",
@@ -5526,7 +5289,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 0,
         "diferenca": 5,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-240"
     },
     {
         "comarca": "Londrina",
@@ -5535,7 +5297,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 13,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-241"
     },
     {
         "comarca": "Londrina",
@@ -5544,7 +5305,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-242"
     },
     {
         "comarca": "Londrina",
@@ -5553,7 +5313,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-243"
     },
     {
         "comarca": "Londrina",
@@ -5562,7 +5321,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-244"
     },
     {
         "comarca": "Londrina",
@@ -5571,7 +5329,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-245"
     },
     {
         "comarca": "Londrina",
@@ -5580,7 +5337,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-246"
     },
     {
         "comarca": "Londrina",
@@ -5589,7 +5345,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-247"
     },
     {
         "comarca": "Londrina",
@@ -5598,7 +5353,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-248"
     },
     {
         "comarca": "Londrina",
@@ -5607,7 +5361,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-249"
     },
     {
         "comarca": "Londrina",
@@ -5616,7 +5369,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 0,
         "diferenca": 6,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-250"
     },
     {
         "comarca": "Londrina",
@@ -5625,7 +5377,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-251"
     },
     {
         "comarca": "Londrina",
@@ -5634,7 +5385,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-252"
     },
     {
         "comarca": "Mallet",
@@ -5643,7 +5393,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-253"
     },
     {
         "comarca": "Mamborê",
@@ -5652,7 +5401,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-254"
     },
     {
         "comarca": "Mandaguaçu",
@@ -5661,7 +5409,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 12,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-255"
     },
     {
         "comarca": "Mandaguari",
@@ -5670,7 +5417,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": 3,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-256"
     },
     {
         "comarca": "Mangueirinha",
@@ -5679,7 +5425,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-257"
     },
     {
         "comarca": "Manoel Ribas",
@@ -5688,7 +5433,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-258"
     },
     {
         "comarca": "Marechal Cândido Rondon",
@@ -5697,7 +5441,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-259"
     },
     {
         "comarca": "Marechal Cândido Rondon",
@@ -5706,7 +5449,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-260"
     },
     {
         "comarca": "Marechal Cândido Rondon",
@@ -5715,7 +5457,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-261"
     },
     {
         "comarca": "Marialva",
@@ -5724,16 +5465,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 2,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-262"
     },
     {
-        "comarca": "Marilândia do Sul",
+        "comarca": "Marilândia Do Sul",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 6,
         "lotacao_paradigma": 9,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-263"
     },
     {
         "comarca": "Maringá",
@@ -5742,7 +5481,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 11,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-264"
     },
     {
         "comarca": "Maringá",
@@ -5751,7 +5489,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 11,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-265"
     },
     {
         "comarca": "Maringá",
@@ -5760,7 +5497,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 11,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-266"
     },
     {
         "comarca": "Maringá",
@@ -5769,7 +5505,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-267"
     },
     {
         "comarca": "Maringá",
@@ -5778,7 +5513,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-268"
     },
     {
         "comarca": "Maringá",
@@ -5787,7 +5521,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-269"
     },
     {
         "comarca": "Maringá",
@@ -5796,7 +5529,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-270"
     },
     {
         "comarca": "Maringá",
@@ -5805,7 +5537,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 14,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-271"
     },
     {
         "comarca": "Maringá",
@@ -5814,7 +5545,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-272"
     },
     {
         "comarca": "Maringá",
@@ -5823,7 +5553,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-273"
     },
     {
         "comarca": "Maringá",
@@ -5832,7 +5561,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-274"
     },
     {
         "comarca": "Maringá",
@@ -5841,7 +5569,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-275"
     },
     {
         "comarca": "Maringá",
@@ -5850,7 +5577,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-276"
     },
     {
         "comarca": "Maringá",
@@ -5859,7 +5585,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-277"
     },
     {
         "comarca": "Maringá",
@@ -5868,7 +5593,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-278"
     },
     {
         "comarca": "Maringá",
@@ -5877,7 +5601,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-279"
     },
     {
         "comarca": "Maringá",
@@ -5886,7 +5609,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-280"
     },
     {
         "comarca": "Maringá",
@@ -5895,7 +5617,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-281"
     },
     {
         "comarca": "Maringá",
@@ -5904,7 +5625,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-282"
     },
     {
         "comarca": "Marmeleiro",
@@ -5913,7 +5633,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 11,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-283"
     },
     {
         "comarca": "Matelândia",
@@ -5922,7 +5641,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-284"
     },
     {
         "comarca": "Matinhos",
@@ -5931,7 +5649,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-285"
     },
     {
         "comarca": "Medianeira",
@@ -5940,7 +5657,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 11,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-286"
     },
     {
         "comarca": "Morretes",
@@ -5949,7 +5665,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-287"
     },
     {
         "comarca": "Nova Aurora",
@@ -5958,7 +5673,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-288"
     },
     {
         "comarca": "Nova Esperança",
@@ -5967,7 +5681,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-289"
     },
     {
         "comarca": "Nova Esperança",
@@ -5976,7 +5689,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-290"
     },
     {
         "comarca": "Nova Esperança",
@@ -5985,7 +5697,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-291"
     },
     {
         "comarca": "Nova Fátima",
@@ -5994,7 +5705,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-292"
     },
     {
         "comarca": "Nova Londrina",
@@ -6003,7 +5713,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-293"
     },
     {
         "comarca": "Ortigueira",
@@ -6012,7 +5721,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-294"
     },
     {
         "comarca": "Paiçandu",
@@ -6021,7 +5729,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-295"
     },
     {
         "comarca": "Paiçandu",
@@ -6030,7 +5737,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-296"
     },
     {
         "comarca": "Palmas",
@@ -6039,7 +5745,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 0,
         "diferenca": 5,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-297"
     },
     {
         "comarca": "Palmas",
@@ -6048,7 +5753,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-298"
     },
     {
         "comarca": "Palmeira",
@@ -6057,7 +5761,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-299"
     },
     {
         "comarca": "Palmital",
@@ -6066,7 +5769,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-300"
     },
     {
         "comarca": "Palotina",
@@ -6075,16 +5777,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-301"
     },
     {
-        "comarca": "Paraíso do Norte",
+        "comarca": "Paraíso Do Norte",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-302"
     },
     {
         "comarca": "Paranacity",
@@ -6093,7 +5793,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-303"
     },
     {
         "comarca": "Paranaguá",
@@ -6102,7 +5801,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-304"
     },
     {
         "comarca": "Paranaguá",
@@ -6111,7 +5809,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-305"
     },
     {
         "comarca": "Paranaguá",
@@ -6120,7 +5817,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-306"
     },
     {
         "comarca": "Paranaguá",
@@ -6129,7 +5825,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-307"
     },
     {
         "comarca": "Paranaguá",
@@ -6138,7 +5833,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-308"
     },
     {
         "comarca": "Paranaguá",
@@ -6147,7 +5841,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-309"
     },
     {
         "comarca": "Paranaguá",
@@ -6156,7 +5849,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-310"
     },
     {
         "comarca": "Paranaguá",
@@ -6165,7 +5857,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 13,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-311"
     },
     {
         "comarca": "Paranavaí",
@@ -6174,7 +5865,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-312"
     },
     {
         "comarca": "Paranavaí",
@@ -6183,7 +5873,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-313"
     },
     {
         "comarca": "Paranavaí",
@@ -6192,7 +5881,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-314"
     },
     {
         "comarca": "Paranavaí",
@@ -6201,7 +5889,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-315"
     },
     {
         "comarca": "Pato Branco",
@@ -6210,7 +5897,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 11,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-316"
     },
     {
         "comarca": "Pato Branco",
@@ -6219,7 +5905,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-317"
     },
     {
         "comarca": "Pato Branco",
@@ -6228,7 +5913,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-318"
     },
     {
         "comarca": "Peabiru",
@@ -6237,7 +5921,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-319"
     },
     {
         "comarca": "Pérola",
@@ -6246,7 +5929,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-320"
     },
     {
         "comarca": "Pinhais",
@@ -6255,7 +5937,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-321"
     },
     {
         "comarca": "Pinhais",
@@ -6264,7 +5945,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-322"
     },
     {
         "comarca": "Pinhais",
@@ -6273,7 +5953,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-323"
     },
     {
         "comarca": "Pinhão",
@@ -6282,7 +5961,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-324"
     },
     {
         "comarca": "Pinhão",
@@ -6291,16 +5969,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-325"
     },
     {
-        "comarca": "Piraí do Sul",
+        "comarca": "Piraí Do Sul",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 8,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-326"
     },
     {
         "comarca": "Piraquara",
@@ -6309,7 +5985,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-327"
     },
     {
         "comarca": "Piraquara",
@@ -6318,7 +5993,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -5,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-328"
     },
     {
         "comarca": "Piraquara",
@@ -6327,7 +6001,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-329"
     },
     {
         "comarca": "Piraquara",
@@ -6336,16 +6009,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-330"
     },
     {
-        "comarca": "PITANGA",
+        "comarca": "Pitanga",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-331"
     },
     {
         "comarca": "Ponta Grossa",
@@ -6354,7 +6025,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 0,
         "diferenca": 6,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-332"
     },
     {
         "comarca": "Ponta Grossa",
@@ -6363,16 +6033,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-333"
     },
     {
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 0,
         "lotacao_paradigma": 13,
         "diferenca": -13,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-334"
     },
     {
         "comarca": "Ponta Grossa",
@@ -6381,7 +6049,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-335"
     },
     {
         "comarca": "Ponta Grossa",
@@ -6390,7 +6057,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 0,
         "diferenca": 9,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-336"
     },
     {
         "comarca": "Ponta Grossa",
@@ -6399,7 +6065,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-337"
     },
     {
         "comarca": "Ponta Grossa",
@@ -6408,7 +6073,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-338"
     },
     {
         "comarca": "Ponta Grossa",
@@ -6417,7 +6081,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-339"
     },
     {
         "comarca": "Ponta Grossa",
@@ -6426,7 +6089,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-340"
     },
     {
         "comarca": "Ponta Grossa",
@@ -6435,7 +6097,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-341"
     },
     {
         "comarca": "Ponta Grossa",
@@ -6444,7 +6105,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-342"
     },
     {
         "comarca": "Ponta Grossa",
@@ -6453,25 +6113,22 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-343"
     },
     {
-        "comarca": "Pontal do Paraná",
+        "comarca": "Pontal Do Paraná",
         "unidade": "VARA CÍVEL, DA FAZENDA PÚBLICA, ACIDENTES DO TRABALHO, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL E JUIZADO ESPECIAL DA FAZENDA PÚBLICA",
         "lotacao_real": 6,
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-344"
     },
     {
-        "comarca": "Pontal do Paraná",
+        "comarca": "Pontal Do Paraná",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CÍVEL E JUIZADO ESPECIAL CRIMINAL",
         "lotacao_real": 6,
         "lotacao_paradigma": 10,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-345"
     },
     {
         "comarca": "Porecatu",
@@ -6480,7 +6137,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-346"
     },
     {
         "comarca": "Porecatu",
@@ -6489,16 +6145,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-347"
     },
     {
-        "comarca": "Primeiro de Maio",
+        "comarca": "Primeiro De Maio",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-348"
     },
     {
         "comarca": "Prudentópolis",
@@ -6507,7 +6161,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-349"
     },
     {
         "comarca": "Prudentópolis",
@@ -6516,7 +6169,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-350"
     },
     {
         "comarca": "Quatro Barras",
@@ -6525,25 +6177,22 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-351"
     },
     {
-        "comarca": "Quedas do Iguaçu",
+        "comarca": "Quedas Do Iguaçu",
         "unidade": "VARA CÍVEL, DA FAZENDA PÚBLICA, ACIDENTES DO TRABALHO, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL, JUIZADO ESPECIAL CÍVEL E JUIZADO ESPECIAL DA FAZENDA PÚBLICA",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-352"
     },
     {
-        "comarca": "Quedas do Iguaçu",
+        "comarca": "Quedas Do Iguaçu",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CRIMINAL",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-353"
     },
     {
         "comarca": "Realeza",
@@ -6552,7 +6201,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-354"
     },
     {
         "comarca": "Rebouças",
@@ -6561,7 +6209,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-355"
     },
     {
         "comarca": "Reserva",
@@ -6570,7 +6217,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-356"
     },
     {
         "comarca": "Ribeirão Claro",
@@ -6579,34 +6225,30 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-357"
     },
     {
-        "comarca": "Ribeirão do Pinhal",
+        "comarca": "Ribeirão Do Pinhal",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-358"
     },
     {
-        "comarca": "Rio Branco do Sul",
+        "comarca": "Rio Branco Do Sul",
         "unidade": "VARA CRIMINAL E INFÂNCIA E JUVENTUDE",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-359"
     },
     {
-        "comarca": "RIO BRANCO DO SUL",
+        "comarca": "Rio Branco Do Sul",
         "unidade": "Juizado Especial Cível, Criminal, da Fazenda Pública e Família e Sucessões",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-360"
     },
     {
         "comarca": "Rio Negro",
@@ -6615,7 +6257,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-361"
     },
     {
         "comarca": "Rolândia",
@@ -6624,7 +6265,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-363"
     },
     {
         "comarca": "Rolândia",
@@ -6633,16 +6273,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-364"
     },
     {
-        "comarca": "Salto do Lontra",
+        "comarca": "Salto Do Lontra",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-365"
     },
     {
         "comarca": "Santa Fé",
@@ -6651,7 +6289,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 10,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-366"
     },
     {
         "comarca": "Santa Helena",
@@ -6660,16 +6297,14 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-367"
     },
     {
-        "comarca": "Santa Isabel do Ivaí",
+        "comarca": "Santa Isabel Do Ivaí",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-368"
     },
     {
         "comarca": "Santa Mariana",
@@ -6678,43 +6313,38 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-369"
     },
     {
-        "comarca": "Santo Antônio da Platina",
+        "comarca": "Santo Antônio Da Platina",
         "unidade": "VARA CRIMINAL, INFÂNCIA E JUVENTUDE E FAMÍLIA E SUCESSÕES",
         "lotacao_real": 6,
         "lotacao_paradigma": 9,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-370"
     },
     {
-        "comarca": "Santo Antônio da Platina",
+        "comarca": "Santo Antônio Da Platina",
         "unidade": "JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-371"
     },
     {
-        "comarca": "Santo Antônio do Sudoeste",
+        "comarca": "Santo Antônio Do Sudoeste",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-372"
     },
     {
-        "comarca": "São Jerônimo da Serra",
+        "comarca": "São Jerônimo Da Serra",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 3,
         "lotacao_paradigma": 7,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-373"
     },
     {
         "comarca": "São João",
@@ -6723,133 +6353,118 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-374"
     },
     {
-        "comarca": "São João do Ivaí",
+        "comarca": "São João Do Ivaí",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-375"
     },
     {
-        "comarca": "São João do Triunfo",
+        "comarca": "São João Do Triunfo",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-376"
     },
     {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "3ª VARA CÍVEL",
         "lotacao_real": 7,
         "lotacao_paradigma": 11,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-377"
     },
     {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "1ª VARA CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-378"
     },
     {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "2ª VARA CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 8,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-379"
     },
     {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "VARA DA INFÂNCIA E JUVENTUDE",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-380"
     },
     {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "VARA DE FAMÍLIA E SUCESSÕES, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-381"
     },
     {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "VARA DA FAZENDA PÚBLICA",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-382"
     },
     {
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José Dos Pinhais",
         "unidade": "1º Juizado Especial Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-383"
     },
     {
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José Dos Pinhais",
         "unidade": "2º Juizado Especial Cível e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-384"
     },
     {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "VARA DESCENTRALIZADA DO AFONSO PENA",
         "lotacao_real": 6,
         "lotacao_paradigma": 9,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-385"
     },
     {
-        "comarca": "São José dos Pinhais",
+        "comarca": "São José Dos Pinhais",
         "unidade": "JUIZADO DE VIOLÊNCIA DOMÉSTICA E FAMILIAR CONTRA A MULHER, VARA DE CRIMES CONTRA CRIANÇAS, ADOLESCENTES E IDOSOS",
         "lotacao_real": 8,
         "lotacao_paradigma": 11,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-386"
     },
     {
-        "comarca": "São Mateus do Sul",
+        "comarca": "São Mateus Do Sul",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CRIMINAL",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-387"
     },
     {
-        "comarca": "São Miguel do Iguaçu",
+        "comarca": "São Miguel Do Iguaçu",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-388"
     },
     {
         "comarca": "Sarandi",
@@ -6858,7 +6473,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-389"
     },
     {
         "comarca": "Sarandi",
@@ -6867,7 +6481,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-390"
     },
     {
         "comarca": "Sarandi",
@@ -6876,7 +6489,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-391"
     },
     {
         "comarca": "Sarandi",
@@ -6885,7 +6497,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-392"
     },
     {
         "comarca": "Sengés",
@@ -6894,7 +6505,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-393"
     },
     {
         "comarca": "Sertanópolis",
@@ -6903,7 +6513,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-394"
     },
     {
         "comarca": "Siqueira Campos",
@@ -6912,7 +6521,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-395"
     },
     {
         "comarca": "Teixeira Soares",
@@ -6921,7 +6529,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-396"
     },
     {
         "comarca": "Telêmaco Borba",
@@ -6930,7 +6537,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-397"
     },
     {
         "comarca": "Telêmaco Borba",
@@ -6939,7 +6545,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-398"
     },
     {
         "comarca": "Telêmaco Borba",
@@ -6948,7 +6553,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-399"
     },
     {
         "comarca": "Telêmaco Borba",
@@ -6957,7 +6561,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-400"
     },
     {
         "comarca": "Terra Boa",
@@ -6966,7 +6569,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 9,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-401"
     },
     {
         "comarca": "Terra Rica",
@@ -6975,7 +6577,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 6,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-402"
     },
     {
         "comarca": "Terra Roxa",
@@ -6984,7 +6585,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-403"
     },
     {
         "comarca": "Tibagi",
@@ -6993,7 +6593,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-404"
     },
     {
         "comarca": "Toledo",
@@ -7002,7 +6601,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-405"
     },
     {
         "comarca": "Toledo",
@@ -7011,7 +6609,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-406"
     },
     {
         "comarca": "Toledo",
@@ -7020,7 +6617,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-407"
     },
     {
         "comarca": "Toledo",
@@ -7029,7 +6625,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-408"
     },
     {
         "comarca": "Toledo",
@@ -7038,7 +6633,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-409"
     },
     {
         "comarca": "Toledo",
@@ -7047,7 +6641,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-410"
     },
     {
         "comarca": "Tomazina",
@@ -7056,7 +6649,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-411"
     },
     {
         "comarca": "Ubiratã",
@@ -7065,7 +6657,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-412"
     },
     {
         "comarca": "Umuarama",
@@ -7074,7 +6665,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-413"
     },
     {
         "comarca": "Umuarama",
@@ -7083,7 +6673,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 2,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-414"
     },
     {
         "comarca": "Umuarama",
@@ -7092,7 +6681,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-415"
     },
     {
         "comarca": "Umuarama",
@@ -7101,7 +6689,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-416"
     },
     {
         "comarca": "Umuarama",
@@ -7110,7 +6697,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-417"
     },
     {
         "comarca": "Umuarama",
@@ -7119,52 +6705,46 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-418"
     },
     {
-        "comarca": "União da Vitória",
+        "comarca": "União Da Vitória",
         "unidade": "2ª VARA CÍVEL E DA FAZENDA PÚBLICA",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-419"
     },
     {
-        "comarca": "União da Vitória",
+        "comarca": "União Da Vitória",
         "unidade": "1ª VARA CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
         "diferenca": -2,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-420"
     },
     {
-        "comarca": "União da Vitória",
+        "comarca": "União Da Vitória",
         "unidade": "2ª VARA CRIMINAL",
         "lotacao_real": 3,
         "lotacao_paradigma": 8,
         "diferenca": -5,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-421"
     },
     {
-        "comarca": "União da Vitória",
+        "comarca": "União Da Vitória",
         "unidade": "VARA DE FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE, ACIDENTES DO TRABALHO, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL",
         "lotacao_real": 9,
         "lotacao_paradigma": 9,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-422"
     },
     {
-        "comarca": "União da Vitória",
+        "comarca": "União Da Vitória",
         "unidade": "JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-423"
     },
     {
         "comarca": "Uraí",
@@ -7173,7 +6753,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 7,
         "diferenca": 0,
         "status": "EQUILIBRADA",
-        "codigo_anexo2": "A2-424"
     },
     {
         "comarca": "Wenceslau Braz",
@@ -7182,7 +6761,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-425"
     },
     {
         "comarca": "Xambrê",
@@ -7191,7 +6769,6 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 5,
         "diferenca": 1,
         "status": "SUPERAVITÁRIA",
-        "codigo_anexo2": "A2-426"
     },
     {
         "comarca": "Cambé",
@@ -7200,6 +6777,5 @@ LOTACAO_COMPLETA = [
         "lotacao_paradigma": 8,
         "diferenca": -7,
         "status": "DEFICITÁRIA",
-        "codigo_anexo2": "A2-590"
     },
 ]
