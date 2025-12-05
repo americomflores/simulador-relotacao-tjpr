@@ -1,18 +1,19 @@
 """
 Dados de Lotação Paradigma - TJPR
-Atualizado em: 05/12/2025 11:33:55
+Atualizado em: 05/12/2025 12:31:02
 Fonte: Mesclagem de tabelabi.xlsx + dados anteriores + correções manuais
 
 Regras de mesclagem:
   - Unidades encontradas no tabelabi.xlsx: dados atualizados
   - Unidades não encontradas no tabelabi.xlsx: dados anteriores mantidos
-  - Correções manuais: 4 varas com paradigma atualizado e lotação real mantida
+  - Correções manuais aplicadas
+  - Comarcas e unidades normalizadas para Title Case
 
-Correções aplicadas:
-  - A2-059: Cascavel - 4ª Vara Cível (paradigma 0→7, real mantida: 7)
-  - A2-110: Curitiba - 24ª Vara Cível (paradigma 0→8, real mantida: 7)
-  - A2-111: Curitiba - 25ª Vara Cível (paradigma 0→8, real mantida: 7)
-  - A2-332: Ponta Grossa - 1ª Vara Cível (paradigma 0→7, real mantida: 6)
+Atualizações:
+  - A2-112: Curitiba - 26ª Vara Cível (paradigma atualizado para 8)
+  - A2-113: Curitiba - 27ª Vara Cível (paradigma atualizado para 8)
+  - Todas as comarcas normalizadas (ex: CURITIBA → Curitiba)
+  - Todas as unidades normalizadas (ex: 1ª VARA CRIMINAL → 1ª Vara Criminal)
 
 Fórmulas (para dados do tabelabi.xlsx):
   - Lotação Paradigma = Analistas + Técnicos + Servidores Efetivos Gabinete (paradigma)
@@ -22,7 +23,7 @@ Fórmulas (para dados do tabelabi.xlsx):
 # Mapeamento: Código Anexo II -> Dados de Lotação
 LOTACAO_POR_CODIGO = {
     "A2-001": {
-        "comarca": "ALMIRANTE TAMANDARÉ",
+        "comarca": "Almirante Tamandaré",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -30,7 +31,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-002": {
-        "comarca": "ALMIRANTE TAMANDARÉ",
+        "comarca": "Almirante Tamandaré",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -38,7 +39,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-003": {
-        "comarca": "ALMIRANTE TAMANDARÉ",
+        "comarca": "Almirante Tamandaré",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -46,7 +47,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-004": {
-        "comarca": "ALMIRANTE TAMANDARÉ",
+        "comarca": "Almirante Tamandaré",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -54,7 +55,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-005": {
-        "comarca": "ALMIRANTE TAMANDARÉ",
+        "comarca": "Almirante Tamandaré",
         "unidade": "Secretaria Unificada das 1ª e 2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 1,
         "lotacao_paradigma": 11,
@@ -62,7 +63,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-006": {
-        "comarca": "ALTO PARANÁ",
+        "comarca": "Alto Paraná",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -70,7 +71,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-007": {
-        "comarca": "ALTO PIQUIRI",
+        "comarca": "Alto Piquiri",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -78,7 +79,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-008": {
-        "comarca": "ALTÔNIA",
+        "comarca": "Altônia",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -86,7 +87,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-009": {
-        "comarca": "AMPÉRE",
+        "comarca": "Ampére",
         "unidade": "Juízo Único",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -94,7 +95,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-010": {
-        "comarca": "ANDIRÁ",
+        "comarca": "Andirá",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -102,7 +103,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-011": {
-        "comarca": "ANTONINA",
+        "comarca": "Antonina",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -110,7 +111,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-012": {
-        "comarca": "ANTONINA",
+        "comarca": "Antonina",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -118,7 +119,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-013": {
-        "comarca": "APUCARANA",
+        "comarca": "Apucarana",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -126,7 +127,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-014": {
-        "comarca": "APUCARANA",
+        "comarca": "Apucarana",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -134,7 +135,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-015": {
-        "comarca": "APUCARANA",
+        "comarca": "Apucarana",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 8,
         "lotacao_paradigma": 7,
@@ -142,7 +143,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-016": {
-        "comarca": "APUCARANA",
+        "comarca": "Apucarana",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
@@ -150,7 +151,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-017": {
-        "comarca": "ARAPONGAS",
+        "comarca": "Arapongas",
         "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 0,
         "lotacao_paradigma": 5,
@@ -158,7 +159,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-018": {
-        "comarca": "ARAPONGAS",
+        "comarca": "Arapongas",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 0,
         "lotacao_paradigma": 5,
@@ -166,7 +167,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-019": {
-        "comarca": "ARAPONGAS",
+        "comarca": "Arapongas",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 0,
         "lotacao_paradigma": 6,
@@ -174,7 +175,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-020": {
-        "comarca": "ARAPONGAS",
+        "comarca": "Arapongas",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 0,
         "lotacao_paradigma": 6,
@@ -182,7 +183,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-021": {
-        "comarca": "ARAPONGAS",
+        "comarca": "Arapongas",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 0,
         "lotacao_paradigma": 9,
@@ -190,7 +191,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-022": {
-        "comarca": "ARAPOTI",
+        "comarca": "Arapoti",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -198,7 +199,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-023": {
-        "comarca": "ARAUCÁRIA",
+        "comarca": "Araucária",
         "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -206,7 +207,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-024": {
-        "comarca": "ARAUCÁRIA",
+        "comarca": "Araucária",
         "unidade": "Vara Criminal",
         "lotacao_real": 9,
         "lotacao_paradigma": 9,
@@ -214,7 +215,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-025": {
-        "comarca": "ARAUCÁRIA",
+        "comarca": "Araucária",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 8,
@@ -222,7 +223,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-026": {
-        "comarca": "ARAUCÁRIA",
+        "comarca": "Araucária",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -230,7 +231,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-027": {
-        "comarca": "ASSAÍ",
+        "comarca": "Assaí",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -238,7 +239,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-028": {
-        "comarca": "ASSIS CHATEAUBRIAND",
+        "comarca": "Assis Chateaubriand",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -246,7 +247,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-029": {
-        "comarca": "ASTORGA",
+        "comarca": "Astorga",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -254,7 +255,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-030": {
-        "comarca": "BANDEIRANTES",
+        "comarca": "Bandeirantes",
         "unidade": "2ª Vara Cível e da Fazenda Pública, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -262,7 +263,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-032": {
-        "comarca": "BARBOSA FERRAZ",
+        "comarca": "Barbosa Ferraz",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -270,7 +271,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-033": {
-        "comarca": "BARRACÃO",
+        "comarca": "Barracão",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -278,7 +279,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-034": {
-        "comarca": "BELA VISTA DO PARAÍSO",
+        "comarca": "Bela Vista do Paraíso",
         "unidade": "Juízo Único - Crime e Anexos, Juizados Especiais e Distribuidor",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -286,7 +287,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-035": {
-        "comarca": "BOCAIÚVA DO SUL",
+        "comarca": "Bocaiúva do Sul",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -294,7 +295,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-036": {
-        "comarca": "CAMBARÁ",
+        "comarca": "Cambará",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -302,7 +303,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-037": {
-        "comarca": "CAMBÉ",
+        "comarca": "Cambé",
         "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -310,7 +311,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-038": {
-        "comarca": "CAMBÉ",
+        "comarca": "Cambé",
         "unidade": "Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -318,7 +319,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-039": {
-        "comarca": "CAMBÉ",
+        "comarca": "Cambé",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -326,7 +327,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-040": {
-        "comarca": "CAMBÉ",
+        "comarca": "Cambé",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -334,7 +335,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-041": {
-        "comarca": "CAMPINA DA LAGOA",
+        "comarca": "Campina da Lagoa",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 1,
         "lotacao_paradigma": 5,
@@ -342,7 +343,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-042": {
-        "comarca": "CAMPINA GRANDE DO SUL",
+        "comarca": "Campina Grande do Sul",
         "unidade": "Vara Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -350,7 +351,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-043": {
-        "comarca": "CAMPINA GRANDE DO SUL",
+        "comarca": "Campina Grande do Sul",
         "unidade": "Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -358,7 +359,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-044": {
-        "comarca": "CAMPINA GRANDE DO SUL",
+        "comarca": "Campina Grande do Sul",
         "unidade": "Vara de Família e Sucessões, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível, Criminal e da Fazenda Pública e Infância e Juventude",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -366,7 +367,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-045": {
-        "comarca": "CAMPO LARGO",
+        "comarca": "Campo Largo",
         "unidade": "1ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -374,7 +375,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-046": {
-        "comarca": "CAMPO LARGO",
+        "comarca": "Campo Largo",
         "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -382,7 +383,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-047": {
-        "comarca": "CAMPO LARGO",
+        "comarca": "Campo Largo",
         "unidade": "Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 8,
@@ -390,7 +391,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-048": {
-        "comarca": "CAMPO LARGO",
+        "comarca": "Campo Largo",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -398,7 +399,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-049": {
-        "comarca": "CAMPO LARGO",
+        "comarca": "Campo Largo",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -406,7 +407,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-050": {
-        "comarca": "CAMPO MOURÃO",
+        "comarca": "Campo Mourão",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -414,7 +415,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-051": {
-        "comarca": "CAMPO MOURÃO",
+        "comarca": "Campo Mourão",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -422,7 +423,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-052": {
-        "comarca": "CAMPO MOURÃO",
+        "comarca": "Campo Mourão",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -430,7 +431,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-053": {
-        "comarca": "CAMPO MOURÃO",
+        "comarca": "Campo Mourão",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -438,7 +439,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-054": {
-        "comarca": "CÂNDIDO DE ABREU",
+        "comarca": "Cândido de Abreu",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -446,7 +447,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-055": {
-        "comarca": "CANTAGALO",
+        "comarca": "Cantagalo",
         "unidade": "Juízo Único",
         "lotacao_real": 7,
         "lotacao_paradigma": 6,
@@ -454,7 +455,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-056": {
-        "comarca": "CAPANEMA",
+        "comarca": "Capanema",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -462,7 +463,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-057": {
-        "comarca": "CAPITÃO LEÔNIDAS MARQUES",
+        "comarca": "Capitão Leônidas Marques",
         "unidade": "Juízo Único",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -470,7 +471,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-058": {
-        "comarca": "CARLÓPOLIS",
+        "comarca": "Carlópolis",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -479,14 +480,14 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-059": {
         "comarca": "Cascavel",
-        "unidade": "4ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "4ª Vara Cível e Empresarial Regional",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
         "diferenca": 0,
         "status": "EQUILIBRADA",
     },
     "A2-060": {
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "5ª Vara Cível",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -494,7 +495,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-061": {
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -502,7 +503,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-062": {
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 0,
         "lotacao_paradigma": 6,
@@ -510,7 +511,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-063": {
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "3ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -519,14 +520,14 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-064": {
         "comarca": "Cascavel",
-        "unidade": "1º JUIZADO DE VIOLÊNCIA DOMÉSTICA E FAMILIAR CONTRA A MULHER, VARA DE CRIMES CONTRA CRIANÇAS, ADOLESCENTES E IDOSOS",
+        "unidade": "1º Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
         "diferenca": 0,
         "status": "EQUILIBRADA",
     },
     "A2-065": {
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "1ª Vara de Família e Sucessões, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -534,7 +535,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-066": {
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "2ª Vara de Família e Sucessões e Acidentes do Trabalho",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -542,7 +543,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-067": {
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "Vara da Infância e Juventude",
         "lotacao_real": 8,
         "lotacao_paradigma": 11,
@@ -550,7 +551,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-068": {
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "Vara da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 5,
@@ -558,7 +559,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-069": {
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "Vara de Execuções Penais e Corregedoria dos Presídios",
         "lotacao_real": 7,
         "lotacao_paradigma": 6,
@@ -566,7 +567,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-070": {
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "1º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -574,7 +575,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-071": {
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "2º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -582,7 +583,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-072": {
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "3º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -590,7 +591,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-073": {
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "4ª Vara Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -598,7 +599,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-074": {
-        "comarca": "CASTRO",
+        "comarca": "Castro",
         "unidade": "Vara Criminal",
         "lotacao_real": 1,
         "lotacao_paradigma": 7,
@@ -606,7 +607,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-075": {
-        "comarca": "CASTRO",
+        "comarca": "Castro",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -614,7 +615,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-076": {
-        "comarca": "CASTRO",
+        "comarca": "Castro",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -622,7 +623,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-077": {
-        "comarca": "CATANDUVAS",
+        "comarca": "Catanduvas",
         "unidade": "Juízo Único",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -630,7 +631,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-078": {
-        "comarca": "CENTENÁRIO DO SUL",
+        "comarca": "Centenário do Sul",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -638,7 +639,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-079": {
-        "comarca": "CERRO AZUL",
+        "comarca": "Cerro Azul",
         "unidade": "Juízo Único - Crime e Anexos, Juizados Especiais e Distribuidor",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -646,7 +647,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-080": {
-        "comarca": "CHOPINZINHO",
+        "comarca": "Chopinzinho",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -654,7 +655,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-081": {
-        "comarca": "CIANORTE",
+        "comarca": "Cianorte",
         "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -662,7 +663,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-082": {
-        "comarca": "CIANORTE",
+        "comarca": "Cianorte",
         "unidade": "Vara Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
@@ -670,7 +671,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-083": {
-        "comarca": "CIANORTE",
+        "comarca": "Cianorte",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -678,7 +679,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-084": {
-        "comarca": "CIANORTE",
+        "comarca": "Cianorte",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 9,
         "lotacao_paradigma": 7,
@@ -686,7 +687,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-085": {
-        "comarca": "CIDADE GAÚCHA",
+        "comarca": "Cidade Gaúcha",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -694,7 +695,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-086": {
-        "comarca": "CLEVELÂNDIA",
+        "comarca": "Clevelândia",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -702,7 +703,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-087": {
-        "comarca": "COLOMBO",
+        "comarca": "Colombo",
         "unidade": "2ª Vara Cível",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -710,7 +711,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-088": {
-        "comarca": "COLOMBO",
+        "comarca": "Colombo",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -718,7 +719,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-089": {
-        "comarca": "COLOMBO",
+        "comarca": "Colombo",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -726,7 +727,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-090": {
-        "comarca": "COLOMBO",
+        "comarca": "Colombo",
         "unidade": "Vara da Infância e Juventude, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -734,7 +735,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-091": {
-        "comarca": "COLOMBO",
+        "comarca": "Colombo",
         "unidade": "Vara de Família e Sucessões",
         "lotacao_real": 5,
         "lotacao_paradigma": 8,
@@ -742,7 +743,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-092": {
-        "comarca": "COLOMBO",
+        "comarca": "Colombo",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -750,7 +751,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-093": {
-        "comarca": "COLOMBO",
+        "comarca": "Colombo",
         "unidade": "Vara da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -758,7 +759,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-094": {
-        "comarca": "COLORADO",
+        "comarca": "Colorado",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -766,7 +767,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-095": {
-        "comarca": "CONGONHINHAS",
+        "comarca": "Congonhinhas",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -774,7 +775,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-096": {
-        "comarca": "CORBÉLIA",
+        "comarca": "Corbélia",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -782,7 +783,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-097": {
-        "comarca": "CORNÉLIO PROCÓPIO",
+        "comarca": "Cornélio Procópio",
         "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -790,7 +791,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-098": {
-        "comarca": "CORNÉLIO PROCÓPIO",
+        "comarca": "Cornélio Procópio",
         "unidade": "Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -798,7 +799,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-099": {
-        "comarca": "CORNÉLIO PROCÓPIO",
+        "comarca": "Cornélio Procópio",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -806,7 +807,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-100": {
-        "comarca": "CORNÉLIO PROCÓPIO",
+        "comarca": "Cornélio Procópio",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -814,7 +815,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-101": {
-        "comarca": "CORONEL VIVIDA",
+        "comarca": "Coronel Vivida",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -822,7 +823,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-102": {
-        "comarca": "CRUZEIRO DO OESTE",
+        "comarca": "Cruzeiro do Oeste",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 7,
@@ -830,7 +831,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-103": {
-        "comarca": "CRUZEIRO DO OESTE",
+        "comarca": "Cruzeiro do Oeste",
         "unidade": "Vara de Execuções Penais e Corregedoria dos Presídios",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -838,7 +839,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-104": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "3ª Vara Cível",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
@@ -846,7 +847,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-105": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "10ª Vara Cível",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
@@ -854,7 +855,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-106": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "12ª Vara Cível",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
@@ -862,7 +863,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-107": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "15ª Vara Cível",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
@@ -870,7 +871,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-108": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "18ª Vara Cível",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
@@ -878,7 +879,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-109": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "23ª Vara Cível",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
@@ -887,7 +888,7 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-110": {
         "comarca": "Curitiba",
-        "unidade": "24ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "24ª Vara Cível e Empresarial Regional",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
         "diferenca": -1,
@@ -895,7 +896,7 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-111": {
         "comarca": "Curitiba",
-        "unidade": "25ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "25ª Vara Cível e Empresarial Regional",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
         "diferenca": -1,
@@ -903,22 +904,22 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-112": {
         "comarca": "Curitiba",
-        "unidade": "26ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "26ª Vara Cível e Empresarial Regional",
         "lotacao_real": 5,
-        "lotacao_paradigma": 0,
-        "diferenca": 5,
-        "status": "SUPERAVITÁRIA",
+        "lotacao_paradigma": 8,
+        "diferenca": -3,
+        "status": "DEFICITÁRIA",
     },
     "A2-113": {
         "comarca": "Curitiba",
-        "unidade": "27ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "27ª Vara Cível e Empresarial Regional",
         "lotacao_real": 5,
-        "lotacao_paradigma": 0,
-        "diferenca": 5,
-        "status": "SUPERAVITÁRIA",
+        "lotacao_paradigma": 8,
+        "diferenca": -3,
+        "status": "DEFICITÁRIA",
     },
     "A2-114": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "1ª Vara de Família",
         "lotacao_real": 9,
         "lotacao_paradigma": 5,
@@ -926,7 +927,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-115": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "3ª Vara de Família",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -934,7 +935,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-116": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "5ª Vara de Família",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -942,7 +943,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-117": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "6ª Vara de Família",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -950,7 +951,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-118": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "7ª Vara de Família",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -958,7 +959,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-119": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "1ª Vara de Sucessões",
         "lotacao_real": 7,
         "lotacao_paradigma": 6,
@@ -966,7 +967,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-120": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara de Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -974,7 +975,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-121": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara da Infância e da Juventude e Adoção",
         "lotacao_real": 12,
         "lotacao_paradigma": 13,
@@ -982,7 +983,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-122": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "2ª Vara de Sucessões",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -990,7 +991,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-123": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara de Adolescentes em Conflito com a Lei",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -998,7 +999,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-124": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara de Infrações Penais contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 0,
         "lotacao_paradigma": 6,
@@ -1006,7 +1007,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-125": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1014,7 +1015,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-126": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1022,7 +1023,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-127": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "3ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1030,7 +1031,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-128": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "4ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1038,7 +1039,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-130": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Secretaria Unificada das 1ª e 2ª Varas Descentralizadas do Pinheirinho",
         "lotacao_real": 12,
         "lotacao_paradigma": 14,
@@ -1046,7 +1047,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-131": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "7ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -1054,7 +1055,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-132": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "8ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1062,7 +1063,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-133": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "9ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -1070,7 +1071,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-134": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "10ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -1079,14 +1080,14 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-135": {
         "comarca": "Curitiba",
-        "unidade": "2ª VARA DE INFRAÇÕES PENAIS CONTRA CRIANÇAS, ADOLESCENTES E IDOSOS",
+        "unidade": "2ª Vara de Infrações Penais contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 6,
         "lotacao_paradigma": 0,
         "diferenca": 6,
         "status": "SUPERAVITÁRIA",
     },
     "A2-136": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "12ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1094,7 +1095,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-137": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "13ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -1102,7 +1103,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-138": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "1ª Vara Privativa do Tribunal do Júri",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -1110,7 +1111,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-139": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "2ª Vara Privativa do Tribunal do Júri",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1118,7 +1119,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-140": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara de Delitos de Trânsito",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1126,7 +1127,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-141": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "3º Juizado de Violência Doméstica e Familiar contra a Mulher – Casa da Mulher Brasileira",
         "lotacao_real": 11,
         "lotacao_paradigma": 11,
@@ -1134,7 +1135,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-142": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara da Auditoria da Justiça Militar",
         "lotacao_real": 3,
         "lotacao_paradigma": 3,
@@ -1142,7 +1143,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-143": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "1º Juizado Especial Cível – Matéria Bancária",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -1150,15 +1151,15 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-144": {
-        "comarca": "CURITIBA",
-        "unidade": "Juizado Especial PUC - Cajuru",
+        "comarca": "Curitiba",
+        "unidade": "Juizado Especial Puc - Cajuru",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
         "diferenca": 0,
         "status": "EQUILIBRADA",
     },
     "A2-145": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "3º Juizado Especial Cível – Telecomunicações",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1166,7 +1167,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-146": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "5º Juizado Especial Cível e Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -1174,7 +1175,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-147": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "6º Juizado Especial Cível e Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1182,7 +1183,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-148": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "8º Juizado Especial Cível e Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1190,15 +1191,15 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-149": {
-        "comarca": "CURITIBA",
-        "unidade": "Secretaria Unificada das 1ª e 2ª Varas Descentralizadas do Bairro Novo (Sítio Cercado)",
+        "comarca": "Curitiba",
+        "unidade": "Secretaria Unificada das 1ª e 2ª Varas Descentralizadas do Bairro Novo (sítio Cercado)",
         "lotacao_real": 11,
         "lotacao_paradigma": 11,
         "diferenca": 0,
         "status": "EQUILIBRADA",
     },
     "A2-150": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Secretaria Unificada das 1ª e 2ª Varas Descentralizadas do Boqueirão",
         "lotacao_real": 13,
         "lotacao_paradigma": 14,
@@ -1206,7 +1207,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-151": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "11º Juizado Especial Cível e Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1214,7 +1215,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-152": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Secretaria Unificada das 1ª e 2ª Varas Descentralizadas de Santa Felicidade",
         "lotacao_real": 12,
         "lotacao_paradigma": 14,
@@ -1222,7 +1223,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-153": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "13º Juizado Especial Cível e Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1230,7 +1231,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-154": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "14º Juizado Especial Cível e Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1238,7 +1239,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-155": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Secretaria Unificada das 1ª e 2ª Varas Descentralizadas da Cidade Industrial",
         "lotacao_real": 13,
         "lotacao_paradigma": 14,
@@ -1246,7 +1247,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-156": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara de Execuções Penais, Medidas Alternativas e Corregedoria dos Presídios",
         "lotacao_real": 1,
         "lotacao_paradigma": 22,
@@ -1255,14 +1256,14 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-157": {
         "comarca": "Curitiba",
-        "unidade": "SECRETARIA ESPECIALIZADA DE MOVIMENTAÇÃO PROCESSUAL DA FAZENDA PÚBLICA",
+        "unidade": "Secretaria Especializada de Movimentação Processual da Fazenda Pública",
         "lotacao_real": 43,
         "lotacao_paradigma": 0,
         "diferenca": 43,
         "status": "SUPERAVITÁRIA",
     },
     "A2-158": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Secretaria Unificada dos 4º e 15º Juizados Especiais da Fazenda Pública",
         "lotacao_real": 2,
         "lotacao_paradigma": 19,
@@ -1271,7 +1272,7 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-159": {
         "comarca": "Curitiba",
-        "unidade": "SECRETARIA ESPECIALIZADA EM MOVIMENTAÇÕES PROCESSUAIS DOS JUIZADOS DE VIOLÊNCIA DOMÉSTICA E FAMILIAR CONTRA A MULHER",
+        "unidade": "Secretaria Especializada em Movimentações Processuais dos Juizados de Violência Doméstica e Familiar contra a Mulher",
         "lotacao_real": 31,
         "lotacao_paradigma": 0,
         "diferenca": 31,
@@ -1279,14 +1280,14 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-160": {
         "comarca": "Curitiba",
-        "unidade": "SECRETARIA ESPECIALIZADA EM MOVIMENTAÇÕES PROCESSUAIS DAS VARAS DE EXECUÇÕES FISCAIS ESTADUAIS",
+        "unidade": "Secretaria Especializada em Movimentações Processuais das Varas de Execuções Fiscais Estaduais",
         "lotacao_real": 13,
         "lotacao_paradigma": 0,
         "diferenca": 13,
         "status": "SUPERAVITÁRIA",
     },
     "A2-161": {
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Secretaria Unificada das 1ª, 2ª e 3ª Varas de Execuções Fiscais Municipais",
         "lotacao_real": 3,
         "lotacao_paradigma": 24,
@@ -1294,7 +1295,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-162": {
-        "comarca": "CURIÚVA",
+        "comarca": "Curiúva",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1302,7 +1303,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-163": {
-        "comarca": "DOIS VIZINHOS",
+        "comarca": "Dois Vizinhos",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 9,
@@ -1310,7 +1311,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-164": {
-        "comarca": "ENGENHEIRO BELTRÃO",
+        "comarca": "Engenheiro Beltrão",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -1318,7 +1319,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-165": {
-        "comarca": "FAXINAL",
+        "comarca": "Faxinal",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1326,7 +1327,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-166": {
-        "comarca": "FAZENDA RIO GRANDE",
+        "comarca": "Fazenda Rio Grande",
         "unidade": "Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 8,
@@ -1334,7 +1335,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-167": {
-        "comarca": "FAZENDA RIO GRANDE",
+        "comarca": "Fazenda Rio Grande",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 8,
@@ -1342,7 +1343,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-168": {
-        "comarca": "FAZENDA RIO GRANDE",
+        "comarca": "Fazenda Rio Grande",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -1351,14 +1352,14 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-169": {
         "comarca": "Fazenda Rio Grande",
-        "unidade": "2ª VARA CÍVEL E DA FAZENDA PÚBLICA",
+        "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 3,
         "lotacao_paradigma": 7,
         "diferenca": -4,
         "status": "DEFICITÁRIA",
     },
     "A2-170": {
-        "comarca": "FORMOSA DO OESTE",
+        "comarca": "Formosa do Oeste",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -1366,7 +1367,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-171": {
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1374,7 +1375,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-172": {
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1382,7 +1383,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-173": {
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "3ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1390,7 +1391,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-174": {
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
@@ -1398,7 +1399,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-175": {
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "2ª Vara de Família e Sucessões e Acidentes do Trabalho",
         "lotacao_real": 7,
         "lotacao_paradigma": 6,
@@ -1406,7 +1407,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-176": {
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "Vara da Infância e Juventude",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -1414,7 +1415,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-177": {
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "Vara de Execuções Penais e Corregedoria dos Presídios",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
@@ -1422,7 +1423,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-178": {
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "1ª Vara da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1430,7 +1431,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-179": {
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "2ª Vara da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1438,7 +1439,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-180": {
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "1º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1446,7 +1447,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-181": {
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "2º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1454,7 +1455,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-182": {
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "3º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1462,7 +1463,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-183": {
-        "comarca": "FRANCISCO BELTRÃO",
+        "comarca": "Francisco Beltrão",
         "unidade": "1ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -1470,7 +1471,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-184": {
-        "comarca": "FRANCISCO BELTRÃO",
+        "comarca": "Francisco Beltrão",
         "unidade": "Vara Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 9,
@@ -1478,7 +1479,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-185": {
-        "comarca": "FRANCISCO BELTRÃO",
+        "comarca": "Francisco Beltrão",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -1486,7 +1487,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-186": {
-        "comarca": "FRANCISCO BELTRÃO",
+        "comarca": "Francisco Beltrão",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 7,
@@ -1494,7 +1495,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-187": {
-        "comarca": "FRANCISCO BELTRÃO",
+        "comarca": "Francisco Beltrão",
         "unidade": "Vara de Execuções Penais e Corregedoria dos Presídios",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1502,7 +1503,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-188": {
-        "comarca": "GOIOERÊ",
+        "comarca": "Goioerê",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -1510,7 +1511,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-189": {
-        "comarca": "GOIOERÊ",
+        "comarca": "Goioerê",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1518,7 +1519,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-190": {
-        "comarca": "GRANDES RIOS",
+        "comarca": "Grandes Rios",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -1526,7 +1527,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-191": {
-        "comarca": "GUAÍRA",
+        "comarca": "Guaíra",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -1534,7 +1535,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-192": {
-        "comarca": "GUAÍRA",
+        "comarca": "Guaíra",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
@@ -1542,7 +1543,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-193": {
-        "comarca": "GUARANIAÇU",
+        "comarca": "Guaraniaçu",
         "unidade": "Juízo Único",
         "lotacao_real": 6,
         "lotacao_paradigma": 8,
@@ -1550,7 +1551,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-194": {
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "1ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 9,
         "lotacao_paradigma": 6,
@@ -1558,7 +1559,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-195": {
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "3ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 6,
@@ -1566,7 +1567,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-196": {
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -1574,7 +1575,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-197": {
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1582,7 +1583,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-198": {
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "Vara da Infância e Juventude",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1590,7 +1591,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-199": {
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "Vara de Família e Sucessões, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
@@ -1598,7 +1599,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-200": {
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "Vara de Execuções Penais e Corregedoria dos Presídios",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1606,7 +1607,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-201": {
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "1º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1614,7 +1615,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-202": {
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "2º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1622,7 +1623,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-203": {
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "3ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1630,7 +1631,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-204": {
-        "comarca": "GUARATUBA",
+        "comarca": "Guaratuba",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 9,
@@ -1638,7 +1639,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-205": {
-        "comarca": "IBAITI",
+        "comarca": "Ibaiti",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -1646,7 +1647,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-206": {
-        "comarca": "IBIPORÃ",
+        "comarca": "Ibiporã",
         "unidade": "Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1654,7 +1655,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-207": {
-        "comarca": "IBIPORÃ",
+        "comarca": "Ibiporã",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -1662,7 +1663,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-208": {
-        "comarca": "IBIPORÃ",
+        "comarca": "Ibiporã",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1670,7 +1671,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-209": {
-        "comarca": "ICARAÍMA",
+        "comarca": "Icaraíma",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -1678,7 +1679,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-210": {
-        "comarca": "IMBITUVA",
+        "comarca": "Imbituva",
         "unidade": "Juízo Único",
         "lotacao_real": 7,
         "lotacao_paradigma": 9,
@@ -1686,7 +1687,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-211": {
-        "comarca": "IPIRANGA",
+        "comarca": "Ipiranga",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1694,7 +1695,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-212": {
-        "comarca": "IPORÃ",
+        "comarca": "Iporã",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -1702,7 +1703,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-213": {
-        "comarca": "IRATI",
+        "comarca": "Irati",
         "unidade": "Vara Criminal e Infância e Juventude",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -1710,7 +1711,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-214": {
-        "comarca": "IRATI",
+        "comarca": "Irati",
         "unidade": "Juizado Especial Cível, Criminal, da Fazenda Pública e Família e Sucessões",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1719,14 +1720,14 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-215": {
         "comarca": "Irati",
-        "unidade": "SECRETARIA ESPECIALIZADA DE MOVIMENTAÇÃO PROCESSUAL DAS VARAS CÍVEIS",
+        "unidade": "Secretaria Especializada de Movimentação Processual das Varas Cíveis",
         "lotacao_real": 7,
         "lotacao_paradigma": 0,
         "diferenca": 7,
         "status": "SUPERAVITÁRIA",
     },
     "A2-216": {
-        "comarca": "IRETAMA",
+        "comarca": "Iretama",
         "unidade": "Juízo Único",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -1734,7 +1735,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-217": {
-        "comarca": "IVAIPORÃ",
+        "comarca": "Ivaiporã",
         "unidade": "Vara Criminal, Infância e Juventude e Família e Sucessões",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -1742,7 +1743,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-218": {
-        "comarca": "IVAIPORÃ",
+        "comarca": "Ivaiporã",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1750,7 +1751,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-219": {
-        "comarca": "JACAREZINHO",
+        "comarca": "Jacarezinho",
         "unidade": "Vara Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1758,7 +1759,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-220": {
-        "comarca": "JACAREZINHO",
+        "comarca": "Jacarezinho",
         "unidade": "Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -1766,7 +1767,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-221": {
-        "comarca": "JACAREZINHO",
+        "comarca": "Jacarezinho",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1774,7 +1775,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-222": {
-        "comarca": "JACAREZINHO",
+        "comarca": "Jacarezinho",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1782,7 +1783,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-223": {
-        "comarca": "JAGUAPITÃ",
+        "comarca": "Jaguapitã",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1790,7 +1791,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-224": {
-        "comarca": "JAGUARIAÍVA",
+        "comarca": "Jaguariaíva",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -1798,7 +1799,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-225": {
-        "comarca": "JANDAIA DO SUL",
+        "comarca": "Jandaia do Sul",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
@@ -1806,7 +1807,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-226": {
-        "comarca": "JANDAIA DO SUL",
+        "comarca": "Jandaia do Sul",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -1814,7 +1815,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-227": {
-        "comarca": "JOAQUIM TÁVORA",
+        "comarca": "Joaquim Távora",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 2,
         "lotacao_paradigma": 5,
@@ -1822,7 +1823,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-228": {
-        "comarca": "LAPA",
+        "comarca": "Lapa",
         "unidade": "Vara Criminal, Infância e Juventude e Família e Sucessões",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
@@ -1830,7 +1831,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-229": {
-        "comarca": "LAPA",
+        "comarca": "Lapa",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1838,7 +1839,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-230": {
-        "comarca": "LARANJEIRAS DO SUL",
+        "comarca": "Laranjeiras do Sul",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
@@ -1846,7 +1847,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-231": {
-        "comarca": "LOANDA",
+        "comarca": "Loanda",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -1854,7 +1855,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-233": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1862,7 +1863,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-234": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "3ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1870,7 +1871,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-235": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "4ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -1878,7 +1879,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-236": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "5ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1886,7 +1887,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-237": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "1º Juizado de Violência Doméstica e Familiar contra a Mulher e Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
@@ -1894,7 +1895,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-238": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "3ª Vara de Família e Sucessões",
         "lotacao_real": 0,
         "lotacao_paradigma": 7,
@@ -1902,7 +1903,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-239": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "Vara da Infância e da Juventude",
         "lotacao_real": 8,
         "lotacao_paradigma": 6,
@@ -1911,14 +1912,14 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-240": {
         "comarca": "Londrina",
-        "unidade": "VARA DE SUCESSÕES, ACIDENTES DO TRABALHO, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL",
+        "unidade": "Vara de Sucessões, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 0,
         "diferenca": 5,
         "status": "SUPERAVITÁRIA",
     },
     "A2-241": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "Vara de Execuções Penais, Medidas Alternativas e Corregedoria dos Presídios",
         "lotacao_real": 8,
         "lotacao_paradigma": 11,
@@ -1926,15 +1927,15 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-242": {
-        "comarca": "LONDRINA",
-        "unidade": "2º Juizado de Violência Doméstica e Familiar contra a Mulher e Vara de Crimes Contra Crianças, Adolescentes e Idosos",
+        "comarca": "Londrina",
+        "unidade": "2º Juizado de Violência Doméstica e Familiar contra a Mulher e Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
         "diferenca": 0,
         "status": "EQUILIBRADA",
     },
     "A2-243": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "1º Juizado Especial da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -1942,7 +1943,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-244": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "2º Juizado Especial Cível e Criminal",
         "lotacao_real": 8,
         "lotacao_paradigma": 7,
@@ -1950,7 +1951,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-245": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "3º Juizado Especial Cível e Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -1958,7 +1959,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-246": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "4º Juizado Especial Cível e Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -1966,7 +1967,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-247": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "5º Juizado Especial Cível e Criminal",
         "lotacao_real": 8,
         "lotacao_paradigma": 7,
@@ -1974,7 +1975,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-248": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "6º Juizado Especial Cível e Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -1982,7 +1983,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-249": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "2ª Vara da Fazenda Pública",
         "lotacao_real": 0,
         "lotacao_paradigma": 5,
@@ -1991,14 +1992,14 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-250": {
         "comarca": "Londrina",
-        "unidade": "11ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "11ª Vara Cível e Empresarial Regional",
         "lotacao_real": 6,
         "lotacao_paradigma": 0,
         "diferenca": 6,
         "status": "SUPERAVITÁRIA",
     },
     "A2-251": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "1ª Vara de Execuções Fiscais",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -2006,7 +2007,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-252": {
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "2ª Vara de Execuções Fiscais",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -2014,7 +2015,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-253": {
-        "comarca": "MALLET",
+        "comarca": "Mallet",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2022,7 +2023,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-254": {
-        "comarca": "MAMBORÊ",
+        "comarca": "Mamborê",
         "unidade": "Juízo Único",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -2030,7 +2031,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-255": {
-        "comarca": "MANDAGUAÇU",
+        "comarca": "Mandaguaçu",
         "unidade": "Juízo Único",
         "lotacao_real": 9,
         "lotacao_paradigma": 10,
@@ -2038,7 +2039,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-256": {
-        "comarca": "MANDAGUARI",
+        "comarca": "Mandaguari",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
@@ -2046,7 +2047,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-257": {
-        "comarca": "MANGUEIRINHA",
+        "comarca": "Mangueirinha",
         "unidade": "Juízo Único",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -2054,7 +2055,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-258": {
-        "comarca": "MANOEL RIBAS",
+        "comarca": "Manoel Ribas",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 2,
         "lotacao_paradigma": 5,
@@ -2062,7 +2063,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-259": {
-        "comarca": "MARECHAL CÂNDIDO RONDON",
+        "comarca": "Marechal Cândido Rondon",
         "unidade": "Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 8,
@@ -2070,7 +2071,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-260": {
-        "comarca": "MARECHAL CÂNDIDO RONDON",
+        "comarca": "Marechal Cândido Rondon",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -2078,7 +2079,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-261": {
-        "comarca": "MARECHAL CÂNDIDO RONDON",
+        "comarca": "Marechal Cândido Rondon",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2086,7 +2087,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-262": {
-        "comarca": "MARIALVA",
+        "comarca": "Marialva",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -2094,7 +2095,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-263": {
-        "comarca": "MARILÂNDIA DO SUL",
+        "comarca": "Marilândia do Sul",
         "unidade": "Juízo Único",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
@@ -2103,14 +2104,14 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-264": {
         "comarca": "Maringá",
-        "unidade": "3ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "3ª Vara Cível e Empresarial Regional",
         "lotacao_real": 8,
         "lotacao_paradigma": 11,
         "diferenca": -3,
         "status": "DEFICITÁRIA",
     },
     "A2-265": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "4ª Vara Cível",
         "lotacao_real": 9,
         "lotacao_paradigma": 9,
@@ -2118,7 +2119,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-266": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "7ª Vara Cível",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
@@ -2126,7 +2127,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-267": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2134,7 +2135,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-268": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2142,7 +2143,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-269": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "3ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2150,7 +2151,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-270": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "4ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -2158,7 +2159,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-271": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 12,
         "lotacao_paradigma": 12,
@@ -2166,7 +2167,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-272": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "1ª Vara de Família e Sucessões, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -2174,7 +2175,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-273": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "2ª Vara de Família e Sucessões e Acidentes do Trabalho",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
@@ -2182,7 +2183,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-274": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "Vara da Infância e Juventude",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -2190,7 +2191,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-275": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "1ª Vara da Fazenda Pública",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
@@ -2198,7 +2199,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-276": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "2ª Vara da Fazenda Pública",
         "lotacao_real": 10,
         "lotacao_paradigma": 8,
@@ -2206,7 +2207,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-277": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "Vara de Execuções Penais, Medidas Alternativas e Corregedoria dos Presídios",
         "lotacao_real": 8,
         "lotacao_paradigma": 6,
@@ -2214,7 +2215,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-278": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "5º Juizado Especial da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -2222,7 +2223,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-279": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "1º Juizado Especial Cível e Criminal",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
@@ -2230,7 +2231,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-280": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "2º Juizado Especial Cível e Criminal",
         "lotacao_real": 10,
         "lotacao_paradigma": 8,
@@ -2238,7 +2239,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-281": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "3º Juizado Especial Cível e Criminal",
         "lotacao_real": 10,
         "lotacao_paradigma": 8,
@@ -2246,7 +2247,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-282": {
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "4º Juizado Especial Cível e Criminal",
         "lotacao_real": 10,
         "lotacao_paradigma": 8,
@@ -2254,7 +2255,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-283": {
-        "comarca": "MARMELEIRO",
+        "comarca": "Marmeleiro",
         "unidade": "Juízo Único",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
@@ -2262,7 +2263,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-284": {
-        "comarca": "MATELÂNDIA",
+        "comarca": "Matelândia",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -2270,7 +2271,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-285": {
-        "comarca": "MATINHOS",
+        "comarca": "Matinhos",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -2278,7 +2279,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-286": {
-        "comarca": "MEDIANEIRA",
+        "comarca": "Medianeira",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 11,
@@ -2286,7 +2287,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-287": {
-        "comarca": "MORRETES",
+        "comarca": "Morretes",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2294,7 +2295,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-288": {
-        "comarca": "NOVA AURORA",
+        "comarca": "Nova Aurora",
         "unidade": "Juízo Único",
         "lotacao_real": 6,
         "lotacao_paradigma": 8,
@@ -2302,7 +2303,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-289": {
-        "comarca": "NOVA ESPERANÇA",
+        "comarca": "Nova Esperança",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2310,7 +2311,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-290": {
-        "comarca": "NOVA ESPERANÇA",
+        "comarca": "Nova Esperança",
         "unidade": "Vara Criminal, Infância e Juventude e Família e Sucessões",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2318,7 +2319,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-291": {
-        "comarca": "NOVA ESPERANÇA",
+        "comarca": "Nova Esperança",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2326,7 +2327,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-292": {
-        "comarca": "NOVA FÁTIMA",
+        "comarca": "Nova Fátima",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2334,7 +2335,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-293": {
-        "comarca": "NOVA LONDRINA",
+        "comarca": "Nova Londrina",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2342,7 +2343,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-294": {
-        "comarca": "ORTIGUEIRA",
+        "comarca": "Ortigueira",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -2350,7 +2351,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-295": {
-        "comarca": "PAIÇANDU",
+        "comarca": "Paiçandu",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -2358,7 +2359,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-296": {
-        "comarca": "PAIÇANDU",
+        "comarca": "Paiçandu",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2367,14 +2368,14 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-297": {
         "comarca": "Palmas",
-        "unidade": "VARA CRIMINAL E DA INFÂNCIA E JUVENTUDE",
+        "unidade": "Vara Criminal e da Infância e Juventude",
         "lotacao_real": 5,
         "lotacao_paradigma": 0,
         "diferenca": 5,
         "status": "SUPERAVITÁRIA",
     },
     "A2-298": {
-        "comarca": "PALMAS",
+        "comarca": "Palmas",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 0,
         "lotacao_paradigma": 8,
@@ -2382,7 +2383,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-299": {
-        "comarca": "PALMEIRA",
+        "comarca": "Palmeira",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2390,7 +2391,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-300": {
-        "comarca": "PALMITAL",
+        "comarca": "Palmital",
         "unidade": "Juízo Único - Crime e Anexos, Juizados Especiais e Distribuidor",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2398,7 +2399,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-301": {
-        "comarca": "PALOTINA",
+        "comarca": "Palotina",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2406,7 +2407,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-302": {
-        "comarca": "PARAÍSO DO NORTE",
+        "comarca": "Paraíso do Norte",
         "unidade": "Juízo Único - Crime e Anexos, Juizados Especiais e Distribuidor",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2414,7 +2415,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-303": {
-        "comarca": "PARANACITY",
+        "comarca": "Paranacity",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -2422,7 +2423,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-304": {
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "1ª Vara Cível",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2430,7 +2431,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-305": {
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "2ª Vara Cível",
         "lotacao_real": 2,
         "lotacao_paradigma": 5,
@@ -2438,7 +2439,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-306": {
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "Vara de Família e Sucessões",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2446,7 +2447,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-307": {
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -2454,7 +2455,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-308": {
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -2462,7 +2463,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-309": {
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "Vara da Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2470,7 +2471,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-310": {
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2478,7 +2479,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-311": {
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "Vara da Fazenda Pública",
         "lotacao_real": 11,
         "lotacao_paradigma": 11,
@@ -2486,7 +2487,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-312": {
-        "comarca": "PARANAVAÍ",
+        "comarca": "Paranavaí",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2494,7 +2495,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-313": {
-        "comarca": "PARANAVAÍ",
+        "comarca": "Paranavaí",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -2502,7 +2503,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-314": {
-        "comarca": "PARANAVAÍ",
+        "comarca": "Paranavaí",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -2510,7 +2511,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-315": {
-        "comarca": "PARANAVAÍ",
+        "comarca": "Paranavaí",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 9,
         "lotacao_paradigma": 7,
@@ -2518,7 +2519,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-316": {
-        "comarca": "PATO BRANCO",
+        "comarca": "Pato Branco",
         "unidade": "Vara Criminal",
         "lotacao_real": 9,
         "lotacao_paradigma": 9,
@@ -2526,7 +2527,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-317": {
-        "comarca": "PATO BRANCO",
+        "comarca": "Pato Branco",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -2534,7 +2535,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-318": {
-        "comarca": "PATO BRANCO",
+        "comarca": "Pato Branco",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -2542,7 +2543,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-319": {
-        "comarca": "PEABIRU",
+        "comarca": "Peabiru",
         "unidade": "Juízo Único",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -2550,7 +2551,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-320": {
-        "comarca": "PÉROLA",
+        "comarca": "Pérola",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2558,7 +2559,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-321": {
-        "comarca": "PINHAIS",
+        "comarca": "Pinhais",
         "unidade": "Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -2566,7 +2567,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-322": {
-        "comarca": "PINHAIS",
+        "comarca": "Pinhais",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -2574,7 +2575,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-323": {
-        "comarca": "PINHAIS",
+        "comarca": "Pinhais",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2582,7 +2583,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-324": {
-        "comarca": "PINHÃO",
+        "comarca": "Pinhão",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2590,7 +2591,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-325": {
-        "comarca": "PINHÃO",
+        "comarca": "Pinhão",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2598,7 +2599,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-326": {
-        "comarca": "PIRAÍ DO SUL",
+        "comarca": "Piraí do Sul",
         "unidade": "Juízo Único",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -2606,7 +2607,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-327": {
-        "comarca": "PIRAQUARA",
+        "comarca": "Piraquara",
         "unidade": "Vara Cível e da Fazenda Pública",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -2614,7 +2615,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-328": {
-        "comarca": "PIRAQUARA",
+        "comarca": "Piraquara",
         "unidade": "Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 8,
@@ -2622,7 +2623,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-329": {
-        "comarca": "PIRAQUARA",
+        "comarca": "Piraquara",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -2630,7 +2631,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-330": {
-        "comarca": "PIRAQUARA",
+        "comarca": "Piraquara",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2638,7 +2639,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-331": {
-        "comarca": "PITANGA",
+        "comarca": "Pitanga",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -2647,14 +2648,14 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-332": {
         "comarca": "Ponta Grossa",
-        "unidade": "1ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "1ª Vara Cível e Empresarial Regional",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
         "diferenca": -1,
         "status": "DEFICITÁRIA",
     },
     "A2-333": {
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2662,7 +2663,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-334": {
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 0,
         "lotacao_paradigma": 13,
@@ -2670,7 +2671,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-335": {
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "3ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2679,14 +2680,14 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-336": {
         "comarca": "Ponta Grossa",
-        "unidade": "1º JUIZADO DE VIOLÊNCIA DOMÉSTICA E FAMILIAR CONTRA A MULHER, VARA DE CRIMES CONTRA CRIANÇAS, ADOLESCENTES E IDOSOS",
+        "unidade": "1º Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 9,
         "lotacao_paradigma": 0,
         "diferenca": 9,
         "status": "SUPERAVITÁRIA",
     },
     "A2-337": {
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "Vara da Infância e Juventude",
         "lotacao_real": 7,
         "lotacao_paradigma": 9,
@@ -2694,7 +2695,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-338": {
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "Vara de Execuções Penais e Corregedoria dos Presídios",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -2702,7 +2703,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-339": {
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "1ª Vara da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -2710,7 +2711,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-340": {
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "2ª Vara da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 7,
@@ -2718,7 +2719,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-341": {
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "1º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -2726,7 +2727,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-342": {
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "2º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -2734,7 +2735,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-343": {
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "3º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 6,
@@ -2742,7 +2743,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-344": {
-        "comarca": "PONTAL DO PARANÁ",
+        "comarca": "Pontal do Paraná",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial e Juizado Especial da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -2750,7 +2751,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-345": {
-        "comarca": "PONTAL DO PARANÁ",
+        "comarca": "Pontal do Paraná",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude, Juizado Especial Cível e Juizado Especial Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 8,
@@ -2758,7 +2759,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-346": {
-        "comarca": "PORECATU",
+        "comarca": "Porecatu",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2766,7 +2767,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-347": {
-        "comarca": "PORECATU",
+        "comarca": "Porecatu",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2774,7 +2775,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-348": {
-        "comarca": "PRIMEIRO DE MAIO",
+        "comarca": "Primeiro de Maio",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2782,7 +2783,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-349": {
-        "comarca": "PRUDENTÓPOLIS",
+        "comarca": "Prudentópolis",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -2790,7 +2791,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-350": {
-        "comarca": "PRUDENTÓPOLIS",
+        "comarca": "Prudentópolis",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -2798,7 +2799,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-351": {
-        "comarca": "QUATRO BARRAS",
+        "comarca": "Quatro Barras",
         "unidade": "Juízo Único",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2806,7 +2807,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-352": {
-        "comarca": "QUEDAS DO IGUAÇU",
+        "comarca": "Quedas do Iguaçu",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2814,7 +2815,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-353": {
-        "comarca": "QUEDAS DO IGUAÇU",
+        "comarca": "Quedas do Iguaçu",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2822,7 +2823,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-354": {
-        "comarca": "REALEZA",
+        "comarca": "Realeza",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -2830,7 +2831,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-355": {
-        "comarca": "REBOUÇAS",
+        "comarca": "Rebouças",
         "unidade": "Juízo Único",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2838,7 +2839,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-356": {
-        "comarca": "RESERVA",
+        "comarca": "Reserva",
         "unidade": "Juízo Único",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2846,7 +2847,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-357": {
-        "comarca": "RIBEIRÃO CLARO",
+        "comarca": "Ribeirão Claro",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2854,7 +2855,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-358": {
-        "comarca": "RIBEIRÃO DO PINHAL",
+        "comarca": "Ribeirão do Pinhal",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2862,7 +2863,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-359": {
-        "comarca": "RIO BRANCO DO SUL",
+        "comarca": "Rio Branco do Sul",
         "unidade": "Vara Criminal e Infância e Juventude",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2870,7 +2871,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-360": {
-        "comarca": "RIO BRANCO DO SUL",
+        "comarca": "Rio Branco do Sul",
         "unidade": "Juizado Especial Cível, Criminal, da Fazenda Pública e Família e Sucessões",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2878,7 +2879,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-361": {
-        "comarca": "RIO NEGRO",
+        "comarca": "Rio Negro",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 6,
@@ -2886,7 +2887,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-363": {
-        "comarca": "ROLÂNDIA",
+        "comarca": "Rolândia",
         "unidade": "Vara da Infância e Juventude, Família e Sucessões, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2894,7 +2895,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-364": {
-        "comarca": "ROLÂNDIA",
+        "comarca": "Rolândia",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -2902,7 +2903,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-365": {
-        "comarca": "SALTO DO LONTRA",
+        "comarca": "Salto do Lontra",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -2910,7 +2911,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-366": {
-        "comarca": "SANTA FÉ",
+        "comarca": "Santa Fé",
         "unidade": "Juízo Único",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
@@ -2918,7 +2919,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-367": {
-        "comarca": "SANTA HELENA",
+        "comarca": "Santa Helena",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2926,7 +2927,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-368": {
-        "comarca": "SANTA ISABEL DO IVAÍ",
+        "comarca": "Santa Isabel do Ivaí",
         "unidade": "Juízo Único",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2934,7 +2935,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-369": {
-        "comarca": "SANTA MARIANA",
+        "comarca": "Santa Mariana",
         "unidade": "Juízo Único",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -2942,7 +2943,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-370": {
-        "comarca": "SANTO ANTÔNIO DA PLATINA",
+        "comarca": "Santo Antônio da Platina",
         "unidade": "Vara Criminal, Infância e Juventude e Família e Sucessões",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -2950,7 +2951,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-371": {
-        "comarca": "SANTO ANTÔNIO DA PLATINA",
+        "comarca": "Santo Antônio da Platina",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2958,7 +2959,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-372": {
-        "comarca": "SANTO ANTÔNIO DO SUDOESTE",
+        "comarca": "Santo Antônio do Sudoeste",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
@@ -2966,7 +2967,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-373": {
-        "comarca": "SÃO JERÔNIMO DA SERRA",
+        "comarca": "São Jerônimo da Serra",
         "unidade": "Juízo Único",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -2974,7 +2975,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-374": {
-        "comarca": "SÃO JOÃO",
+        "comarca": "São João",
         "unidade": "Juízo Único",
         "lotacao_real": 3,
         "lotacao_paradigma": 6,
@@ -2982,7 +2983,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-375": {
-        "comarca": "SÃO JOÃO DO IVAÍ",
+        "comarca": "São João do Ivaí",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2990,7 +2991,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-376": {
-        "comarca": "SÃO JOÃO DO TRIUNFO",
+        "comarca": "São João do Triunfo",
         "unidade": "Juízo Único - Crime e Anexos, Juizados Especiais e Distribuidor",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -2998,7 +2999,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-377": {
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "3ª Vara Cível",
         "lotacao_real": 7,
         "lotacao_paradigma": 9,
@@ -3006,7 +3007,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-378": {
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3014,7 +3015,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-379": {
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -3022,7 +3023,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-380": {
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "Vara da Infância e Juventude",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3030,7 +3031,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-381": {
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "Vara de Família e Sucessões, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -3038,7 +3039,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-382": {
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "Vara da Fazenda Pública",
         "lotacao_real": 9,
         "lotacao_paradigma": 7,
@@ -3046,7 +3047,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-383": {
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "1º Juizado Especial Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3054,7 +3055,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-384": {
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "2º Juizado Especial Cível e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -3062,7 +3063,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-385": {
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "Vara Descentralizada do Afonso Pena",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -3070,7 +3071,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-386": {
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
@@ -3078,7 +3079,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-387": {
-        "comarca": "SÃO MATEUS DO SUL",
+        "comarca": "São Mateus do Sul",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -3086,7 +3087,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-388": {
-        "comarca": "SÃO MIGUEL DO IGUAÇU",
+        "comarca": "São Miguel do Iguaçu",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -3094,7 +3095,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-389": {
-        "comarca": "SARANDI",
+        "comarca": "Sarandi",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3102,7 +3103,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-390": {
-        "comarca": "SARANDI",
+        "comarca": "Sarandi",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3110,7 +3111,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-391": {
-        "comarca": "SARANDI",
+        "comarca": "Sarandi",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3118,7 +3119,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-392": {
-        "comarca": "SARANDI",
+        "comarca": "Sarandi",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3126,7 +3127,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-393": {
-        "comarca": "SENGÉS",
+        "comarca": "Sengés",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3134,7 +3135,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-394": {
-        "comarca": "SERTANÓPOLIS",
+        "comarca": "Sertanópolis",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3142,7 +3143,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-395": {
-        "comarca": "SIQUEIRA CAMPOS",
+        "comarca": "Siqueira Campos",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -3150,7 +3151,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-396": {
-        "comarca": "TEIXEIRA SOARES",
+        "comarca": "Teixeira Soares",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -3158,7 +3159,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-397": {
-        "comarca": "TELÊMACO BORBA",
+        "comarca": "Telêmaco Borba",
         "unidade": "Vara Cível e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -3166,7 +3167,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-398": {
-        "comarca": "TELÊMACO BORBA",
+        "comarca": "Telêmaco Borba",
         "unidade": "Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -3174,7 +3175,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-399": {
-        "comarca": "TELÊMACO BORBA",
+        "comarca": "Telêmaco Borba",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -3182,7 +3183,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-400": {
-        "comarca": "TELÊMACO BORBA",
+        "comarca": "Telêmaco Borba",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -3190,7 +3191,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-401": {
-        "comarca": "TERRA BOA",
+        "comarca": "Terra Boa",
         "unidade": "Juízo Único",
         "lotacao_real": 8,
         "lotacao_paradigma": 7,
@@ -3198,7 +3199,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-402": {
-        "comarca": "TERRA RICA",
+        "comarca": "Terra Rica",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -3206,7 +3207,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-403": {
-        "comarca": "TERRA ROXA",
+        "comarca": "Terra Roxa",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -3214,7 +3215,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-404": {
-        "comarca": "TIBAGI",
+        "comarca": "Tibagi",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -3222,7 +3223,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-405": {
-        "comarca": "TOLEDO",
+        "comarca": "Toledo",
         "unidade": "3ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -3230,7 +3231,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-406": {
-        "comarca": "TOLEDO",
+        "comarca": "Toledo",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -3238,7 +3239,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-407": {
-        "comarca": "TOLEDO",
+        "comarca": "Toledo",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3246,7 +3247,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-408": {
-        "comarca": "TOLEDO",
+        "comarca": "Toledo",
         "unidade": "Vara da Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -3254,7 +3255,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-409": {
-        "comarca": "TOLEDO",
+        "comarca": "Toledo",
         "unidade": "Vara de Família e Sucessões",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -3262,7 +3263,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-410": {
-        "comarca": "TOLEDO",
+        "comarca": "Toledo",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -3270,7 +3271,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-411": {
-        "comarca": "TOMAZINA",
+        "comarca": "Tomazina",
         "unidade": "Juízo Único",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -3278,7 +3279,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-412": {
-        "comarca": "UBIRATÃ",
+        "comarca": "Ubiratã",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3286,7 +3287,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-413": {
-        "comarca": "UMUARAMA",
+        "comarca": "Umuarama",
         "unidade": "1ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -3294,7 +3295,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-414": {
-        "comarca": "UMUARAMA",
+        "comarca": "Umuarama",
         "unidade": "3ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -3302,7 +3303,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-415": {
-        "comarca": "UMUARAMA",
+        "comarca": "Umuarama",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -3310,7 +3311,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-416": {
-        "comarca": "UMUARAMA",
+        "comarca": "Umuarama",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3318,7 +3319,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-417": {
-        "comarca": "UMUARAMA",
+        "comarca": "Umuarama",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -3326,7 +3327,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-418": {
-        "comarca": "UMUARAMA",
+        "comarca": "Umuarama",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3334,7 +3335,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-419": {
-        "comarca": "UNIÃO DA VITÓRIA",
+        "comarca": "União da Vitória",
         "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -3342,7 +3343,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-420": {
-        "comarca": "UNIÃO DA VITÓRIA",
+        "comarca": "União da Vitória",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3350,7 +3351,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-421": {
-        "comarca": "UNIÃO DA VITÓRIA",
+        "comarca": "União da Vitória",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -3358,7 +3359,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-422": {
-        "comarca": "UNIÃO DA VITÓRIA",
+        "comarca": "União da Vitória",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -3366,7 +3367,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-423": {
-        "comarca": "UNIÃO DA VITÓRIA",
+        "comarca": "União da Vitória",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -3374,7 +3375,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-424": {
-        "comarca": "URAÍ",
+        "comarca": "Uraí",
         "unidade": "Juízo Único",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -3382,7 +3383,7 @@ LOTACAO_POR_CODIGO = {
         "status": "SUPERAVITÁRIA",
     },
     "A2-425": {
-        "comarca": "WENCESLAU BRAZ",
+        "comarca": "Wenceslau Braz",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -3390,7 +3391,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-426": {
-        "comarca": "XAMBRÊ",
+        "comarca": "Xambrê",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -3399,7 +3400,7 @@ LOTACAO_POR_CODIGO = {
     },
     "A2-590": {
         "comarca": "Cambé",
-        "unidade": "1ª VARA CÍVEL E DA FAZENDA PÚBLICA",
+        "unidade": "1ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 1,
         "lotacao_paradigma": 8,
         "diferenca": -7,
@@ -3411,7 +3412,7 @@ LOTACAO_POR_CODIGO = {
 LOTACAO_COMPLETA = [
     {
         "codigo": "A2-001",
-        "comarca": "ALMIRANTE TAMANDARÉ",
+        "comarca": "Almirante Tamandaré",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3420,7 +3421,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-002",
-        "comarca": "ALMIRANTE TAMANDARÉ",
+        "comarca": "Almirante Tamandaré",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3429,7 +3430,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-003",
-        "comarca": "ALMIRANTE TAMANDARÉ",
+        "comarca": "Almirante Tamandaré",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3438,7 +3439,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-004",
-        "comarca": "ALMIRANTE TAMANDARÉ",
+        "comarca": "Almirante Tamandaré",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3447,7 +3448,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-005",
-        "comarca": "ALMIRANTE TAMANDARÉ",
+        "comarca": "Almirante Tamandaré",
         "unidade": "Secretaria Unificada das 1ª e 2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 1,
         "lotacao_paradigma": 11,
@@ -3456,7 +3457,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-006",
-        "comarca": "ALTO PARANÁ",
+        "comarca": "Alto Paraná",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -3465,7 +3466,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-007",
-        "comarca": "ALTO PIQUIRI",
+        "comarca": "Alto Piquiri",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -3474,7 +3475,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-008",
-        "comarca": "ALTÔNIA",
+        "comarca": "Altônia",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -3483,7 +3484,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-009",
-        "comarca": "AMPÉRE",
+        "comarca": "Ampére",
         "unidade": "Juízo Único",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -3492,7 +3493,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-010",
-        "comarca": "ANDIRÁ",
+        "comarca": "Andirá",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3501,7 +3502,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-011",
-        "comarca": "ANTONINA",
+        "comarca": "Antonina",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3510,7 +3511,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-012",
-        "comarca": "ANTONINA",
+        "comarca": "Antonina",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -3519,7 +3520,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-013",
-        "comarca": "APUCARANA",
+        "comarca": "Apucarana",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3528,7 +3529,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-014",
-        "comarca": "APUCARANA",
+        "comarca": "Apucarana",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -3537,7 +3538,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-015",
-        "comarca": "APUCARANA",
+        "comarca": "Apucarana",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 8,
         "lotacao_paradigma": 7,
@@ -3546,7 +3547,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-016",
-        "comarca": "APUCARANA",
+        "comarca": "Apucarana",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
@@ -3555,7 +3556,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-017",
-        "comarca": "ARAPONGAS",
+        "comarca": "Arapongas",
         "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 0,
         "lotacao_paradigma": 5,
@@ -3564,7 +3565,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-018",
-        "comarca": "ARAPONGAS",
+        "comarca": "Arapongas",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 0,
         "lotacao_paradigma": 5,
@@ -3573,7 +3574,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-019",
-        "comarca": "ARAPONGAS",
+        "comarca": "Arapongas",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 0,
         "lotacao_paradigma": 6,
@@ -3582,7 +3583,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-020",
-        "comarca": "ARAPONGAS",
+        "comarca": "Arapongas",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 0,
         "lotacao_paradigma": 6,
@@ -3591,7 +3592,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-021",
-        "comarca": "ARAPONGAS",
+        "comarca": "Arapongas",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 0,
         "lotacao_paradigma": 9,
@@ -3600,7 +3601,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-022",
-        "comarca": "ARAPOTI",
+        "comarca": "Arapoti",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3609,7 +3610,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-023",
-        "comarca": "ARAUCÁRIA",
+        "comarca": "Araucária",
         "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3618,7 +3619,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-024",
-        "comarca": "ARAUCÁRIA",
+        "comarca": "Araucária",
         "unidade": "Vara Criminal",
         "lotacao_real": 9,
         "lotacao_paradigma": 9,
@@ -3627,7 +3628,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-025",
-        "comarca": "ARAUCÁRIA",
+        "comarca": "Araucária",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 8,
@@ -3636,7 +3637,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-026",
-        "comarca": "ARAUCÁRIA",
+        "comarca": "Araucária",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -3645,7 +3646,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-027",
-        "comarca": "ASSAÍ",
+        "comarca": "Assaí",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -3654,7 +3655,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-028",
-        "comarca": "ASSIS CHATEAUBRIAND",
+        "comarca": "Assis Chateaubriand",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3663,7 +3664,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-029",
-        "comarca": "ASTORGA",
+        "comarca": "Astorga",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -3672,7 +3673,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-030",
-        "comarca": "BANDEIRANTES",
+        "comarca": "Bandeirantes",
         "unidade": "2ª Vara Cível e da Fazenda Pública, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -3681,7 +3682,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-032",
-        "comarca": "BARBOSA FERRAZ",
+        "comarca": "Barbosa Ferraz",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -3690,7 +3691,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-033",
-        "comarca": "BARRACÃO",
+        "comarca": "Barracão",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -3699,7 +3700,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-034",
-        "comarca": "BELA VISTA DO PARAÍSO",
+        "comarca": "Bela Vista do Paraíso",
         "unidade": "Juízo Único - Crime e Anexos, Juizados Especiais e Distribuidor",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3708,7 +3709,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-035",
-        "comarca": "BOCAIÚVA DO SUL",
+        "comarca": "Bocaiúva do Sul",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3717,7 +3718,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-036",
-        "comarca": "CAMBARÁ",
+        "comarca": "Cambará",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -3726,7 +3727,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-037",
-        "comarca": "CAMBÉ",
+        "comarca": "Cambé",
         "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -3735,7 +3736,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-038",
-        "comarca": "CAMBÉ",
+        "comarca": "Cambé",
         "unidade": "Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -3744,7 +3745,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-039",
-        "comarca": "CAMBÉ",
+        "comarca": "Cambé",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -3753,7 +3754,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-040",
-        "comarca": "CAMBÉ",
+        "comarca": "Cambé",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3762,7 +3763,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-041",
-        "comarca": "CAMPINA DA LAGOA",
+        "comarca": "Campina da Lagoa",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 1,
         "lotacao_paradigma": 5,
@@ -3771,7 +3772,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-042",
-        "comarca": "CAMPINA GRANDE DO SUL",
+        "comarca": "Campina Grande do Sul",
         "unidade": "Vara Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3780,7 +3781,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-043",
-        "comarca": "CAMPINA GRANDE DO SUL",
+        "comarca": "Campina Grande do Sul",
         "unidade": "Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3789,7 +3790,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-044",
-        "comarca": "CAMPINA GRANDE DO SUL",
+        "comarca": "Campina Grande do Sul",
         "unidade": "Vara de Família e Sucessões, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível, Criminal e da Fazenda Pública e Infância e Juventude",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -3798,7 +3799,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-045",
-        "comarca": "CAMPO LARGO",
+        "comarca": "Campo Largo",
         "unidade": "1ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3807,7 +3808,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-046",
-        "comarca": "CAMPO LARGO",
+        "comarca": "Campo Largo",
         "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -3816,7 +3817,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-047",
-        "comarca": "CAMPO LARGO",
+        "comarca": "Campo Largo",
         "unidade": "Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 8,
@@ -3825,7 +3826,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-048",
-        "comarca": "CAMPO LARGO",
+        "comarca": "Campo Largo",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -3834,7 +3835,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-049",
-        "comarca": "CAMPO LARGO",
+        "comarca": "Campo Largo",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -3843,7 +3844,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-050",
-        "comarca": "CAMPO MOURÃO",
+        "comarca": "Campo Mourão",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3852,7 +3853,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-051",
-        "comarca": "CAMPO MOURÃO",
+        "comarca": "Campo Mourão",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3861,7 +3862,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-052",
-        "comarca": "CAMPO MOURÃO",
+        "comarca": "Campo Mourão",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -3870,7 +3871,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-053",
-        "comarca": "CAMPO MOURÃO",
+        "comarca": "Campo Mourão",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3879,7 +3880,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-054",
-        "comarca": "CÂNDIDO DE ABREU",
+        "comarca": "Cândido de Abreu",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -3888,7 +3889,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-055",
-        "comarca": "CANTAGALO",
+        "comarca": "Cantagalo",
         "unidade": "Juízo Único",
         "lotacao_real": 7,
         "lotacao_paradigma": 6,
@@ -3897,7 +3898,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-056",
-        "comarca": "CAPANEMA",
+        "comarca": "Capanema",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -3906,7 +3907,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-057",
-        "comarca": "CAPITÃO LEÔNIDAS MARQUES",
+        "comarca": "Capitão Leônidas Marques",
         "unidade": "Juízo Único",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -3915,7 +3916,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-058",
-        "comarca": "CARLÓPOLIS",
+        "comarca": "Carlópolis",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3925,7 +3926,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-059",
         "comarca": "Cascavel",
-        "unidade": "4ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "4ª Vara Cível e Empresarial Regional",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
         "diferenca": 0,
@@ -3933,7 +3934,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-060",
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "5ª Vara Cível",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -3942,7 +3943,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-061",
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3951,7 +3952,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-062",
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 0,
         "lotacao_paradigma": 6,
@@ -3960,7 +3961,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-063",
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "3ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3970,7 +3971,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-064",
         "comarca": "Cascavel",
-        "unidade": "1º JUIZADO DE VIOLÊNCIA DOMÉSTICA E FAMILIAR CONTRA A MULHER, VARA DE CRIMES CONTRA CRIANÇAS, ADOLESCENTES E IDOSOS",
+        "unidade": "1º Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
         "diferenca": 0,
@@ -3978,7 +3979,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-065",
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "1ª Vara de Família e Sucessões, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -3987,7 +3988,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-066",
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "2ª Vara de Família e Sucessões e Acidentes do Trabalho",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -3996,7 +3997,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-067",
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "Vara da Infância e Juventude",
         "lotacao_real": 8,
         "lotacao_paradigma": 11,
@@ -4005,7 +4006,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-068",
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "Vara da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 5,
@@ -4014,7 +4015,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-069",
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "Vara de Execuções Penais e Corregedoria dos Presídios",
         "lotacao_real": 7,
         "lotacao_paradigma": 6,
@@ -4023,7 +4024,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-070",
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "1º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -4032,7 +4033,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-071",
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "2º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -4041,7 +4042,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-072",
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "3º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -4050,7 +4051,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-073",
-        "comarca": "CASCAVEL",
+        "comarca": "Cascavel",
         "unidade": "4ª Vara Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -4059,7 +4060,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-074",
-        "comarca": "CASTRO",
+        "comarca": "Castro",
         "unidade": "Vara Criminal",
         "lotacao_real": 1,
         "lotacao_paradigma": 7,
@@ -4068,7 +4069,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-075",
-        "comarca": "CASTRO",
+        "comarca": "Castro",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4077,7 +4078,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-076",
-        "comarca": "CASTRO",
+        "comarca": "Castro",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4086,7 +4087,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-077",
-        "comarca": "CATANDUVAS",
+        "comarca": "Catanduvas",
         "unidade": "Juízo Único",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -4095,7 +4096,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-078",
-        "comarca": "CENTENÁRIO DO SUL",
+        "comarca": "Centenário do Sul",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4104,7 +4105,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-079",
-        "comarca": "CERRO AZUL",
+        "comarca": "Cerro Azul",
         "unidade": "Juízo Único - Crime e Anexos, Juizados Especiais e Distribuidor",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4113,7 +4114,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-080",
-        "comarca": "CHOPINZINHO",
+        "comarca": "Chopinzinho",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4122,7 +4123,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-081",
-        "comarca": "CIANORTE",
+        "comarca": "Cianorte",
         "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4131,7 +4132,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-082",
-        "comarca": "CIANORTE",
+        "comarca": "Cianorte",
         "unidade": "Vara Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
@@ -4140,7 +4141,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-083",
-        "comarca": "CIANORTE",
+        "comarca": "Cianorte",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -4149,7 +4150,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-084",
-        "comarca": "CIANORTE",
+        "comarca": "Cianorte",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 9,
         "lotacao_paradigma": 7,
@@ -4158,7 +4159,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-085",
-        "comarca": "CIDADE GAÚCHA",
+        "comarca": "Cidade Gaúcha",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -4167,7 +4168,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-086",
-        "comarca": "CLEVELÂNDIA",
+        "comarca": "Clevelândia",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4176,7 +4177,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-087",
-        "comarca": "COLOMBO",
+        "comarca": "Colombo",
         "unidade": "2ª Vara Cível",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -4185,7 +4186,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-088",
-        "comarca": "COLOMBO",
+        "comarca": "Colombo",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -4194,7 +4195,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-089",
-        "comarca": "COLOMBO",
+        "comarca": "Colombo",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -4203,7 +4204,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-090",
-        "comarca": "COLOMBO",
+        "comarca": "Colombo",
         "unidade": "Vara da Infância e Juventude, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4212,7 +4213,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-091",
-        "comarca": "COLOMBO",
+        "comarca": "Colombo",
         "unidade": "Vara de Família e Sucessões",
         "lotacao_real": 5,
         "lotacao_paradigma": 8,
@@ -4221,7 +4222,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-092",
-        "comarca": "COLOMBO",
+        "comarca": "Colombo",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -4230,7 +4231,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-093",
-        "comarca": "COLOMBO",
+        "comarca": "Colombo",
         "unidade": "Vara da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -4239,7 +4240,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-094",
-        "comarca": "COLORADO",
+        "comarca": "Colorado",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4248,7 +4249,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-095",
-        "comarca": "CONGONHINHAS",
+        "comarca": "Congonhinhas",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -4257,7 +4258,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-096",
-        "comarca": "CORBÉLIA",
+        "comarca": "Corbélia",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -4266,7 +4267,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-097",
-        "comarca": "CORNÉLIO PROCÓPIO",
+        "comarca": "Cornélio Procópio",
         "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4275,7 +4276,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-098",
-        "comarca": "CORNÉLIO PROCÓPIO",
+        "comarca": "Cornélio Procópio",
         "unidade": "Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4284,7 +4285,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-099",
-        "comarca": "CORNÉLIO PROCÓPIO",
+        "comarca": "Cornélio Procópio",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4293,7 +4294,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-100",
-        "comarca": "CORNÉLIO PROCÓPIO",
+        "comarca": "Cornélio Procópio",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -4302,7 +4303,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-101",
-        "comarca": "CORONEL VIVIDA",
+        "comarca": "Coronel Vivida",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4311,7 +4312,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-102",
-        "comarca": "CRUZEIRO DO OESTE",
+        "comarca": "Cruzeiro do Oeste",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 7,
@@ -4320,7 +4321,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-103",
-        "comarca": "CRUZEIRO DO OESTE",
+        "comarca": "Cruzeiro do Oeste",
         "unidade": "Vara de Execuções Penais e Corregedoria dos Presídios",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4329,7 +4330,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-104",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "3ª Vara Cível",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
@@ -4338,7 +4339,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-105",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "10ª Vara Cível",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
@@ -4347,7 +4348,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-106",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "12ª Vara Cível",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
@@ -4356,7 +4357,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-107",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "15ª Vara Cível",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
@@ -4365,7 +4366,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-108",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "18ª Vara Cível",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
@@ -4374,7 +4375,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-109",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "23ª Vara Cível",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
@@ -4384,7 +4385,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-110",
         "comarca": "Curitiba",
-        "unidade": "24ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "24ª Vara Cível e Empresarial Regional",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
         "diferenca": -1,
@@ -4393,7 +4394,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-111",
         "comarca": "Curitiba",
-        "unidade": "25ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "25ª Vara Cível e Empresarial Regional",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
         "diferenca": -1,
@@ -4402,24 +4403,24 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-112",
         "comarca": "Curitiba",
-        "unidade": "26ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "26ª Vara Cível e Empresarial Regional",
         "lotacao_real": 5,
-        "lotacao_paradigma": 0,
-        "diferenca": 5,
-        "status": "SUPERAVITÁRIA",
+        "lotacao_paradigma": 8,
+        "diferenca": -3,
+        "status": "DEFICITÁRIA",
     },
     {
         "codigo": "A2-113",
         "comarca": "Curitiba",
-        "unidade": "27ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "27ª Vara Cível e Empresarial Regional",
         "lotacao_real": 5,
-        "lotacao_paradigma": 0,
-        "diferenca": 5,
-        "status": "SUPERAVITÁRIA",
+        "lotacao_paradigma": 8,
+        "diferenca": -3,
+        "status": "DEFICITÁRIA",
     },
     {
         "codigo": "A2-114",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "1ª Vara de Família",
         "lotacao_real": 9,
         "lotacao_paradigma": 5,
@@ -4428,7 +4429,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-115",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "3ª Vara de Família",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -4437,7 +4438,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-116",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "5ª Vara de Família",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -4446,7 +4447,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-117",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "6ª Vara de Família",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4455,7 +4456,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-118",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "7ª Vara de Família",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4464,7 +4465,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-119",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "1ª Vara de Sucessões",
         "lotacao_real": 7,
         "lotacao_paradigma": 6,
@@ -4473,7 +4474,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-120",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara de Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -4482,7 +4483,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-121",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara da Infância e da Juventude e Adoção",
         "lotacao_real": 12,
         "lotacao_paradigma": 13,
@@ -4491,7 +4492,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-122",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "2ª Vara de Sucessões",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -4500,7 +4501,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-123",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara de Adolescentes em Conflito com a Lei",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -4509,7 +4510,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-124",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara de Infrações Penais contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 0,
         "lotacao_paradigma": 6,
@@ -4518,7 +4519,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-125",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4527,7 +4528,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-126",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -4536,7 +4537,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-127",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "3ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4545,7 +4546,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-128",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "4ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4554,7 +4555,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-130",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Secretaria Unificada das 1ª e 2ª Varas Descentralizadas do Pinheirinho",
         "lotacao_real": 12,
         "lotacao_paradigma": 14,
@@ -4563,7 +4564,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-131",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "7ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4572,7 +4573,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-132",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "8ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4581,7 +4582,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-133",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "9ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4590,7 +4591,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-134",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "10ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4600,7 +4601,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-135",
         "comarca": "Curitiba",
-        "unidade": "2ª VARA DE INFRAÇÕES PENAIS CONTRA CRIANÇAS, ADOLESCENTES E IDOSOS",
+        "unidade": "2ª Vara de Infrações Penais contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 6,
         "lotacao_paradigma": 0,
         "diferenca": 6,
@@ -4608,7 +4609,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-136",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "12ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -4617,7 +4618,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-137",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "13ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4626,7 +4627,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-138",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "1ª Vara Privativa do Tribunal do Júri",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4635,7 +4636,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-139",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "2ª Vara Privativa do Tribunal do Júri",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4644,7 +4645,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-140",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara de Delitos de Trânsito",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4653,7 +4654,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-141",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "3º Juizado de Violência Doméstica e Familiar contra a Mulher – Casa da Mulher Brasileira",
         "lotacao_real": 11,
         "lotacao_paradigma": 11,
@@ -4662,7 +4663,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-142",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara da Auditoria da Justiça Militar",
         "lotacao_real": 3,
         "lotacao_paradigma": 3,
@@ -4671,7 +4672,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-143",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "1º Juizado Especial Cível – Matéria Bancária",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -4680,8 +4681,8 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-144",
-        "comarca": "CURITIBA",
-        "unidade": "Juizado Especial PUC - Cajuru",
+        "comarca": "Curitiba",
+        "unidade": "Juizado Especial Puc - Cajuru",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
         "diferenca": 0,
@@ -4689,7 +4690,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-145",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "3º Juizado Especial Cível – Telecomunicações",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -4698,7 +4699,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-146",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "5º Juizado Especial Cível e Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -4707,7 +4708,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-147",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "6º Juizado Especial Cível e Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4716,7 +4717,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-148",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "8º Juizado Especial Cível e Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -4725,8 +4726,8 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-149",
-        "comarca": "CURITIBA",
-        "unidade": "Secretaria Unificada das 1ª e 2ª Varas Descentralizadas do Bairro Novo (Sítio Cercado)",
+        "comarca": "Curitiba",
+        "unidade": "Secretaria Unificada das 1ª e 2ª Varas Descentralizadas do Bairro Novo (sítio Cercado)",
         "lotacao_real": 11,
         "lotacao_paradigma": 11,
         "diferenca": 0,
@@ -4734,7 +4735,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-150",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Secretaria Unificada das 1ª e 2ª Varas Descentralizadas do Boqueirão",
         "lotacao_real": 13,
         "lotacao_paradigma": 14,
@@ -4743,7 +4744,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-151",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "11º Juizado Especial Cível e Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4752,7 +4753,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-152",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Secretaria Unificada das 1ª e 2ª Varas Descentralizadas de Santa Felicidade",
         "lotacao_real": 12,
         "lotacao_paradigma": 14,
@@ -4761,7 +4762,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-153",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "13º Juizado Especial Cível e Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4770,7 +4771,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-154",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "14º Juizado Especial Cível e Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -4779,7 +4780,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-155",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Secretaria Unificada das 1ª e 2ª Varas Descentralizadas da Cidade Industrial",
         "lotacao_real": 13,
         "lotacao_paradigma": 14,
@@ -4788,7 +4789,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-156",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Vara de Execuções Penais, Medidas Alternativas e Corregedoria dos Presídios",
         "lotacao_real": 1,
         "lotacao_paradigma": 22,
@@ -4798,7 +4799,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-157",
         "comarca": "Curitiba",
-        "unidade": "SECRETARIA ESPECIALIZADA DE MOVIMENTAÇÃO PROCESSUAL DA FAZENDA PÚBLICA",
+        "unidade": "Secretaria Especializada de Movimentação Processual da Fazenda Pública",
         "lotacao_real": 43,
         "lotacao_paradigma": 0,
         "diferenca": 43,
@@ -4806,7 +4807,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-158",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Secretaria Unificada dos 4º e 15º Juizados Especiais da Fazenda Pública",
         "lotacao_real": 2,
         "lotacao_paradigma": 19,
@@ -4816,7 +4817,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-159",
         "comarca": "Curitiba",
-        "unidade": "SECRETARIA ESPECIALIZADA EM MOVIMENTAÇÕES PROCESSUAIS DOS JUIZADOS DE VIOLÊNCIA DOMÉSTICA E FAMILIAR CONTRA A MULHER",
+        "unidade": "Secretaria Especializada em Movimentações Processuais dos Juizados de Violência Doméstica e Familiar contra a Mulher",
         "lotacao_real": 31,
         "lotacao_paradigma": 0,
         "diferenca": 31,
@@ -4825,7 +4826,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-160",
         "comarca": "Curitiba",
-        "unidade": "SECRETARIA ESPECIALIZADA EM MOVIMENTAÇÕES PROCESSUAIS DAS VARAS DE EXECUÇÕES FISCAIS ESTADUAIS",
+        "unidade": "Secretaria Especializada em Movimentações Processuais das Varas de Execuções Fiscais Estaduais",
         "lotacao_real": 13,
         "lotacao_paradigma": 0,
         "diferenca": 13,
@@ -4833,7 +4834,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-161",
-        "comarca": "CURITIBA",
+        "comarca": "Curitiba",
         "unidade": "Secretaria Unificada das 1ª, 2ª e 3ª Varas de Execuções Fiscais Municipais",
         "lotacao_real": 3,
         "lotacao_paradigma": 24,
@@ -4842,7 +4843,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-162",
-        "comarca": "CURIÚVA",
+        "comarca": "Curiúva",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4851,7 +4852,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-163",
-        "comarca": "DOIS VIZINHOS",
+        "comarca": "Dois Vizinhos",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 9,
@@ -4860,7 +4861,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-164",
-        "comarca": "ENGENHEIRO BELTRÃO",
+        "comarca": "Engenheiro Beltrão",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -4869,7 +4870,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-165",
-        "comarca": "FAXINAL",
+        "comarca": "Faxinal",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4878,7 +4879,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-166",
-        "comarca": "FAZENDA RIO GRANDE",
+        "comarca": "Fazenda Rio Grande",
         "unidade": "Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 8,
@@ -4887,7 +4888,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-167",
-        "comarca": "FAZENDA RIO GRANDE",
+        "comarca": "Fazenda Rio Grande",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 8,
@@ -4896,7 +4897,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-168",
-        "comarca": "FAZENDA RIO GRANDE",
+        "comarca": "Fazenda Rio Grande",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4906,7 +4907,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-169",
         "comarca": "Fazenda Rio Grande",
-        "unidade": "2ª VARA CÍVEL E DA FAZENDA PÚBLICA",
+        "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 3,
         "lotacao_paradigma": 7,
         "diferenca": -4,
@@ -4914,7 +4915,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-170",
-        "comarca": "FORMOSA DO OESTE",
+        "comarca": "Formosa do Oeste",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4923,7 +4924,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-171",
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -4932,7 +4933,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-172",
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -4941,7 +4942,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-173",
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "3ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4950,7 +4951,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-174",
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
@@ -4959,7 +4960,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-175",
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "2ª Vara de Família e Sucessões e Acidentes do Trabalho",
         "lotacao_real": 7,
         "lotacao_paradigma": 6,
@@ -4968,7 +4969,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-176",
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "Vara da Infância e Juventude",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -4977,7 +4978,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-177",
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "Vara de Execuções Penais e Corregedoria dos Presídios",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
@@ -4986,7 +4987,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-178",
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "1ª Vara da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -4995,7 +4996,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-179",
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "2ª Vara da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5004,7 +5005,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-180",
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "1º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -5013,7 +5014,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-181",
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "2º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -5022,7 +5023,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-182",
-        "comarca": "FOZ DO IGUAÇU",
+        "comarca": "Foz do Iguaçu",
         "unidade": "3º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5031,7 +5032,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-183",
-        "comarca": "FRANCISCO BELTRÃO",
+        "comarca": "Francisco Beltrão",
         "unidade": "1ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -5040,7 +5041,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-184",
-        "comarca": "FRANCISCO BELTRÃO",
+        "comarca": "Francisco Beltrão",
         "unidade": "Vara Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 9,
@@ -5049,7 +5050,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-185",
-        "comarca": "FRANCISCO BELTRÃO",
+        "comarca": "Francisco Beltrão",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -5058,7 +5059,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-186",
-        "comarca": "FRANCISCO BELTRÃO",
+        "comarca": "Francisco Beltrão",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 7,
@@ -5067,7 +5068,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-187",
-        "comarca": "FRANCISCO BELTRÃO",
+        "comarca": "Francisco Beltrão",
         "unidade": "Vara de Execuções Penais e Corregedoria dos Presídios",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5076,7 +5077,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-188",
-        "comarca": "GOIOERÊ",
+        "comarca": "Goioerê",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -5085,7 +5086,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-189",
-        "comarca": "GOIOERÊ",
+        "comarca": "Goioerê",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5094,7 +5095,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-190",
-        "comarca": "GRANDES RIOS",
+        "comarca": "Grandes Rios",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -5103,7 +5104,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-191",
-        "comarca": "GUAÍRA",
+        "comarca": "Guaíra",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -5112,7 +5113,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-192",
-        "comarca": "GUAÍRA",
+        "comarca": "Guaíra",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
@@ -5121,7 +5122,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-193",
-        "comarca": "GUARANIAÇU",
+        "comarca": "Guaraniaçu",
         "unidade": "Juízo Único",
         "lotacao_real": 6,
         "lotacao_paradigma": 8,
@@ -5130,7 +5131,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-194",
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "1ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 9,
         "lotacao_paradigma": 6,
@@ -5139,7 +5140,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-195",
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "3ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 6,
@@ -5148,7 +5149,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-196",
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -5157,7 +5158,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-197",
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5166,7 +5167,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-198",
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "Vara da Infância e Juventude",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5175,7 +5176,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-199",
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "Vara de Família e Sucessões, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
@@ -5184,7 +5185,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-200",
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "Vara de Execuções Penais e Corregedoria dos Presídios",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -5193,7 +5194,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-201",
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "1º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -5202,7 +5203,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-202",
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "2º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -5211,7 +5212,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-203",
-        "comarca": "GUARAPUAVA",
+        "comarca": "Guarapuava",
         "unidade": "3ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5220,7 +5221,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-204",
-        "comarca": "GUARATUBA",
+        "comarca": "Guaratuba",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 9,
@@ -5229,7 +5230,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-205",
-        "comarca": "IBAITI",
+        "comarca": "Ibaiti",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -5238,7 +5239,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-206",
-        "comarca": "IBIPORÃ",
+        "comarca": "Ibiporã",
         "unidade": "Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5247,7 +5248,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-207",
-        "comarca": "IBIPORÃ",
+        "comarca": "Ibiporã",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -5256,7 +5257,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-208",
-        "comarca": "IBIPORÃ",
+        "comarca": "Ibiporã",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5265,7 +5266,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-209",
-        "comarca": "ICARAÍMA",
+        "comarca": "Icaraíma",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -5274,7 +5275,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-210",
-        "comarca": "IMBITUVA",
+        "comarca": "Imbituva",
         "unidade": "Juízo Único",
         "lotacao_real": 7,
         "lotacao_paradigma": 9,
@@ -5283,7 +5284,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-211",
-        "comarca": "IPIRANGA",
+        "comarca": "Ipiranga",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5292,7 +5293,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-212",
-        "comarca": "IPORÃ",
+        "comarca": "Iporã",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -5301,7 +5302,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-213",
-        "comarca": "IRATI",
+        "comarca": "Irati",
         "unidade": "Vara Criminal e Infância e Juventude",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -5310,7 +5311,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-214",
-        "comarca": "IRATI",
+        "comarca": "Irati",
         "unidade": "Juizado Especial Cível, Criminal, da Fazenda Pública e Família e Sucessões",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5320,7 +5321,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-215",
         "comarca": "Irati",
-        "unidade": "SECRETARIA ESPECIALIZADA DE MOVIMENTAÇÃO PROCESSUAL DAS VARAS CÍVEIS",
+        "unidade": "Secretaria Especializada de Movimentação Processual das Varas Cíveis",
         "lotacao_real": 7,
         "lotacao_paradigma": 0,
         "diferenca": 7,
@@ -5328,7 +5329,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-216",
-        "comarca": "IRETAMA",
+        "comarca": "Iretama",
         "unidade": "Juízo Único",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -5337,7 +5338,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-217",
-        "comarca": "IVAIPORÃ",
+        "comarca": "Ivaiporã",
         "unidade": "Vara Criminal, Infância e Juventude e Família e Sucessões",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -5346,7 +5347,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-218",
-        "comarca": "IVAIPORÃ",
+        "comarca": "Ivaiporã",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5355,7 +5356,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-219",
-        "comarca": "JACAREZINHO",
+        "comarca": "Jacarezinho",
         "unidade": "Vara Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5364,7 +5365,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-220",
-        "comarca": "JACAREZINHO",
+        "comarca": "Jacarezinho",
         "unidade": "Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -5373,7 +5374,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-221",
-        "comarca": "JACAREZINHO",
+        "comarca": "Jacarezinho",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5382,7 +5383,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-222",
-        "comarca": "JACAREZINHO",
+        "comarca": "Jacarezinho",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5391,7 +5392,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-223",
-        "comarca": "JAGUAPITÃ",
+        "comarca": "Jaguapitã",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5400,7 +5401,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-224",
-        "comarca": "JAGUARIAÍVA",
+        "comarca": "Jaguariaíva",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -5409,7 +5410,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-225",
-        "comarca": "JANDAIA DO SUL",
+        "comarca": "Jandaia do Sul",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
@@ -5418,7 +5419,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-226",
-        "comarca": "JANDAIA DO SUL",
+        "comarca": "Jandaia do Sul",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -5427,7 +5428,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-227",
-        "comarca": "JOAQUIM TÁVORA",
+        "comarca": "Joaquim Távora",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 2,
         "lotacao_paradigma": 5,
@@ -5436,7 +5437,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-228",
-        "comarca": "LAPA",
+        "comarca": "Lapa",
         "unidade": "Vara Criminal, Infância e Juventude e Família e Sucessões",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
@@ -5445,7 +5446,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-229",
-        "comarca": "LAPA",
+        "comarca": "Lapa",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5454,7 +5455,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-230",
-        "comarca": "LARANJEIRAS DO SUL",
+        "comarca": "Laranjeiras do Sul",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
@@ -5463,7 +5464,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-231",
-        "comarca": "LOANDA",
+        "comarca": "Loanda",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -5472,7 +5473,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-233",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -5481,7 +5482,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-234",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "3ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5490,7 +5491,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-235",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "4ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -5499,7 +5500,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-236",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "5ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5508,7 +5509,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-237",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "1º Juizado de Violência Doméstica e Familiar contra a Mulher e Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
@@ -5517,7 +5518,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-238",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "3ª Vara de Família e Sucessões",
         "lotacao_real": 0,
         "lotacao_paradigma": 7,
@@ -5526,7 +5527,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-239",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "Vara da Infância e da Juventude",
         "lotacao_real": 8,
         "lotacao_paradigma": 6,
@@ -5536,7 +5537,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-240",
         "comarca": "Londrina",
-        "unidade": "VARA DE SUCESSÕES, ACIDENTES DO TRABALHO, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL",
+        "unidade": "Vara de Sucessões, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 0,
         "diferenca": 5,
@@ -5544,7 +5545,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-241",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "Vara de Execuções Penais, Medidas Alternativas e Corregedoria dos Presídios",
         "lotacao_real": 8,
         "lotacao_paradigma": 11,
@@ -5553,8 +5554,8 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-242",
-        "comarca": "LONDRINA",
-        "unidade": "2º Juizado de Violência Doméstica e Familiar contra a Mulher e Vara de Crimes Contra Crianças, Adolescentes e Idosos",
+        "comarca": "Londrina",
+        "unidade": "2º Juizado de Violência Doméstica e Familiar contra a Mulher e Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 8,
         "lotacao_paradigma": 8,
         "diferenca": 0,
@@ -5562,7 +5563,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-243",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "1º Juizado Especial da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -5571,7 +5572,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-244",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "2º Juizado Especial Cível e Criminal",
         "lotacao_real": 8,
         "lotacao_paradigma": 7,
@@ -5580,7 +5581,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-245",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "3º Juizado Especial Cível e Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -5589,7 +5590,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-246",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "4º Juizado Especial Cível e Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -5598,7 +5599,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-247",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "5º Juizado Especial Cível e Criminal",
         "lotacao_real": 8,
         "lotacao_paradigma": 7,
@@ -5607,7 +5608,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-248",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "6º Juizado Especial Cível e Criminal",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -5616,7 +5617,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-249",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "2ª Vara da Fazenda Pública",
         "lotacao_real": 0,
         "lotacao_paradigma": 5,
@@ -5626,7 +5627,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-250",
         "comarca": "Londrina",
-        "unidade": "11ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "11ª Vara Cível e Empresarial Regional",
         "lotacao_real": 6,
         "lotacao_paradigma": 0,
         "diferenca": 6,
@@ -5634,7 +5635,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-251",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "1ª Vara de Execuções Fiscais",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -5643,7 +5644,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-252",
-        "comarca": "LONDRINA",
+        "comarca": "Londrina",
         "unidade": "2ª Vara de Execuções Fiscais",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -5652,7 +5653,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-253",
-        "comarca": "MALLET",
+        "comarca": "Mallet",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5661,7 +5662,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-254",
-        "comarca": "MAMBORÊ",
+        "comarca": "Mamborê",
         "unidade": "Juízo Único",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -5670,7 +5671,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-255",
-        "comarca": "MANDAGUAÇU",
+        "comarca": "Mandaguaçu",
         "unidade": "Juízo Único",
         "lotacao_real": 9,
         "lotacao_paradigma": 10,
@@ -5679,7 +5680,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-256",
-        "comarca": "MANDAGUARI",
+        "comarca": "Mandaguari",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
@@ -5688,7 +5689,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-257",
-        "comarca": "MANGUEIRINHA",
+        "comarca": "Mangueirinha",
         "unidade": "Juízo Único",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -5697,7 +5698,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-258",
-        "comarca": "MANOEL RIBAS",
+        "comarca": "Manoel Ribas",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 2,
         "lotacao_paradigma": 5,
@@ -5706,7 +5707,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-259",
-        "comarca": "MARECHAL CÂNDIDO RONDON",
+        "comarca": "Marechal Cândido Rondon",
         "unidade": "Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 8,
@@ -5715,7 +5716,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-260",
-        "comarca": "MARECHAL CÂNDIDO RONDON",
+        "comarca": "Marechal Cândido Rondon",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -5724,7 +5725,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-261",
-        "comarca": "MARECHAL CÂNDIDO RONDON",
+        "comarca": "Marechal Cândido Rondon",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5733,7 +5734,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-262",
-        "comarca": "MARIALVA",
+        "comarca": "Marialva",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -5742,7 +5743,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-263",
-        "comarca": "MARILÂNDIA DO SUL",
+        "comarca": "Marilândia do Sul",
         "unidade": "Juízo Único",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
@@ -5752,7 +5753,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-264",
         "comarca": "Maringá",
-        "unidade": "3ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "3ª Vara Cível e Empresarial Regional",
         "lotacao_real": 8,
         "lotacao_paradigma": 11,
         "diferenca": -3,
@@ -5760,7 +5761,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-265",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "4ª Vara Cível",
         "lotacao_real": 9,
         "lotacao_paradigma": 9,
@@ -5769,7 +5770,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-266",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "7ª Vara Cível",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
@@ -5778,7 +5779,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-267",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -5787,7 +5788,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-268",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5796,7 +5797,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-269",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "3ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -5805,7 +5806,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-270",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "4ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -5814,7 +5815,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-271",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 12,
         "lotacao_paradigma": 12,
@@ -5823,7 +5824,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-272",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "1ª Vara de Família e Sucessões, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -5832,7 +5833,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-273",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "2ª Vara de Família e Sucessões e Acidentes do Trabalho",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
@@ -5841,7 +5842,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-274",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "Vara da Infância e Juventude",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -5850,7 +5851,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-275",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "1ª Vara da Fazenda Pública",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
@@ -5859,7 +5860,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-276",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "2ª Vara da Fazenda Pública",
         "lotacao_real": 10,
         "lotacao_paradigma": 8,
@@ -5868,7 +5869,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-277",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "Vara de Execuções Penais, Medidas Alternativas e Corregedoria dos Presídios",
         "lotacao_real": 8,
         "lotacao_paradigma": 6,
@@ -5877,7 +5878,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-278",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "5º Juizado Especial da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -5886,7 +5887,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-279",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "1º Juizado Especial Cível e Criminal",
         "lotacao_real": 9,
         "lotacao_paradigma": 8,
@@ -5895,7 +5896,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-280",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "2º Juizado Especial Cível e Criminal",
         "lotacao_real": 10,
         "lotacao_paradigma": 8,
@@ -5904,7 +5905,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-281",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "3º Juizado Especial Cível e Criminal",
         "lotacao_real": 10,
         "lotacao_paradigma": 8,
@@ -5913,7 +5914,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-282",
-        "comarca": "MARINGÁ",
+        "comarca": "Maringá",
         "unidade": "4º Juizado Especial Cível e Criminal",
         "lotacao_real": 10,
         "lotacao_paradigma": 8,
@@ -5922,7 +5923,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-283",
-        "comarca": "MARMELEIRO",
+        "comarca": "Marmeleiro",
         "unidade": "Juízo Único",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
@@ -5931,7 +5932,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-284",
-        "comarca": "MATELÂNDIA",
+        "comarca": "Matelândia",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -5940,7 +5941,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-285",
-        "comarca": "MATINHOS",
+        "comarca": "Matinhos",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -5949,7 +5950,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-286",
-        "comarca": "MEDIANEIRA",
+        "comarca": "Medianeira",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 11,
@@ -5958,7 +5959,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-287",
-        "comarca": "MORRETES",
+        "comarca": "Morretes",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5967,7 +5968,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-288",
-        "comarca": "NOVA AURORA",
+        "comarca": "Nova Aurora",
         "unidade": "Juízo Único",
         "lotacao_real": 6,
         "lotacao_paradigma": 8,
@@ -5976,7 +5977,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-289",
-        "comarca": "NOVA ESPERANÇA",
+        "comarca": "Nova Esperança",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -5985,7 +5986,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-290",
-        "comarca": "NOVA ESPERANÇA",
+        "comarca": "Nova Esperança",
         "unidade": "Vara Criminal, Infância e Juventude e Família e Sucessões",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -5994,7 +5995,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-291",
-        "comarca": "NOVA ESPERANÇA",
+        "comarca": "Nova Esperança",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6003,7 +6004,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-292",
-        "comarca": "NOVA FÁTIMA",
+        "comarca": "Nova Fátima",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6012,7 +6013,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-293",
-        "comarca": "NOVA LONDRINA",
+        "comarca": "Nova Londrina",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6021,7 +6022,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-294",
-        "comarca": "ORTIGUEIRA",
+        "comarca": "Ortigueira",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -6030,7 +6031,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-295",
-        "comarca": "PAIÇANDU",
+        "comarca": "Paiçandu",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -6039,7 +6040,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-296",
-        "comarca": "PAIÇANDU",
+        "comarca": "Paiçandu",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6049,7 +6050,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-297",
         "comarca": "Palmas",
-        "unidade": "VARA CRIMINAL E DA INFÂNCIA E JUVENTUDE",
+        "unidade": "Vara Criminal e da Infância e Juventude",
         "lotacao_real": 5,
         "lotacao_paradigma": 0,
         "diferenca": 5,
@@ -6057,7 +6058,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-298",
-        "comarca": "PALMAS",
+        "comarca": "Palmas",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 0,
         "lotacao_paradigma": 8,
@@ -6066,7 +6067,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-299",
-        "comarca": "PALMEIRA",
+        "comarca": "Palmeira",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6075,7 +6076,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-300",
-        "comarca": "PALMITAL",
+        "comarca": "Palmital",
         "unidade": "Juízo Único - Crime e Anexos, Juizados Especiais e Distribuidor",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6084,7 +6085,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-301",
-        "comarca": "PALOTINA",
+        "comarca": "Palotina",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6093,7 +6094,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-302",
-        "comarca": "PARAÍSO DO NORTE",
+        "comarca": "Paraíso do Norte",
         "unidade": "Juízo Único - Crime e Anexos, Juizados Especiais e Distribuidor",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6102,7 +6103,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-303",
-        "comarca": "PARANACITY",
+        "comarca": "Paranacity",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -6111,7 +6112,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-304",
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "1ª Vara Cível",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6120,7 +6121,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-305",
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "2ª Vara Cível",
         "lotacao_real": 2,
         "lotacao_paradigma": 5,
@@ -6129,7 +6130,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-306",
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "Vara de Família e Sucessões",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6138,7 +6139,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-307",
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -6147,7 +6148,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-308",
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -6156,7 +6157,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-309",
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "Vara da Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6165,7 +6166,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-310",
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6174,7 +6175,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-311",
-        "comarca": "PARANAGUÁ",
+        "comarca": "Paranaguá",
         "unidade": "Vara da Fazenda Pública",
         "lotacao_real": 11,
         "lotacao_paradigma": 11,
@@ -6183,7 +6184,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-312",
-        "comarca": "PARANAVAÍ",
+        "comarca": "Paranavaí",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6192,7 +6193,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-313",
-        "comarca": "PARANAVAÍ",
+        "comarca": "Paranavaí",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -6201,7 +6202,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-314",
-        "comarca": "PARANAVAÍ",
+        "comarca": "Paranavaí",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -6210,7 +6211,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-315",
-        "comarca": "PARANAVAÍ",
+        "comarca": "Paranavaí",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 9,
         "lotacao_paradigma": 7,
@@ -6219,7 +6220,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-316",
-        "comarca": "PATO BRANCO",
+        "comarca": "Pato Branco",
         "unidade": "Vara Criminal",
         "lotacao_real": 9,
         "lotacao_paradigma": 9,
@@ -6228,7 +6229,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-317",
-        "comarca": "PATO BRANCO",
+        "comarca": "Pato Branco",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -6237,7 +6238,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-318",
-        "comarca": "PATO BRANCO",
+        "comarca": "Pato Branco",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -6246,7 +6247,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-319",
-        "comarca": "PEABIRU",
+        "comarca": "Peabiru",
         "unidade": "Juízo Único",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -6255,7 +6256,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-320",
-        "comarca": "PÉROLA",
+        "comarca": "Pérola",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6264,7 +6265,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-321",
-        "comarca": "PINHAIS",
+        "comarca": "Pinhais",
         "unidade": "Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -6273,7 +6274,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-322",
-        "comarca": "PINHAIS",
+        "comarca": "Pinhais",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -6282,7 +6283,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-323",
-        "comarca": "PINHAIS",
+        "comarca": "Pinhais",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6291,7 +6292,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-324",
-        "comarca": "PINHÃO",
+        "comarca": "Pinhão",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6300,7 +6301,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-325",
-        "comarca": "PINHÃO",
+        "comarca": "Pinhão",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6309,7 +6310,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-326",
-        "comarca": "PIRAÍ DO SUL",
+        "comarca": "Piraí do Sul",
         "unidade": "Juízo Único",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -6318,7 +6319,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-327",
-        "comarca": "PIRAQUARA",
+        "comarca": "Piraquara",
         "unidade": "Vara Cível e da Fazenda Pública",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -6327,7 +6328,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-328",
-        "comarca": "PIRAQUARA",
+        "comarca": "Piraquara",
         "unidade": "Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 8,
@@ -6336,7 +6337,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-329",
-        "comarca": "PIRAQUARA",
+        "comarca": "Piraquara",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -6345,7 +6346,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-330",
-        "comarca": "PIRAQUARA",
+        "comarca": "Piraquara",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6354,7 +6355,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-331",
-        "comarca": "PITANGA",
+        "comarca": "Pitanga",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -6364,7 +6365,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-332",
         "comarca": "Ponta Grossa",
-        "unidade": "1ª VARA CÍVEL E EMPRESARIAL REGIONAL",
+        "unidade": "1ª Vara Cível e Empresarial Regional",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
         "diferenca": -1,
@@ -6372,7 +6373,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-333",
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6381,7 +6382,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-334",
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 0,
         "lotacao_paradigma": 13,
@@ -6390,7 +6391,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-335",
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "3ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6400,7 +6401,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-336",
         "comarca": "Ponta Grossa",
-        "unidade": "1º JUIZADO DE VIOLÊNCIA DOMÉSTICA E FAMILIAR CONTRA A MULHER, VARA DE CRIMES CONTRA CRIANÇAS, ADOLESCENTES E IDOSOS",
+        "unidade": "1º Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 9,
         "lotacao_paradigma": 0,
         "diferenca": 9,
@@ -6408,7 +6409,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-337",
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "Vara da Infância e Juventude",
         "lotacao_real": 7,
         "lotacao_paradigma": 9,
@@ -6417,7 +6418,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-338",
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "Vara de Execuções Penais e Corregedoria dos Presídios",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -6426,7 +6427,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-339",
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "1ª Vara da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -6435,7 +6436,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-340",
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "2ª Vara da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 7,
@@ -6444,7 +6445,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-341",
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "1º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -6453,7 +6454,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-342",
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "2º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -6462,7 +6463,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-343",
-        "comarca": "PONTA GROSSA",
+        "comarca": "Ponta Grossa",
         "unidade": "3º Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 8,
         "lotacao_paradigma": 6,
@@ -6471,7 +6472,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-344",
-        "comarca": "PONTAL DO PARANÁ",
+        "comarca": "Pontal do Paraná",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial e Juizado Especial da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -6480,7 +6481,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-345",
-        "comarca": "PONTAL DO PARANÁ",
+        "comarca": "Pontal do Paraná",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude, Juizado Especial Cível e Juizado Especial Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 8,
@@ -6489,7 +6490,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-346",
-        "comarca": "PORECATU",
+        "comarca": "Porecatu",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6498,7 +6499,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-347",
-        "comarca": "PORECATU",
+        "comarca": "Porecatu",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6507,7 +6508,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-348",
-        "comarca": "PRIMEIRO DE MAIO",
+        "comarca": "Primeiro de Maio",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6516,7 +6517,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-349",
-        "comarca": "PRUDENTÓPOLIS",
+        "comarca": "Prudentópolis",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -6525,7 +6526,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-350",
-        "comarca": "PRUDENTÓPOLIS",
+        "comarca": "Prudentópolis",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -6534,7 +6535,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-351",
-        "comarca": "QUATRO BARRAS",
+        "comarca": "Quatro Barras",
         "unidade": "Juízo Único",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6543,7 +6544,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-352",
-        "comarca": "QUEDAS DO IGUAÇU",
+        "comarca": "Quedas do Iguaçu",
         "unidade": "Vara Cível, da Fazenda Pública, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial, Juizado Especial Cível e Juizado Especial da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6552,7 +6553,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-353",
-        "comarca": "QUEDAS DO IGUAÇU",
+        "comarca": "Quedas do Iguaçu",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6561,7 +6562,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-354",
-        "comarca": "REALEZA",
+        "comarca": "Realeza",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -6570,7 +6571,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-355",
-        "comarca": "REBOUÇAS",
+        "comarca": "Rebouças",
         "unidade": "Juízo Único",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6579,7 +6580,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-356",
-        "comarca": "RESERVA",
+        "comarca": "Reserva",
         "unidade": "Juízo Único",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6588,7 +6589,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-357",
-        "comarca": "RIBEIRÃO CLARO",
+        "comarca": "Ribeirão Claro",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6597,7 +6598,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-358",
-        "comarca": "RIBEIRÃO DO PINHAL",
+        "comarca": "Ribeirão do Pinhal",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6606,7 +6607,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-359",
-        "comarca": "RIO BRANCO DO SUL",
+        "comarca": "Rio Branco do Sul",
         "unidade": "Vara Criminal e Infância e Juventude",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6615,7 +6616,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-360",
-        "comarca": "RIO BRANCO DO SUL",
+        "comarca": "Rio Branco do Sul",
         "unidade": "Juizado Especial Cível, Criminal, da Fazenda Pública e Família e Sucessões",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6624,7 +6625,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-361",
-        "comarca": "RIO NEGRO",
+        "comarca": "Rio Negro",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 6,
@@ -6633,7 +6634,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-363",
-        "comarca": "ROLÂNDIA",
+        "comarca": "Rolândia",
         "unidade": "Vara da Infância e Juventude, Família e Sucessões, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6642,7 +6643,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-364",
-        "comarca": "ROLÂNDIA",
+        "comarca": "Rolândia",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -6651,7 +6652,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-365",
-        "comarca": "SALTO DO LONTRA",
+        "comarca": "Salto do Lontra",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -6660,7 +6661,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-366",
-        "comarca": "SANTA FÉ",
+        "comarca": "Santa Fé",
         "unidade": "Juízo Único",
         "lotacao_real": 7,
         "lotacao_paradigma": 8,
@@ -6669,7 +6670,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-367",
-        "comarca": "SANTA HELENA",
+        "comarca": "Santa Helena",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6678,7 +6679,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-368",
-        "comarca": "SANTA ISABEL DO IVAÍ",
+        "comarca": "Santa Isabel do Ivaí",
         "unidade": "Juízo Único",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6687,7 +6688,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-369",
-        "comarca": "SANTA MARIANA",
+        "comarca": "Santa Mariana",
         "unidade": "Juízo Único",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -6696,7 +6697,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-370",
-        "comarca": "SANTO ANTÔNIO DA PLATINA",
+        "comarca": "Santo Antônio da Platina",
         "unidade": "Vara Criminal, Infância e Juventude e Família e Sucessões",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -6705,7 +6706,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-371",
-        "comarca": "SANTO ANTÔNIO DA PLATINA",
+        "comarca": "Santo Antônio da Platina",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6714,7 +6715,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-372",
-        "comarca": "SANTO ANTÔNIO DO SUDOESTE",
+        "comarca": "Santo Antônio do Sudoeste",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 7,
@@ -6723,7 +6724,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-373",
-        "comarca": "SÃO JERÔNIMO DA SERRA",
+        "comarca": "São Jerônimo da Serra",
         "unidade": "Juízo Único",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -6732,7 +6733,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-374",
-        "comarca": "SÃO JOÃO",
+        "comarca": "São João",
         "unidade": "Juízo Único",
         "lotacao_real": 3,
         "lotacao_paradigma": 6,
@@ -6741,7 +6742,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-375",
-        "comarca": "SÃO JOÃO DO IVAÍ",
+        "comarca": "São João do Ivaí",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6750,7 +6751,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-376",
-        "comarca": "SÃO JOÃO DO TRIUNFO",
+        "comarca": "São João do Triunfo",
         "unidade": "Juízo Único - Crime e Anexos, Juizados Especiais e Distribuidor",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6759,7 +6760,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-377",
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "3ª Vara Cível",
         "lotacao_real": 7,
         "lotacao_paradigma": 9,
@@ -6768,7 +6769,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-378",
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6777,7 +6778,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-379",
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -6786,7 +6787,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-380",
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "Vara da Infância e Juventude",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6795,7 +6796,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-381",
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "Vara de Família e Sucessões, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -6804,7 +6805,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-382",
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "Vara da Fazenda Pública",
         "lotacao_real": 9,
         "lotacao_paradigma": 7,
@@ -6813,7 +6814,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-383",
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "1º Juizado Especial Cível e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6822,7 +6823,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-384",
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "2º Juizado Especial Cível e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -6831,7 +6832,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-385",
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "Vara Descentralizada do Afonso Pena",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -6840,7 +6841,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-386",
-        "comarca": "SÃO JOSÉ DOS PINHAIS",
+        "comarca": "São José dos Pinhais",
         "unidade": "Juizado de Violência Doméstica e Familiar contra a Mulher, Vara de Crimes contra Crianças, Adolescentes e Idosos",
         "lotacao_real": 8,
         "lotacao_paradigma": 9,
@@ -6849,7 +6850,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-387",
-        "comarca": "SÃO MATEUS DO SUL",
+        "comarca": "São Mateus do Sul",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -6858,7 +6859,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-388",
-        "comarca": "SÃO MIGUEL DO IGUAÇU",
+        "comarca": "São Miguel do Iguaçu",
         "unidade": "Vara Criminal, Família e Sucessões, Infância e Juventude e Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -6867,7 +6868,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-389",
-        "comarca": "SARANDI",
+        "comarca": "Sarandi",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6876,7 +6877,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-390",
-        "comarca": "SARANDI",
+        "comarca": "Sarandi",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6885,7 +6886,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-391",
-        "comarca": "SARANDI",
+        "comarca": "Sarandi",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6894,7 +6895,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-392",
-        "comarca": "SARANDI",
+        "comarca": "Sarandi",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6903,7 +6904,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-393",
-        "comarca": "SENGÉS",
+        "comarca": "Sengés",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6912,7 +6913,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-394",
-        "comarca": "SERTANÓPOLIS",
+        "comarca": "Sertanópolis",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6921,7 +6922,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-395",
-        "comarca": "SIQUEIRA CAMPOS",
+        "comarca": "Siqueira Campos",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 7,
@@ -6930,7 +6931,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-396",
-        "comarca": "TEIXEIRA SOARES",
+        "comarca": "Teixeira Soares",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6939,7 +6940,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-397",
-        "comarca": "TELÊMACO BORBA",
+        "comarca": "Telêmaco Borba",
         "unidade": "Vara Cível e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6948,7 +6949,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-398",
-        "comarca": "TELÊMACO BORBA",
+        "comarca": "Telêmaco Borba",
         "unidade": "Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 6,
@@ -6957,7 +6958,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-399",
-        "comarca": "TELÊMACO BORBA",
+        "comarca": "Telêmaco Borba",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -6966,7 +6967,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-400",
-        "comarca": "TELÊMACO BORBA",
+        "comarca": "Telêmaco Borba",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -6975,7 +6976,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-401",
-        "comarca": "TERRA BOA",
+        "comarca": "Terra Boa",
         "unidade": "Juízo Único",
         "lotacao_real": 8,
         "lotacao_paradigma": 7,
@@ -6984,7 +6985,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-402",
-        "comarca": "TERRA RICA",
+        "comarca": "Terra Rica",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -6993,7 +6994,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-403",
-        "comarca": "TERRA ROXA",
+        "comarca": "Terra Roxa",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -7002,7 +7003,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-404",
-        "comarca": "TIBAGI",
+        "comarca": "Tibagi",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -7011,7 +7012,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-405",
-        "comarca": "TOLEDO",
+        "comarca": "Toledo",
         "unidade": "3ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -7020,7 +7021,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-406",
-        "comarca": "TOLEDO",
+        "comarca": "Toledo",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -7029,7 +7030,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-407",
-        "comarca": "TOLEDO",
+        "comarca": "Toledo",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7038,7 +7039,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-408",
-        "comarca": "TOLEDO",
+        "comarca": "Toledo",
         "unidade": "Vara da Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -7047,7 +7048,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-409",
-        "comarca": "TOLEDO",
+        "comarca": "Toledo",
         "unidade": "Vara de Família e Sucessões",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -7056,7 +7057,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-410",
-        "comarca": "TOLEDO",
+        "comarca": "Toledo",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 6,
@@ -7065,7 +7066,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-411",
-        "comarca": "TOMAZINA",
+        "comarca": "Tomazina",
         "unidade": "Juízo Único",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -7074,7 +7075,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-412",
-        "comarca": "UBIRATÃ",
+        "comarca": "Ubiratã",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7083,7 +7084,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-413",
-        "comarca": "UMUARAMA",
+        "comarca": "Umuarama",
         "unidade": "1ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -7092,7 +7093,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-414",
-        "comarca": "UMUARAMA",
+        "comarca": "Umuarama",
         "unidade": "3ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -7101,7 +7102,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-415",
-        "comarca": "UMUARAMA",
+        "comarca": "Umuarama",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 3,
         "lotacao_paradigma": 5,
@@ -7110,7 +7111,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-416",
-        "comarca": "UMUARAMA",
+        "comarca": "Umuarama",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7119,7 +7120,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-417",
-        "comarca": "UMUARAMA",
+        "comarca": "Umuarama",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 6,
         "lotacao_paradigma": 7,
@@ -7128,7 +7129,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-418",
-        "comarca": "UMUARAMA",
+        "comarca": "Umuarama",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7137,7 +7138,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-419",
-        "comarca": "UNIÃO DA VITÓRIA",
+        "comarca": "União da Vitória",
         "unidade": "2ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -7146,7 +7147,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-420",
-        "comarca": "UNIÃO DA VITÓRIA",
+        "comarca": "União da Vitória",
         "unidade": "1ª Vara Criminal",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7155,7 +7156,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-421",
-        "comarca": "UNIÃO DA VITÓRIA",
+        "comarca": "União da Vitória",
         "unidade": "2ª Vara Criminal",
         "lotacao_real": 4,
         "lotacao_paradigma": 6,
@@ -7164,7 +7165,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-422",
-        "comarca": "UNIÃO DA VITÓRIA",
+        "comarca": "União da Vitória",
         "unidade": "Vara de Família e Sucessões, Infância e Juventude, Acidentes do Trabalho, Registros Públicos e Corregedoria do Foro Extrajudicial",
         "lotacao_real": 7,
         "lotacao_paradigma": 7,
@@ -7173,7 +7174,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-423",
-        "comarca": "UNIÃO DA VITÓRIA",
+        "comarca": "União da Vitória",
         "unidade": "Juizado Especial Cível, Criminal e da Fazenda Pública",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -7182,7 +7183,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-424",
-        "comarca": "URAÍ",
+        "comarca": "Uraí",
         "unidade": "Juízo Único",
         "lotacao_real": 7,
         "lotacao_paradigma": 5,
@@ -7191,7 +7192,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-425",
-        "comarca": "WENCESLAU BRAZ",
+        "comarca": "Wenceslau Braz",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 4,
         "lotacao_paradigma": 5,
@@ -7200,7 +7201,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-426",
-        "comarca": "XAMBRÊ",
+        "comarca": "Xambrê",
         "unidade": "Juízo Único - Crime e Anexos e Juizados Especiais",
         "lotacao_real": 6,
         "lotacao_paradigma": 5,
@@ -7210,7 +7211,7 @@ LOTACAO_COMPLETA = [
     {
         "codigo": "A2-590",
         "comarca": "Cambé",
-        "unidade": "1ª VARA CÍVEL E DA FAZENDA PÚBLICA",
+        "unidade": "1ª Vara Cível e da Fazenda Pública",
         "lotacao_real": 1,
         "lotacao_paradigma": 8,
         "diferenca": -7,
