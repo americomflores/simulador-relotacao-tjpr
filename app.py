@@ -3343,11 +3343,21 @@ def main():
         with col3:
             busca_lot = st.text_input("🔍 Buscar:", key="busca_lot", placeholder="Nome da unidade...")
         
+        # Criar mapeamento reverso: comarca+unidade -> código
+        mapa_codigo = {}
+        for codigo, dados in LOTACAO_POR_CODIGO.items():
+            chave = (dados["comarca"].lower().strip(), dados["unidade"].lower().strip())
+            mapa_codigo[chave] = codigo
+
         # Preparar dados
         dados_lotacao = []
         for u in LOTACAO_COMPLETA:
+            # Buscar o código correspondente
+            chave = (u["comarca"].lower().strip(), u["unidade"].lower().strip())
+            codigo = mapa_codigo.get(chave, "-")
+
             dados_lotacao.append({
-                "Código": u.get("codigo_anexo2", "-"),
+                "Código": codigo,
                 "Comarca": u["comarca"],
                 "Unidade": u["unidade"],
                 "Lotação Real": u["lotacao_real"],
