@@ -17,17 +17,23 @@ simulador-relotacao-tjpr/
 ├── app.py                           # Aplicação principal (3.600+ linhas)
 ├── data.py                          # ANEXO_I e ANEXO_II (vagas do edital)
 ├── lotacao_data.py                  # Dados de lotação paradigma das unidades
+├── lista_classificatoria.py         # Lista Classificatória Edital 04/2025 (1268 servidores)
 ├── requirements.txt                 # Dependências Python
 ├── .streamlit/
 │   └── config.toml                 # Configuração do Streamlit
 ├── secrets.toml.example            # Template para credenciais Google Sheets
+├── scripts/                         # Scripts de migração e utilitários
+│   ├── extrair_lista_classificatoria.py    # Extrai dados dos 7 PDFs
+│   ├── migrar_inscricoes_existentes.py     # Migra inscrições com fuzzy matching
+│   └── atualizar_csv_com_posicoes.py       # Atualiza CSV com posições
 ├── services/                        # Módulos de serviços
 │   ├── auth_service.py             # Autenticação e autorização
 │   ├── sheets_service.py           # Operações com Google Sheets
 │   └── simulacao_service.py        # Lógica de cálculo de resultados
 ├── config/                          # Configurações do sistema
 │   ├── auth_config.py              # AUTH_CODES, ADMIN_TELEFONES, ADMIN_SENHA
-│   └── settings.py                 # DATA_LIMITE_ESTAGIO
+│   ├── settings.py                 # DATA_LIMITE_ESTAGIO
+│   └── telefone_posicao_map.py     # Mapeamento telefone → posição (19 telefones)
 ├── utils/                           # Utilitários
 │   ├── logger.py                   # Sistema de logging
 │   ├── formatters.py               # Formatação de dados
@@ -89,12 +95,18 @@ Login → Google Sheets ↔ carregar_inscricoes()
 
 ### Google Sheets (Base de Dados)
 
-**Estrutura das colunas:**
-- A-F: Dados da inscrição (nome, matrícula, datas, escolhas)
+**Estrutura das colunas (11 colunas):**
+- A: nome
+- B: matricula
+- C: data_admissao (MANTIDO para validação de estágio probatório)
+- D: lotacao_atual
+- E: escolha_anexo1
+- F: escolha_anexo2
 - G: data_inscricao
 - H: registrado_por (auditoria)
 - I: alterado_por (auditoria)
 - J: data_alteracao (auditoria)
+- **K: posicao_lista_classificatoria** (NOVO - Edital 04/2025)
 
 ## 🎯 Regras de Negócio Críticas
 
@@ -103,14 +115,16 @@ Login → Google Sheets ↔ carregar_inscricoes()
 - Servidores admitidos APÓS essa data são DESCLASSIFICADOS
 
 ### 2. Critério de Prioridade
-- **ÚNICO critério**: Antiguidade (data_admissao)
-- Servidor mais antigo tem prioridade absoluta
+- **ÚNICO critério**: Posição na Lista Classificatória (Edital 04/2025)
+- Posição 1 = maior prioridade, posição 1268 = menor prioridade
+- **MUDANÇA IMPORTANTE:** Sistema foi migrado de ordenação por `data_admissao` para `posicao_lista_classificatoria`
+- **`data_admissao` MANTIDA** apenas para validação de estágio probatório (não afeta mais a ordem)
 
 ### 3. Processamento em Duas Fases
 
 **Fase 1 - Anexo I (Vagas com Déficit):**
 ```python
-# Para cada inscrito (ordem de antiguidade):
+# Para cada inscrito (ordem de posicao_lista_classificatoria):
 if tem_vaga_disponivel(escolha_anexo1):
     conceder_vaga()
     atualizar_lotacao_origem(-1)  # Servidor sai

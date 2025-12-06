@@ -139,9 +139,11 @@ def calcular_resultado(df_inscricoes):
     
     try:
         df = df_inscricoes.copy()
-        df = df.sort_values("data_admissao", ascending=True).reset_index(drop=True)
-        
-        df["posicao_antiguidade"] = range(1, len(df) + 1)
+        # Ordenar por posição na lista classificatória (posição 1 = maior prioridade)
+        df = df.sort_values("posicao_lista_classificatoria", ascending=True).reset_index(drop=True)
+
+        # Manter coluna posicao_antiguidade para compatibilidade (agora reflete posição da lista)
+        df["posicao_antiguidade"] = df["posicao_lista_classificatoria"]
         df["status"] = ""
         df["resultado"] = ""
         df["vaga_obtida"] = ""

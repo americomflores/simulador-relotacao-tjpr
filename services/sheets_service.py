@@ -61,13 +61,14 @@ def verificar_cabecalhos_log(sheet):
         cabecalhos = sheet.row_values(1)
         
         # Cabeçalhos esperados
-        cabecalhos_necessarios = ["nome", "matricula", "data_admissao", "lotacao_atual", 
+        cabecalhos_necessarios = ["nome", "matricula", "data_admissao", "lotacao_atual",
                                    "escolha_anexo1", "escolha_anexo2", "data_inscricao",
-                                   "registrado_por", "alterado_por", "data_alteracao"]
-        
+                                   "registrado_por", "alterado_por", "data_alteracao",
+                                   "posicao_lista_classificatoria"]
+
         # Se planilha vazia, criar todos os cabeçalhos
         if not cabecalhos:
-            sheet.update('A1:J1', [cabecalhos_necessarios])
+            sheet.update('A1:K1', [cabecalhos_necessarios])
             return
         
         # Verificar se cabeçalhos de log existem (colunas H, I, J)
@@ -94,10 +95,11 @@ def carregar_inscricoes(sheet):
     Returns:
         DataFrame com as inscrições
     """
-    colunas_base = ["nome", "matricula", "data_admissao", "lotacao_atual", 
+    colunas_base = ["nome", "matricula", "data_admissao", "lotacao_atual",
                     "escolha_anexo1", "escolha_anexo2", "data_inscricao"]
     colunas_log = ["registrado_por", "alterado_por", "data_alteracao"]
-    todas_colunas = colunas_base + colunas_log
+    colunas_classificacao = ["posicao_lista_classificatoria"]
+    todas_colunas = colunas_base + colunas_log + colunas_classificacao
     
     if sheet is None:
         return pd.DataFrame(columns=todas_colunas)
@@ -109,11 +111,19 @@ def carregar_inscricoes(sheet):
         
         df = pd.DataFrame(dados)
         df["data_admissao"] = pd.to_datetime(df["data_admissao"], format="%d/%m/%Y", errors="coerce").dt.date
-        
+
         # Garantir que colunas de log existam (para compatibilidade com dados antigos)
         for col in colunas_log:
             if col not in df.columns:
                 df[col] = ""
+
+        # Garantir que coluna de posição existe e converter para int
+        if "posicao_lista_classificatoria" not in df.columns:
+            df["posicao_lista_classificatoria"] = pd.NA
+        df["posicao_lista_classificatoria"] = pd.to_numeric(
+            df["posicao_lista_classificatoria"],
+            errors="coerce"
+        ).astype("Int64")
         
         log_operation("carregar_inscricoes", "system", f"{len(df)} registros")
         return df
@@ -163,11 +173,12 @@ def salvar_inscricao(sheet, dados, telefone_usuario):
                 dados["escolha_anexo1"],
                 dados["escolha_anexo2"],
                 dados["data_inscricao"],
-                registrado_por,           # H: manter original
-                telefone_formatado,       # I: quem alterou
-                data_hora_atual           # J: quando alterou
+                registrado_por,                              # H: manter original
+                telefone_formatado,                          # I: quem alterou
+                data_hora_atual,                             # J: quando alterou
+                dados.get("posicao_lista_classificatoria", "")  # K: posição
             ]
-            sheet.update(f"A{linha_existente}:J{linha_existente}", [valores])
+            sheet.update(f"A{linha_existente}:K{linha_existente}", [valores])
             log_operation("atualizar_inscricao", telefone_usuario, f"matrícula {dados['matricula']}")
         else:
             # Nova inscrição
@@ -179,9 +190,10 @@ def salvar_inscricao(sheet, dados, telefone_usuario):
                 dados["escolha_anexo1"],
                 dados["escolha_anexo2"],
                 dados["data_inscricao"],
-                telefone_formatado,       # H: quem registrou
-                telefone_formatado,       # I: quem alterou (mesmo, pois é novo)
-                data_hora_atual           # J: quando
+                telefone_formatado,                          # H: quem registrou
+                telefone_formatado,                          # I: quem alterou (mesmo, pois é novo)
+                data_hora_atual,                             # J: quando
+                dados.get("posicao_lista_classificatoria", "")  # K: posição
             ]
             sheet.append_row(valores)
             log_operation("criar_inscricao", telefone_usuario, f"matrícula {dados['matricula']}")
