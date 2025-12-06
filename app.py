@@ -738,9 +738,11 @@ def calcular_resultado(df_inscricoes):
         return pd.DataFrame(), {}, {}, {}
     
     df = df_inscricoes.copy()
-    df = df.sort_values("data_admissao", ascending=True).reset_index(drop=True)
-    
-    df["posicao_antiguidade"] = range(1, len(df) + 1)
+    # Ordenar por posição na lista classificatória (posição 1 = maior prioridade)
+    df = df.sort_values("posicao_lista_classificatoria", ascending=True).reset_index(drop=True)
+
+    # Manter posicao_antiguidade para compatibilidade (agora reflete posição da lista)
+    df["posicao_antiguidade"] = df["posicao_lista_classificatoria"]
     df["status"] = ""
     df["resultado"] = ""
     df["vaga_obtida"] = ""
@@ -2568,9 +2570,10 @@ def main():
             st.info("Nenhum servidor inscrito ainda.")
         else:
             df_inscricoes_local = carregar_inscricoes(sheet)
-            
-            df_display = df_inscricoes_local.sort_values("data_admissao", ascending=True).reset_index(drop=True)
-            df_display["posicao"] = range(1, len(df_display) + 1)
+
+            # Ordenar por posição na lista classificatória
+            df_display = df_inscricoes_local.sort_values("posicao_lista_classificatoria", ascending=True).reset_index(drop=True)
+            df_display["posicao"] = df_display["posicao_lista_classificatoria"]
             
             df_display["data_admissao_fmt"] = df_display["data_admissao"].apply(
                 lambda x: x.strftime("%d/%m/%Y") if x else ""
