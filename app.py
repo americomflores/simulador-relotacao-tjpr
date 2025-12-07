@@ -786,6 +786,13 @@ def calcular_resultado(df_inscricoes):
         return pd.DataFrame(), {}, {}, {}
     
     df = df_inscricoes.copy()
+
+    # Garantir que posicao_lista_classificatoria está como Int64
+    df["posicao_lista_classificatoria"] = pd.to_numeric(
+        df["posicao_lista_classificatoria"],
+        errors="coerce"
+    ).astype("Int64")
+
     # Ordenar por posição na lista classificatória (posição 1 = maior prioridade)
     df = df.sort_values("posicao_lista_classificatoria", ascending=True, na_position='last').reset_index(drop=True)
 
@@ -2680,6 +2687,12 @@ def main():
             st.info("Nenhum servidor inscrito ainda.")
         else:
             df_inscricoes_local = carregar_inscricoes(sheet)
+
+            # Garantir que posicao_lista_classificatoria está como Int64
+            df_inscricoes_local["posicao_lista_classificatoria"] = pd.to_numeric(
+                df_inscricoes_local["posicao_lista_classificatoria"],
+                errors="coerce"
+            ).astype("Int64")
 
             # Ordenar por posição na lista classificatória (NA no final)
             df_display = df_inscricoes_local.sort_values(

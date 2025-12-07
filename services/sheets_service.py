@@ -120,6 +120,12 @@ def carregar_inscricoes(sheet):
         # Garantir que coluna de posição existe e converter para int
         if "posicao_lista_classificatoria" not in df.columns:
             df["posicao_lista_classificatoria"] = pd.NA
+        else:
+            # Substituir strings vazias por NA antes da conversão
+            df["posicao_lista_classificatoria"] = df["posicao_lista_classificatoria"].replace("", pd.NA)
+            df["posicao_lista_classificatoria"] = df["posicao_lista_classificatoria"].replace(" ", pd.NA)
+
+        # Converter para numérico e depois para Int64 (nullable integer)
         df["posicao_lista_classificatoria"] = pd.to_numeric(
             df["posicao_lista_classificatoria"],
             errors="coerce"
