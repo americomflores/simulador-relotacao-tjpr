@@ -2,6 +2,7 @@
 Mapeamento de matrículas existentes para posições na lista classificatória.
 Auto-gerado a partir de: Simulador Relotação TJPR - Dados - Página1 - ATUALIZADO.csv
 Total de matrículas: 146
+NOMES NORMALIZADOS: Title Case com preposições em minúscula
 """
 
 MATRICULA_POSICAO_MAP = {
@@ -14,7 +15,7 @@ MATRICULA_POSICAO_MAP = {
     "13313": 585,  # Jackson da Rocha
     "13370": 56,  # Vinicius Blasi Marchiori
     "13481": 71,  # Cris Everton Maia Helleis
-    "13535": 74,  # Aline Alves Esperança
+    "13535": 74,  # Aline Alves Esperanca
     "13848": 101,  # Luana Ines Reichow
     "13862": 105,  # Pauliane Galdino Ribeiro
     "13917": 98,  # Wilian Jorge de Oliveira
@@ -31,7 +32,7 @@ MATRICULA_POSICAO_MAP = {
     "15113": 216,  # Gonçalo Faiçal Valim
     "15131": 207,  # Cecília dos Santos Kenski Boroski
     "21293": 992,  # Daniel Kummer de Oliveira
-    "21294": 991,  # Guilherme Cravetz Assumpção Marques
+    "21294": 991,  # Guilherme Cravetz Assumpcao Marques
     "219093": 1250,  # Leandro Xavier Silva
     "260729": 1052,  # Americo Mendes Flores
     "269905": 1058,  # Victória Kinaski Gonçalves
@@ -43,7 +44,7 @@ MATRICULA_POSICAO_MAP = {
     "281797": 993,  # Fernanda Cavalet
     "281800": 999,  # Luana da Cruz Souza Plinta
     "282480": 1023,  # Elton Jose de Lima
-    "282481": 1017,  # Débora Maria Sampaio Wojakevicz
+    "282481": 1017,  # Debora Maria Sampaio Wojakevicz
     "282495": 1003,  # Alline Filete Rodriguez
     "282499": 1008,  # Rodolfo Ferreira de Pinho dos Santos
     "282503": 1018,  # Monica Harumi Yabiku
@@ -52,9 +53,9 @@ MATRICULA_POSICAO_MAP = {
     "284070": 1034,  # Raphael Victor Gatto Costa
     "284074": 1036,  # Augusto de Oliveira Bressan
     "284110": 1033,  # Marcio Dantas Pinheiro
-    "284330": 1042,  # João Marcelo Thomaz Mendes
+    "284330": 1042,  # Joao Marcelo Thomaz Mendes
     "284332": 1044,  # Rafael Plinta
-    "284333": 1103,  # Urbano Santana de Oliveira Júnior
+    "284333": 1103,  # Urbano Santana de Oliveira Junior
     "284337": 1050,  # Kelly Cristina Ferri
     "285468": 1132,  # Vinicius Colares do Vale
     "285500": 1087,  # Fabricio Pereira dos Santos
@@ -71,7 +72,7 @@ MATRICULA_POSICAO_MAP = {
     "285681": 1086,  # Michelle Helena Marangoni
     "285742": 1145,  # Rodrigo Kawashima Gomes
     "285934": 1191,  # Juliana Goellner
-    "285976": 1155,  # Júlia de Souza Camargo
+    "285976": 1155,  # Julia de Souza Camargo
     "285997": 1157,  # Gleice Vian da Silva
     "286000": 1195,  # Monica Mendes Costa
     "286006": 1190,  # Pedro Lucchese Piovesan

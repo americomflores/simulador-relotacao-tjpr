@@ -6,6 +6,60 @@ import unicodedata
 from data import ANEXO_II
 
 
+def normalizar_nome_pessoa(nome):
+    """
+    Normaliza nome de pessoa para exibição com capitalização correta.
+
+    Regras:
+    - Primeira letra de cada palavra em maiúscula (Title Case)
+    - Preposições e artigos em minúscula: de, do, dos, da, das, e, a, o, as, os
+    - Exceção: primeira palavra do nome sempre em maiúscula
+
+    Exemplos:
+        "AMANDA DOS SANTOS" → "Amanda dos Santos"
+        "JOÃO DE OLIVEIRA" → "João de Oliveira"
+        "MARIA DA SILVA E SOUZA" → "Maria da Silva e Souza"
+
+    Args:
+        nome: Nome a ser normalizado
+
+    Returns:
+        Nome normalizado para exibição
+    """
+    if not nome:
+        return ""
+
+    # Converter para string se não for
+    nome = str(nome).strip()
+
+    # Preposições e artigos que devem ficar em minúscula
+    preposicoes = {
+        'de', 'do', 'dos', 'da', 'das',
+        'e', 'a', 'o', 'as', 'os',
+        'em', 'no', 'na', 'nos', 'nas',
+        'ao', 'aos', 'à', 'às',
+        'com', 'por', 'para'
+    }
+
+    # Separar em palavras
+    palavras = nome.split()
+
+    # Normalizar cada palavra
+    palavras_normalizadas = []
+    for i, palavra in enumerate(palavras):
+        # Primeira palavra sempre em Title Case
+        if i == 0:
+            palavras_normalizadas.append(palavra.capitalize())
+        # Preposições em minúscula (exceto se for a primeira palavra)
+        elif palavra.lower() in preposicoes:
+            palavras_normalizadas.append(palavra.lower())
+        # Outras palavras em Title Case
+        else:
+            palavras_normalizadas.append(palavra.capitalize())
+
+    return ' '.join(palavras_normalizadas)
+
+
 def normalizar_nome(nome):
     """
     Normaliza um nome para comparação:
