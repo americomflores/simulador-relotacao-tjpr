@@ -9,6 +9,7 @@ from datetime import datetime, date
 from data import ANEXO_I, ANEXO_II
 from lotacao_data import LOTACAO_POR_CODIGO, LOTACAO_COMPLETA
 from lista_classificatoria import LISTA_CLASSIFICATORIA
+from config.matricula_posicao_map import MATRICULA_POSICAO_MAP
 import gspread
 from google.oauth2.service_account import Credentials
 import json
@@ -2430,10 +2431,16 @@ def main():
             matricula_busca = st.text_input("Matrícula (para nova inscrição ou editar existente):", key="mat_busca")
             
             inscricao_existente = None
+            posicao_por_matricula = None
             if matricula_busca:
                 inscricao_existente = buscar_inscricao(sheet, matricula_busca)
                 if inscricao_existente:
                     st.info("✏️ Inscrição encontrada! Os dados serão carregados para edição.")
+
+                    # Verificar se matrícula está mapeada
+                    if matricula_busca in MATRICULA_POSICAO_MAP:
+                        posicao_por_matricula = MATRICULA_POSICAO_MAP[matricula_busca]
+                        st.success(f"✅ Matrícula mapeada! Posição na lista: **{posicao_por_matricula}**")
 
             # BUSCA AUTOMÁTICA DE POSIÇÃO - FORA DO FORM (tempo real)
             st.subheader("🔍 Buscar Servidor na Lista Classificatória")
@@ -2447,7 +2454,13 @@ def main():
 
             posicao_sugerida = None
             nome_encontrado = ""
-            if nome_busca_auto and len(nome_busca_auto.strip()) >= 3:
+
+            # Prioridade: posicao_por_matricula > busca por nome
+            if posicao_por_matricula:
+                posicao_sugerida = posicao_por_matricula
+                if posicao_sugerida in LISTA_CLASSIFICATORIA:
+                    nome_encontrado = LISTA_CLASSIFICATORIA[posicao_sugerida]['nome_display']
+            elif nome_busca_auto and len(nome_busca_auto.strip()) >= 3:
                 resultado = buscar_posicao_por_nome(nome_busca_auto)
                 if resultado:
                     posicao_sugerida, score, nome_lista = resultado
