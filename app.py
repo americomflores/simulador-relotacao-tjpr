@@ -675,22 +675,22 @@ def salvar_inscricao(sheet, dados, telefone_usuario):
     if sheet is None:
         st.error("Conexão com Google Sheets não disponível")
         return False
-    
+
     try:
         registros = sheet.get_all_records()
         linha_existente = None
         registro_antigo = None
-        
+
         for i, reg in enumerate(registros, start=2):
             if str(reg.get("matricula", "")) == str(dados["matricula"]):
                 linha_existente = i
                 registro_antigo = reg
                 break
-        
+
         # Formatar telefone do usuário para o log
         telefone_formatado = formatar_telefone_display(telefone_usuario) if telefone_usuario else "Desconhecido"
         data_hora_atual = datetime.now().strftime("%d/%m/%Y %H:%M")
-        
+
         if linha_existente and registro_antigo:
             # Atualização - manter registrado_por original, atualizar alterado_por
             registrado_por = registro_antigo.get("registrado_por", telefone_formatado) or telefone_formatado
@@ -704,9 +704,10 @@ def salvar_inscricao(sheet, dados, telefone_usuario):
                 dados["data_inscricao"],
                 registrado_por,           # H: manter original
                 telefone_formatado,       # I: quem alterou
-                data_hora_atual           # J: quando alterou
+                data_hora_atual,          # J: quando alterou
+                dados.get("posicao_lista_classificatoria", "")  # K: posição na lista classificatória
             ]
-            sheet.update(f"A{linha_existente}:J{linha_existente}", [valores])
+            sheet.update(f"A{linha_existente}:K{linha_existente}", [valores])
         else:
             # Nova inscrição
             valores = [
@@ -719,10 +720,11 @@ def salvar_inscricao(sheet, dados, telefone_usuario):
                 dados["data_inscricao"],
                 telefone_formatado,       # H: quem registrou
                 telefone_formatado,       # I: quem alterou (mesmo, pois é novo)
-                data_hora_atual           # J: quando
+                data_hora_atual,          # J: quando
+                dados.get("posicao_lista_classificatoria", "")  # K: posição na lista classificatória
             ]
             sheet.append_row(valores)
-        
+
         return True
     except Exception as e:
         st.error(f"Erro ao salvar: {e}")
@@ -2429,9 +2431,18 @@ def main():
     # =========================================================================
     with tab1:
         st.header("✍️ Inscrição / Edição")
-        
+
+        # BLOQUEIO TEMPORÁRIO - Apenas admin pode adicionar inscrições
+        telefone_usuario = st.session_state.get("telefone_usuario", "")
+        usuario_autorizado = telefone_usuario == "41997813606"
+
+        if not usuario_autorizado:
+            st.warning("⚠️ **INSCRIÇÕES TEMPORARIAMENTE BLOQUEADAS**\n\nAs inscrições estão temporariamente bloqueadas para manutenção do sistema. Por favor, aguarde liberação.")
+            st.info("Você ainda pode visualizar as outras abas: Inscritos, Resultado, Simulador, Vagas, Lotação e RAJs.")
+            st.stop()
+
         col1, col2 = st.columns([1, 1])
-        
+
         with col1:
             st.subheader("Nova Inscrição ou Edição")
             
