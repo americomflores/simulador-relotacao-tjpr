@@ -2434,26 +2434,57 @@ def main():
                 inscricao_existente = buscar_inscricao(sheet, matricula_busca)
                 if inscricao_existente:
                     st.info("✏️ Inscrição encontrada! Os dados serão carregados para edição.")
-            
+
+            # BUSCA AUTOMÁTICA DE POSIÇÃO - FORA DO FORM (tempo real)
+            st.subheader("🔍 Buscar Servidor na Lista Classificatória")
+
+            nome_busca_auto = st.text_input(
+                "Digite o nome completo do servidor:",
+                value=inscricao_existente.get("nome", "") if inscricao_existente else "",
+                help="A busca é feita automaticamente conforme você digita",
+                key="nome_busca_auto"
+            )
+
+            posicao_sugerida = None
+            nome_encontrado = ""
+            if nome_busca_auto and len(nome_busca_auto.strip()) >= 3:
+                resultado = buscar_posicao_por_nome(nome_busca_auto)
+                if resultado:
+                    posicao_sugerida, score, nome_lista = resultado
+                    if score >= 95:
+                        st.success(f"✅ **Servidor encontrado na Lista Classificatória!**\n\n**Posição: {posicao_sugerida}**\n\nNome na lista: {nome_lista}")
+                        nome_encontrado = nome_lista
+                    elif score >= 85:
+                        st.warning(f"⚠️ **Servidor possivelmente encontrado** (similaridade: {score}%)\n\n**Posição: {posicao_sugerida}**\n\nNome na lista: {nome_lista}\n\n⚠️ Verifique se está correto ou informe a posição manualmente abaixo!")
+                        nome_encontrado = nome_lista
+                else:
+                    st.error(f"❌ **Servidor NÃO encontrado automaticamente!**\n\nInforme a posição manualmente no formulário abaixo.")
+
+            st.divider()
+
             with st.form("form_inscricao"):
                 nome = st.text_input(
                     "Nome completo:",
-                    value=inscricao_existente.get("nome", "") if inscricao_existente else "",
-                    help="Digite o nome completo do servidor para buscar automaticamente na Lista Classificatória"
+                    value=nome_encontrado if nome_encontrado else (inscricao_existente.get("nome", "") if inscricao_existente else ""),
+                    help="Nome do servidor (preenchido automaticamente se encontrado acima)"
                 )
 
-                # Buscar posição automaticamente
-                posicao_encontrada = None
-                if nome and len(nome.strip()) >= 3:
-                    resultado = buscar_posicao_por_nome(nome)
-                    if resultado:
-                        posicao_encontrada, score, nome_lista = resultado
-                        if score >= 95:
-                            st.success(f"✅ **Servidor encontrado na Lista Classificatória!**\n\nPosição: **{posicao_encontrada}**\n\nNome na lista: {nome_lista}")
-                        elif score >= 85:
-                            st.warning(f"⚠️ **Servidor possivelmente encontrado** (similaridade: {score}%)\n\nPosição: **{posicao_encontrada}**\n\nNome na lista: {nome_lista}\n\nVerifique se está correto!")
-                    else:
-                        st.error(f"❌ **Servidor NÃO encontrado na Lista Classificatória!**\n\nApenas servidores da lista oficial do Edital 04/2025 podem se inscrever.")
+                # Campo manual de posição com valor sugerido
+                posicao_default = posicao_sugerida if posicao_sugerida else (inscricao_existente.get("posicao_lista_classificatoria") if inscricao_existente else None)
+
+                posicao_lista = st.number_input(
+                    "Posição na Lista Classificatória:",
+                    min_value=1,
+                    max_value=1268,
+                    value=int(posicao_default) if posicao_default else 1,
+                    step=1,
+                    help="Posição do servidor na Lista Classificatória do Edital 04/2025 (1 a 1268)"
+                )
+
+                # Validar e mostrar dados da posição informada
+                if posicao_lista and posicao_lista in LISTA_CLASSIFICATORIA:
+                    dados_posicao = LISTA_CLASSIFICATORIA[posicao_lista]
+                    st.info(f"**Posição {posicao_lista}:** {dados_posicao['nome_display']}")
 
                 matricula = st.text_input(
                     "Matrícula:",
@@ -2555,15 +2586,17 @@ def main():
                     st.markdown(f"**2ª Opção (Anexo II):** {escolha_a2_resumo[:50]}..." if len(escolha_a2_resumo) > 50 else f"**2ª Opção (Anexo II):** {escolha_a2_resumo}")
                 
                 submitted = st.form_submit_button("💾 Salvar Inscrição", use_container_width=True)
-                
+
                 if submitted:
                     # Verificar conflito novamente
                     if codigo_lotacao_temp and codigo_escolha_a2_temp and codigo_lotacao_temp == codigo_escolha_a2_temp:
                         st.error("❌ Não é possível salvar: origem e destino são iguais!")
                     elif not nome or not matricula or not data_admissao or not lotacao_atual:
                         st.error("Preencha todos os campos obrigatórios!")
-                    elif not posicao_encontrada:
-                        st.error("❌ **Servidor não encontrado na Lista Classificatória!**\n\nApenas servidores da lista oficial do Edital 04/2025 podem se inscrever. Verifique se digitou o nome corretamente.")
+                    elif not posicao_lista or posicao_lista < 1 or posicao_lista > 1268:
+                        st.error("❌ **Posição inválida!**\n\nInforme uma posição entre 1 e 1268.")
+                    elif posicao_lista not in LISTA_CLASSIFICATORIA:
+                        st.error(f"❌ **Posição {posicao_lista} não encontrada na Lista Classificatória!**\n\nVerifique a posição correta.")
                     else:
                         codigo_lotacao = lotacao_atual.split(" - ")[0] if lotacao_atual else ""
                         codigo_escolha_a1 = escolha_a1.split(" - ")[0] if escolha_a1 != "(Não escolheu)" else ""
@@ -2577,7 +2610,7 @@ def main():
                             "escolha_anexo1": codigo_escolha_a1,
                             "escolha_anexo2": codigo_escolha_a2,
                             "data_inscricao": datetime.now().strftime("%d/%m/%Y %H:%M"),
-                            "posicao_lista_classificatoria": posicao_encontrada
+                            "posicao_lista_classificatoria": posicao_lista
                         }
 
                         if salvar_inscricao(sheet, dados, st.session_state.telefone_usuario):
