@@ -2430,15 +2430,6 @@ def main():
     with tab1:
         st.header("✍️ Inscrição / Edição")
 
-        # BLOQUEIO TEMPORÁRIO - Apenas admin pode adicionar inscrições
-        telefone_usuario = st.session_state.get("telefone_usuario", "")
-        usuario_autorizado = telefone_usuario == "41997813606"
-
-        if not usuario_autorizado:
-            st.warning("⚠️ **INSCRIÇÕES TEMPORARIAMENTE BLOQUEADAS**\n\nAs inscrições estão temporariamente bloqueadas para manutenção do sistema. Por favor, aguarde liberação.")
-            st.info("Você ainda pode visualizar as outras abas: Inscritos, Resultado, Simulador, Vagas, Lotação e RAJs.")
-            st.stop()
-
         col1, col2 = st.columns([1, 1])
 
         with col1:
