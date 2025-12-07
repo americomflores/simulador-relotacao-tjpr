@@ -140,7 +140,7 @@ def calcular_resultado(df_inscricoes):
     try:
         df = df_inscricoes.copy()
         # Ordenar por posição na lista classificatória (posição 1 = maior prioridade)
-        df = df.sort_values("posicao_lista_classificatoria", ascending=True).reset_index(drop=True)
+        df = df.sort_values("posicao_lista_classificatoria", ascending=True, na_position='last').reset_index(drop=True)
 
         # Manter coluna posicao_antiguidade para compatibilidade (agora reflete posição da lista)
         df["posicao_antiguidade"] = df["posicao_lista_classificatoria"]

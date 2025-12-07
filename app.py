@@ -787,7 +787,7 @@ def calcular_resultado(df_inscricoes):
     
     df = df_inscricoes.copy()
     # Ordenar por posição na lista classificatória (posição 1 = maior prioridade)
-    df = df.sort_values("posicao_lista_classificatoria", ascending=True).reset_index(drop=True)
+    df = df.sort_values("posicao_lista_classificatoria", ascending=True, na_position='last').reset_index(drop=True)
 
     # Manter posicao_antiguidade para compatibilidade (agora reflete posição da lista)
     df["posicao_antiguidade"] = df["posicao_lista_classificatoria"]
@@ -2681,8 +2681,12 @@ def main():
         else:
             df_inscricoes_local = carregar_inscricoes(sheet)
 
-            # Ordenar por posição na lista classificatória
-            df_display = df_inscricoes_local.sort_values("posicao_lista_classificatoria", ascending=True).reset_index(drop=True)
+            # Ordenar por posição na lista classificatória (NA no final)
+            df_display = df_inscricoes_local.sort_values(
+                "posicao_lista_classificatoria",
+                ascending=True,
+                na_position='last'
+            ).reset_index(drop=True)
             df_display["posicao"] = df_display["posicao_lista_classificatoria"]
             
             df_display["data_admissao_fmt"] = df_display["data_admissao"].apply(
