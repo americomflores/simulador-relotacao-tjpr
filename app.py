@@ -8,12 +8,14 @@ import pandas as pd
 from datetime import datetime, date
 from data import ANEXO_I, ANEXO_II
 from lotacao_data import LOTACAO_POR_CODIGO, LOTACAO_COMPLETA
+from lista_classificatoria import LISTA_CLASSIFICATORIA
 import gspread
 from google.oauth2.service_account import Credentials
 import json
 import re
 from io import BytesIO
 import unicodedata
+from fuzzywuzzy import fuzz
 
 # =============================================================================
 # CONFIGURAÇÃO
@@ -533,6 +535,51 @@ def calcular_lotacao_dinamica(codigo_unidade, ajuste=0):
         "diferenca": nova_diferenca,
         "status": novo_status
     }
+
+
+# =============================================================================
+# BUSCA NA LISTA CLASSIFICATÓRIA
+# =============================================================================
+
+def buscar_posicao_por_nome(nome_inscricao, threshold=85):
+    """
+    Busca posição na lista classificatória por nome usando fuzzy matching.
+
+    Args:
+        nome_inscricao: Nome do servidor
+        threshold: Limite mínimo de similaridade (0-100)
+
+    Returns:
+        Tupla (posicao, score, nome_display) ou None se não encontrar
+    """
+    if not nome_inscricao or len(nome_inscricao.strip()) < 3:
+        return None
+
+    melhor_match = None
+    melhor_score = 0
+    melhor_nome = ""
+
+    nome_busca = nome_inscricao.upper().strip()
+
+    for posicao, dados in LISTA_CLASSIFICATORIA.items():
+        # Tenta match com nome original (sem numeração)
+        score_original = fuzz.ratio(nome_busca, dados["nome_original"].upper())
+
+        # Tenta match com nome display (com numeração se houver)
+        score_display = fuzz.ratio(nome_busca, dados["nome_display"].upper())
+
+        # Usa o melhor score
+        score = max(score_original, score_display)
+
+        if score > melhor_score:
+            melhor_score = score
+            melhor_match = posicao
+            melhor_nome = dados["nome_display"]
+
+    if melhor_score >= threshold:
+        return (melhor_match, melhor_score, melhor_nome)
+
+    return None
 
 
 # =============================================================================
@@ -2390,12 +2437,26 @@ def main():
             
             with st.form("form_inscricao"):
                 nome = st.text_input(
-                    "Nome completo:", 
-                    value=inscricao_existente.get("nome", "") if inscricao_existente else ""
+                    "Nome completo:",
+                    value=inscricao_existente.get("nome", "") if inscricao_existente else "",
+                    help="Digite o nome completo do servidor para buscar automaticamente na Lista Classificatória"
                 )
-                
+
+                # Buscar posição automaticamente
+                posicao_encontrada = None
+                if nome and len(nome.strip()) >= 3:
+                    resultado = buscar_posicao_por_nome(nome)
+                    if resultado:
+                        posicao_encontrada, score, nome_lista = resultado
+                        if score >= 95:
+                            st.success(f"✅ **Servidor encontrado na Lista Classificatória!**\n\nPosição: **{posicao_encontrada}**\n\nNome na lista: {nome_lista}")
+                        elif score >= 85:
+                            st.warning(f"⚠️ **Servidor possivelmente encontrado** (similaridade: {score}%)\n\nPosição: **{posicao_encontrada}**\n\nNome na lista: {nome_lista}\n\nVerifique se está correto!")
+                    else:
+                        st.error(f"❌ **Servidor NÃO encontrado na Lista Classificatória!**\n\nApenas servidores da lista oficial do Edital 04/2025 podem se inscrever.")
+
                 matricula = st.text_input(
-                    "Matrícula:", 
+                    "Matrícula:",
                     value=matricula_busca,
                     disabled=True if matricula_busca else False
                 )
@@ -2501,11 +2562,13 @@ def main():
                         st.error("❌ Não é possível salvar: origem e destino são iguais!")
                     elif not nome or not matricula or not data_admissao or not lotacao_atual:
                         st.error("Preencha todos os campos obrigatórios!")
+                    elif not posicao_encontrada:
+                        st.error("❌ **Servidor não encontrado na Lista Classificatória!**\n\nApenas servidores da lista oficial do Edital 04/2025 podem se inscrever. Verifique se digitou o nome corretamente.")
                     else:
                         codigo_lotacao = lotacao_atual.split(" - ")[0] if lotacao_atual else ""
                         codigo_escolha_a1 = escolha_a1.split(" - ")[0] if escolha_a1 != "(Não escolheu)" else ""
                         codigo_escolha_a2 = escolha_a2.split(" - ")[0] if escolha_a2 != "(Não escolheu)" else ""
-                        
+
                         dados = {
                             "nome": nome,
                             "matricula": matricula,
@@ -2513,9 +2576,10 @@ def main():
                             "lotacao_atual": codigo_lotacao,
                             "escolha_anexo1": codigo_escolha_a1,
                             "escolha_anexo2": codigo_escolha_a2,
-                            "data_inscricao": datetime.now().strftime("%d/%m/%Y %H:%M")
+                            "data_inscricao": datetime.now().strftime("%d/%m/%Y %H:%M"),
+                            "posicao_lista_classificatoria": posicao_encontrada
                         }
-                        
+
                         if salvar_inscricao(sheet, dados, st.session_state.telefone_usuario):
                             st.success("✅ Inscrição salva com sucesso!")
                             st.cache_resource.clear()
