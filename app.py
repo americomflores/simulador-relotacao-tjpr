@@ -780,28 +780,34 @@ def gerar_excel_resultado(df_resultado):
     Retorna bytes do arquivo para download.
     """
     output = BytesIO()
-    
+
+    # Adicionar unidade de origem formatada
+    df_resultado_copy = df_resultado.copy()
+    df_resultado_copy["unidade_origem"] = df_resultado_copy["lotacao_atual"].apply(
+        lambda x: f"{ANEXO_II[x]['comarca']} - {ANEXO_II[x]['unidade']}" if x and x in ANEXO_II else "-"
+    )
+
     # Preparar DataFrame para exportação
-    df_export = df_resultado[[
+    df_export = df_resultado_copy[[
         "posicao_antiguidade", "nome", "matricula", "data_admissao",
-        "status", "resultado", "vaga_obtida", "designacao_origem", "observacao"
+        "unidade_origem", "status", "resultado", "vaga_obtida", "designacao_origem", "observacao"
     ]].copy()
-    
+
     # Formatar data
     df_export["data_admissao"] = df_export["data_admissao"].apply(
         lambda x: x.strftime("%d/%m/%Y") if pd.notna(x) else ""
     )
-    
+
     # Renomear colunas
     df_export.columns = [
         "Posição", "Nome", "Matrícula", "Data Admissão",
-        "Status", "Resultado", "Vaga Obtida", "Designação Origem", "Observação"
+        "Unidade de Origem", "Status", "Resultado", "Vaga Obtida", "Designação Origem", "Observação"
     ]
-    
+
     # Criar Excel com pandas
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         df_export.to_excel(writer, sheet_name='Resultado Simulação', index=False)
-    
+
     output.seek(0)
     return output.getvalue()
 
@@ -1579,15 +1585,21 @@ def main():
             df_resultado["data_admissao_fmt"] = df_resultado["data_admissao"].apply(
                 lambda x: x.strftime("%d/%m/%Y") if pd.notna(x) else ""
             )
-            
+
+            # Adicionar unidade de origem formatada
+            df_resultado["unidade_origem"] = df_resultado["lotacao_atual"].apply(
+                lambda x: f"{ANEXO_II[x]['comarca']} - {ANEXO_II[x]['unidade']}" if x and x in ANEXO_II else "-"
+            )
+
             df_exibir = df_resultado[[
                 "posicao_antiguidade", "nome", "matricula", "data_admissao_fmt",
-                "status", "resultado", "vaga_obtida", "designacao_origem", "observacao"
+                "unidade_origem", "status", "resultado", "vaga_obtida", "designacao_origem", "observacao"
             ]].rename(columns={
                 "posicao_antiguidade": "Pos.",
                 "nome": "Nome",
                 "matricula": "Matrícula",
                 "data_admissao_fmt": "Data Admissão",
+                "unidade_origem": "Unidade de Origem",
                 "status": "Status",
                 "resultado": "Resultado",
                 "vaga_obtida": "Vaga Obtida",
