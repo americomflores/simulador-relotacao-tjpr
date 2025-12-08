@@ -1581,7 +1581,7 @@ def main():
                 """)
             
             st.subheader("📊 Resultado por Ordem de Antiguidade")
-            
+
             df_resultado["data_admissao_fmt"] = df_resultado["data_admissao"].apply(
                 lambda x: x.strftime("%d/%m/%Y") if pd.notna(x) else ""
             )
@@ -1591,25 +1591,51 @@ def main():
                 lambda x: f"{ANEXO_II[x]['comarca']} - {ANEXO_II[x]['unidade']}" if x and x in ANEXO_II else "-"
             )
 
-            df_exibir = df_resultado[[
-                "posicao_antiguidade", "nome", "matricula", "data_admissao_fmt",
-                "unidade_origem", "status", "resultado", "vaga_obtida", "designacao_origem", "observacao"
+            # Busca por nome ou matrícula
+            col_busca, col_filtro = st.columns([3, 1])
+            with col_busca:
+                busca_resultado = st.text_input(
+                    "🔍 Buscar no resultado:",
+                    placeholder="Digite nome ou matrícula...",
+                    key="busca_resultado"
+                )
+            with col_filtro:
+                filtro_status = st.selectbox(
+                    "Filtrar por status:",
+                    ["Todos", "APROVADO", "DESCLASSIFICADO", "NÃO OBTEVE VAGA"],
+                    key="filtro_status_resultado"
+                )
+
+            # Aplicar filtros
+            df_filtrado = df_resultado.copy()
+
+            if busca_resultado:
+                mask = df_filtrado.apply(
+                    lambda x: busca_resultado.lower() in str(x["nome"]).lower() or
+                              busca_resultado.lower() in str(x["matricula"]).lower(),
+                    axis=1
+                )
+                df_filtrado = df_filtrado[mask]
+
+            if filtro_status != "Todos":
+                df_filtrado = df_filtrado[df_filtrado["status"] == filtro_status]
+
+            # Tabela resumida (sem Data Admissão e Observação para reduzir largura)
+            df_exibir = df_filtrado[[
+                "posicao_antiguidade", "nome", "unidade_origem", "status",
+                "vaga_obtida", "designacao_origem"
             ]].rename(columns={
                 "posicao_antiguidade": "Pos.",
                 "nome": "Nome",
-                "matricula": "Matrícula",
-                "data_admissao_fmt": "Data Admissão",
-                "unidade_origem": "Unidade de Origem",
+                "unidade_origem": "Origem",
                 "status": "Status",
-                "resultado": "Resultado",
                 "vaga_obtida": "Vaga Obtida",
-                "designacao_origem": "Designação Origem",
-                "observacao": "Observação"
+                "designacao_origem": "Designação"
             })
-            
+
             def highlight_status(row):
                 if row["Status"] == "APROVADO":
-                    if row["Designação Origem"] == "SIM":
+                    if row["Designação"] == "SIM":
                         return ["background-color: #fff3cd"] * len(row)  # Amarelo - aprovado com ressalva
                     return ["background-color: #d4edda"] * len(row)  # Verde
                 elif row["Status"] == "DESCLASSIFICADO":
@@ -1617,21 +1643,49 @@ def main():
                 elif row["Status"] == "NÃO OBTEVE VAGA":
                     return ["background-color: #e2e3e5"] * len(row)  # Cinza
                 return [""] * len(row)
-            
+
             st.dataframe(
                 df_exibir.style.apply(highlight_status, axis=1),
                 width="stretch",
-                hide_index=True
+                hide_index=True,
+                height=500
             )
-            
+
+            st.caption(f"Exibindo: {len(df_filtrado)} de {len(df_resultado)} servidores")
+
             # Legenda de cores
             st.markdown("""
-            **Legenda:** 
+            **Legenda:**
             - 🟢 Aprovado (designação = NÃO) - pode sair imediatamente
             - 🟡 Aprovado (designação = SIM) - fica na origem até substituição
             - 🔴 Desclassificado (estágio probatório)
             - ⚪ Não obteve vaga
             """)
+
+            # Expander com detalhes completos
+            with st.expander("📋 Ver Detalhes Completos (com Data Admissão, Matrícula e Observações)"):
+                df_completo = df_filtrado[[
+                    "posicao_antiguidade", "nome", "matricula", "data_admissao_fmt",
+                    "unidade_origem", "status", "resultado", "vaga_obtida",
+                    "designacao_origem", "observacao"
+                ]].rename(columns={
+                    "posicao_antiguidade": "Pos.",
+                    "nome": "Nome",
+                    "matricula": "Matrícula",
+                    "data_admissao_fmt": "Data Admissão",
+                    "unidade_origem": "Unidade de Origem",
+                    "status": "Status",
+                    "resultado": "Resultado",
+                    "vaga_obtida": "Vaga Obtida",
+                    "designacao_origem": "Designação Origem",
+                    "observacao": "Observação"
+                })
+
+                st.dataframe(
+                    df_completo.style.apply(highlight_status, axis=1),
+                    width="stretch",
+                    hide_index=True
+                )
             
             st.divider()
             
@@ -1825,63 +1879,6 @@ def main():
                     st.plotly_chart(fig_comarcas, use_container_width=True)
                 else:
                     st.info("Nenhum servidor aprovado ainda.")
-            
-            st.divider()
-            
-            # Top vagas mais disputadas
-            st.subheader("🔥 Top 10 Vagas Mais Disputadas")
-            
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                st.markdown("**Anexo I (Vagas com Déficit):**")
-                
-                if demanda_a1:
-                    top_a1 = sorted(demanda_a1.items(), key=lambda x: x[1], reverse=True)[:10]
-                    dados_top = []
-                    for codigo, dem in top_a1:
-                        if codigo in ANEXO_I:
-                            vagas = ANEXO_I[codigo]["quantidade"]
-                            dados_top.append({
-                                "Comarca": ANEXO_I[codigo]['comarca'],
-                                "Unidade": ANEXO_I[codigo]['unidade'],
-                                "Vagas": vagas,
-                                "Interessados": dem
-                            })
-                    
-                    if dados_top:
-                        st.dataframe(
-                            pd.DataFrame(dados_top), 
-                            width="stretch", 
-                            hide_index=True,
-                            height=400
-                        )
-                else:
-                    st.info("Nenhuma escolha de Anexo I registrada.")
-            
-            with col2:
-                st.markdown("**Anexo II (Todas as Unidades):**")
-                
-                if demanda_a2:
-                    top_a2 = sorted(demanda_a2.items(), key=lambda x: x[1], reverse=True)[:10]
-                    dados_top = []
-                    for codigo, dem in top_a2:
-                        if codigo in ANEXO_II:
-                            dados_top.append({
-                                "Comarca": ANEXO_II[codigo]['comarca'],
-                                "Unidade": ANEXO_II[codigo]['unidade'],
-                                "Interessados": dem
-                            })
-                    
-                    if dados_top:
-                        st.dataframe(
-                            pd.DataFrame(dados_top), 
-                            width="stretch", 
-                            hide_index=True,
-                            height=400
-                        )
-                else:
-                    st.info("Nenhuma escolha de Anexo II registrada.")
     
     # =========================================================================
     # ABA 4: SIMULADOR (Minha Simulação + Comparador)
