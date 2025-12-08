@@ -534,7 +534,7 @@ def buscar_inscricao(sheet, matricula):
 
 def verificar_estagio_probatorio(data_admissao):
     """Verifica se servidor está em estágio probatório"""
-    if data_admissao is None:
+    if data_admissao is None or pd.isna(data_admissao):
         return True
     return data_admissao > DATA_LIMITE_ESTAGIO
 
@@ -1254,7 +1254,7 @@ def main():
                     format="DD/MM/YYYY"
                 )
                 
-                if data_admissao and data_admissao > DATA_LIMITE_ESTAGIO:
+                if pd.notna(data_admissao) and data_admissao > DATA_LIMITE_ESTAGIO:
                     st.warning(f"⚠️ Servidor em ESTÁGIO PROBATÓRIO (admitido após {DATA_LIMITE_ESTAGIO.strftime('%d/%m/%Y')}). Será desclassificado conforme edital.")
                 
                 opcoes_lotacao = [""] + [f"{k} - {v['comarca']} - {v['unidade']}" for k, v in ANEXO_II.items()]
@@ -1434,7 +1434,7 @@ def main():
             )
             
             df_display["estagio_probatorio"] = df_display["data_admissao"].apply(
-                lambda x: "⚠️ SIM" if x and x > DATA_LIMITE_ESTAGIO else "Não"
+                lambda x: "⚠️ SIM" if pd.notna(x) and x > DATA_LIMITE_ESTAGIO else "Não"
             )
             
             # Adicionar status de lotação da origem
