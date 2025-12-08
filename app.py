@@ -789,7 +789,7 @@ def gerar_excel_resultado(df_resultado):
     
     # Formatar data
     df_export["data_admissao"] = df_export["data_admissao"].apply(
-        lambda x: x.strftime("%d/%m/%Y") if x else ""
+        lambda x: x.strftime("%d/%m/%Y") if pd.notna(x) else ""
     )
     
     # Renomear colunas
@@ -817,7 +817,7 @@ def gerar_excel_inscricoes(df_inscricoes):
     # Formatar data
     if "data_admissao" in df_export.columns:
         df_export["data_admissao"] = df_export["data_admissao"].apply(
-            lambda x: x.strftime("%d/%m/%Y") if x else ""
+            lambda x: x.strftime("%d/%m/%Y") if pd.notna(x) else ""
         )
     
     # Adicionar descrições das unidades
@@ -1139,9 +1139,9 @@ def main():
     
     # Criar abas (7 abas organizadas)
     tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-        "✍️ Inscrição",
-        "👥 Inscritos", 
         "🏆 Resultado",
+        "✍️ Inscrição",
+        "👥 Inscritos",
         "🎯 Simulador",
         "📋 Vagas",
         "📈 Lotação",
@@ -1152,9 +1152,9 @@ def main():
     demanda_a1, demanda_a2 = calcular_demanda(df_inscricoes)
     
     # =========================================================================
-    # ABA 1: INSCRIÇÃO
+    # ABA 2: INSCRIÇÃO
     # =========================================================================
-    with tab1:
+    with tab2:
         st.header("✍️ Inscrição / Edição")
 
         col1, col2 = st.columns([1, 1])
@@ -1405,9 +1405,9 @@ def main():
             """)
     
     # =========================================================================
-    # ABA 2: SERVIDORES INSCRITOS
+    # ABA 3: SERVIDORES INSCRITOS
     # =========================================================================
-    with tab2:
+    with tab3:
         st.header("👥 Servidores Inscritos")
         
         if df_inscricoes.empty:
@@ -1430,7 +1430,7 @@ def main():
             df_display["posicao"] = df_display["posicao_lista_classificatoria"]
             
             df_display["data_admissao_fmt"] = df_display["data_admissao"].apply(
-                lambda x: x.strftime("%d/%m/%Y") if x else ""
+                lambda x: x.strftime("%d/%m/%Y") if pd.notna(x) else ""
             )
             
             df_display["estagio_probatorio"] = df_display["data_admissao"].apply(
@@ -1524,9 +1524,9 @@ def main():
                     st.info("Registros antigos não possuem informações de log. Novas inscrições terão essa informação automaticamente.")
     
     # =========================================================================
-    # ABA 3: RESULTADO E DASHBOARD
+    # ABA 1: RESULTADO E DASHBOARD
     # =========================================================================
-    with tab3:
+    with tab1:
         st.header("🏆 Resultado da Simulação")
         
         if df_inscricoes.empty:
@@ -1577,7 +1577,7 @@ def main():
             st.subheader("📊 Resultado por Ordem de Antiguidade")
             
             df_resultado["data_admissao_fmt"] = df_resultado["data_admissao"].apply(
-                lambda x: x.strftime("%d/%m/%Y") if x else ""
+                lambda x: x.strftime("%d/%m/%Y") if pd.notna(x) else ""
             )
             
             df_exibir = df_resultado[[
@@ -2439,7 +2439,7 @@ def main():
                     df_filtrado = df_aprovados[df_aprovados["raj_origem"] == raj_selecionada].copy()
                 
                 df_filtrado["data_admissao_fmt"] = df_filtrado["data_admissao"].apply(
-                    lambda x: x.strftime("%d/%m/%Y") if x else ""
+                    lambda x: x.strftime("%d/%m/%Y") if pd.notna(x) else ""
                 )
                 
                 df_exibir_raj = df_filtrado[[
