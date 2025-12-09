@@ -1625,16 +1625,6 @@ def main():
                 "resultado", "vaga_obtida", "designacao_origem"
             ]].copy()
 
-            # Adicionar coluna auxiliar para styling (mais rápido)
-            df_exibir["_bg_color"] = df_exibir.apply(
-                lambda row: "#fff3cd" if row["status"] == "APROVADO" and row["designacao_origem"] == "SIM"
-                else "#d4edda" if row["status"] == "APROVADO"
-                else "#f8d7da" if row["status"] == "DESCLASSIFICADO"
-                else "#e2e3e5" if row["status"] == "NÃO OBTEVE VAGA"
-                else "",
-                axis=1
-            )
-
             # Renomear colunas
             df_exibir = df_exibir.rename(columns={
                 "posicao_antiguidade": "Pos.",
@@ -1648,14 +1638,22 @@ def main():
 
             # Função otimizada para styling de linha inteira
             def highlight_row(row):
-                color = row["_bg_color"]
+                if row["Status"] == "APROVADO":
+                    if row["Designação"] == "SIM":
+                        color = "#fff3cd"  # Amarelo
+                    else:
+                        color = "#d4edda"  # Verde
+                elif row["Status"] == "DESCLASSIFICADO":
+                    color = "#f8d7da"  # Vermelho
+                elif row["Status"] == "NÃO OBTEVE VAGA":
+                    color = "#e2e3e5"  # Cinza
+                else:
+                    color = ""
+
                 return [f"background-color: {color}" if color else ""] * len(row)
 
-            # Remover coluna auxiliar antes de exibir
-            df_styled = df_exibir.drop(columns=["_bg_color"])
-
             st.dataframe(
-                df_styled.style.apply(lambda row: highlight_row(df_exibir.loc[row.name]), axis=1),
+                df_exibir.style.apply(highlight_row, axis=1),
                 width="stretch",
                 hide_index=True,
                 height=500,
@@ -1681,16 +1679,6 @@ def main():
                     "designacao_origem", "observacao"
                 ]].copy()
 
-                # Adicionar coluna auxiliar para styling
-                df_completo["_bg_color"] = df_completo.apply(
-                    lambda row: "#fff3cd" if row["status"] == "APROVADO" and row["designacao_origem"] == "SIM"
-                    else "#d4edda" if row["status"] == "APROVADO"
-                    else "#f8d7da" if row["status"] == "DESCLASSIFICADO"
-                    else "#e2e3e5" if row["status"] == "NÃO OBTEVE VAGA"
-                    else "",
-                    axis=1
-                )
-
                 # Renomear colunas
                 df_completo = df_completo.rename(columns={
                     "posicao_antiguidade": "Pos.",
@@ -1705,16 +1693,24 @@ def main():
                     "observacao": "Observação"
                 })
 
-                # Função otimizada para styling
+                # Função para styling
                 def highlight_row_completo(row):
-                    color = row["_bg_color"]
+                    if row["Status"] == "APROVADO":
+                        if row["Designação Origem"] == "SIM":
+                            color = "#fff3cd"  # Amarelo
+                        else:
+                            color = "#d4edda"  # Verde
+                    elif row["Status"] == "DESCLASSIFICADO":
+                        color = "#f8d7da"  # Vermelho
+                    elif row["Status"] == "NÃO OBTEVE VAGA":
+                        color = "#e2e3e5"  # Cinza
+                    else:
+                        color = ""
+
                     return [f"background-color: {color}" if color else ""] * len(row)
 
-                # Remover coluna auxiliar antes de exibir
-                df_completo_styled = df_completo.drop(columns=["_bg_color"])
-
                 st.dataframe(
-                    df_completo_styled.style.apply(lambda row: highlight_row_completo(df_completo.loc[row.name]), axis=1),
+                    df_completo.style.apply(highlight_row_completo, axis=1),
                     width="stretch",
                     hide_index=True,
                     use_container_width=True
