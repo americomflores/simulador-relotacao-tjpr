@@ -598,12 +598,14 @@ def calcular_resultado(df_inscricoes):
     vagas_anexo1 = {}
     for codigo, info in ANEXO_I.items():
         vagas_anexo1[codigo] = info["quantidade"]
-    
+
     # Controle dinâmico de lotação das unidades
     # Começar com os valores originais e ajustar conforme movimentações
     ajustes_lotacao = {}  # codigo_unidade -> ajuste acumulado
-    
+
     vagas_anexo2 = {}
+    # Rastrear quantas vagas de cada código vieram do saldo do Anexo I
+    vagas_saldo_anexo1 = {}  # codigo_a2 -> quantidade de vagas do saldo do Anexo I
     servidores_para_anexo2 = []
     
     # FASE 1: Processar Anexo I
@@ -624,7 +626,7 @@ def calcular_resultado(df_inscricoes):
             if vagas_anexo1[escolha_a1] > 0:
                 vagas_anexo1[escolha_a1] -= 1
                 df.at[idx, "status"] = "APROVADO"
-                df.at[idx, "resultado"] = "ANEXO I"
+                df.at[idx, "resultado"] = "Anexo I (vaga deficitária disponibilizada - item 3.8)"
                 df.at[idx, "vaga_obtida"] = f"{ANEXO_I[escolha_a1]['comarca']} - {ANEXO_I[escolha_a1]['unidade']}"
                 
                 # Atualizar ajustes de lotação
@@ -673,6 +675,12 @@ def calcular_resultado(df_inscricoes):
                 else:
                     vagas_anexo2[codigo_a2] = quantidade_sobrante
 
+                # Rastrear que essas vagas vieram do saldo do Anexo I
+                if codigo_a2 in vagas_saldo_anexo1:
+                    vagas_saldo_anexo1[codigo_a2] += quantidade_sobrante
+                else:
+                    vagas_saldo_anexo1[codigo_a2] = quantidade_sobrante
+
     # FASE 2: Processar Anexo II
     # Conforme item 3.11: se possível deferimento em ambas as unidades (A1 e A2),
     # será concedido deferimento para a unidade originalmente indicada no Anexo I
@@ -714,8 +722,27 @@ def calcular_resultado(df_inscricoes):
         
         if vaga_escolhida:
             vagas_anexo2[vaga_escolhida] -= 1
+
+            # Determinar o tipo de vaga obtida
+            eh_vaga_saldo_anexo1 = False
+            if vaga_escolhida in vagas_saldo_anexo1 and vagas_saldo_anexo1[vaga_escolhida] > 0:
+                eh_vaga_saldo_anexo1 = True
+                vagas_saldo_anexo1[vaga_escolhida] -= 1
+
+            # Atribuir resultado baseado no tipo de vaga
+            if origem_vaga == "ANEXO I (via A2)":
+                if eh_vaga_saldo_anexo1:
+                    resultado_final = "Anexo II (vaga remanescente do Anexo I - saldo)"
+                else:
+                    resultado_final = "Anexo I (vaga primária incluída na análise do Anexo II - item 3.11)"
+            else:  # origem_vaga == "ANEXO II"
+                if eh_vaga_saldo_anexo1:
+                    resultado_final = "Anexo II (vaga remanescente do Anexo I - saldo)"
+                else:
+                    resultado_final = "Anexo II (vaga de servidor a relotar - item 3.9)"
+
             df.at[idx, "status"] = "APROVADO"
-            df.at[idx, "resultado"] = origem_vaga
+            df.at[idx, "resultado"] = resultado_final
             df.at[idx, "vaga_obtida"] = f"{ANEXO_II[vaga_escolhida]['comarca']} - {ANEXO_II[vaga_escolhida]['unidade']}"
             
             # Atualizar ajustes de lotação
@@ -1558,9 +1585,9 @@ def main():
             col1, col2, col3, col4 = st.columns(4)
             
             total = len(df_resultado)
-            # Incluir "ANEXO I" e "ANEXO I (via A2)" na contagem
-            aprovados_a1 = len(df_resultado[df_resultado["resultado"].str.startswith("ANEXO I", na=False)])
-            aprovados_a2 = len(df_resultado[df_resultado["resultado"] == "ANEXO II"])
+            # Contar aprovados por Anexo I e Anexo II
+            aprovados_a1 = len(df_resultado[df_resultado["resultado"].str.startswith("Anexo I", na=False)])
+            aprovados_a2 = len(df_resultado[df_resultado["resultado"].str.startswith("Anexo II", na=False)])
             desclass = len(df_resultado[df_resultado["status"] == "DESCLASSIFICADO"])
             
             # Contar designações na origem
@@ -1647,7 +1674,7 @@ def main():
                 "nome": "Nome",
                 "unidade_origem": "Origem",
                 "status": "Status",
-                "resultado": "Anexo",
+                "resultado": "Resultado",
                 "vaga_obtida": "Vaga Obtida",
                 "designacao_origem": "Designação"
             })
@@ -1703,7 +1730,7 @@ def main():
                     "data_admissao_fmt": "Data Admissão",
                     "unidade_origem": "Unidade de Origem",
                     "status": "Status",
-                    "resultado": "Anexo",
+                    "resultado": "Resultado",
                     "vaga_obtida": "Vaga Obtida",
                     "designacao_origem": "Designação Origem",
                     "observacao": "Observação"
