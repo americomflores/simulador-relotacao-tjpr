@@ -1620,35 +1620,52 @@ def main():
                 df_filtrado = df_filtrado[df_filtrado["status"] == filtro_status]
 
             # Tabela resumida (sem Data Admissão e Observação para reduzir largura)
-            df_exibir = df_filtrado[[
-                "posicao_antiguidade", "nome", "unidade_origem", "status",
+            # Adicionar indicador visual de status para melhor performance
+            df_exibir = df_filtrado.copy()
+
+            # Criar coluna de status visual (ícone + texto)
+            def get_status_visual(row):
+                status = row["status"]
+                designacao = row["designacao_origem"]
+
+                if status == "APROVADO":
+                    if designacao == "SIM":
+                        return "🟡 APROVADO*"  # Amarelo - com designação
+                    return "🟢 APROVADO"  # Verde - sem designação
+                elif status == "DESCLASSIFICADO":
+                    return "🔴 DESCLASSIFICADO"
+                elif status == "NÃO OBTEVE VAGA":
+                    return "⚪ SEM VAGA"
+                return status
+
+            df_exibir["status_visual"] = df_exibir.apply(get_status_visual, axis=1)
+
+            # Selecionar e renomear colunas
+            df_exibir = df_exibir[[
+                "posicao_antiguidade", "nome", "unidade_origem", "status_visual",
                 "resultado", "vaga_obtida", "designacao_origem"
             ]].rename(columns={
                 "posicao_antiguidade": "Pos.",
                 "nome": "Nome",
                 "unidade_origem": "Origem",
-                "status": "Status",
+                "status_visual": "Status",
                 "resultado": "Anexo",
                 "vaga_obtida": "Vaga Obtida",
                 "designacao_origem": "Designação"
             })
 
-            def highlight_status(row):
-                if row["Status"] == "APROVADO":
-                    if row["Designação"] == "SIM":
-                        return ["background-color: #fff3cd"] * len(row)  # Amarelo - aprovado com ressalva
-                    return ["background-color: #d4edda"] * len(row)  # Verde
-                elif row["Status"] == "DESCLASSIFICADO":
-                    return ["background-color: #f8d7da"] * len(row)  # Vermelho
-                elif row["Status"] == "NÃO OBTEVE VAGA":
-                    return ["background-color: #e2e3e5"] * len(row)  # Cinza
-                return [""] * len(row)
-
+            # Usar dataframe sem estilização para melhor performance
             st.dataframe(
-                df_exibir.style.apply(highlight_status, axis=1),
+                df_exibir,
                 width="stretch",
                 hide_index=True,
-                height=500
+                height=500,
+                column_config={
+                    "Status": st.column_config.TextColumn(
+                        "Status",
+                        width="medium",
+                    ),
+                }
             )
 
             st.caption(f"Exibindo: {len(df_filtrado)} de {len(df_resultado)} servidores")
@@ -1656,17 +1673,24 @@ def main():
             # Legenda de cores
             st.markdown("""
             **Legenda:**
-            - 🟢 Aprovado (designação = NÃO) - pode sair imediatamente
-            - 🟡 Aprovado (designação = SIM) - fica na origem até substituição
-            - 🔴 Desclassificado (estágio probatório)
-            - ⚪ Não obteve vaga
+            - 🟢 APROVADO - pode sair imediatamente (designação = NÃO)
+            - 🟡 APROVADO* - fica na origem até substituição (designação = SIM)
+            - 🔴 DESCLASSIFICADO - estágio probatório
+            - ⚪ SEM VAGA - não obteve vaga
             """)
 
             # Expander com detalhes completos
             with st.expander("📋 Ver Detalhes Completos (com Data Admissão, Matrícula e Observações)"):
-                df_completo = df_filtrado[[
+                # Criar status visual para o expander também (sem estilização pesada)
+                df_completo = df_filtrado.copy()
+
+                # Status visual
+                df_completo["status_visual"] = df_completo.apply(get_status_visual, axis=1)
+
+                # Selecionar e renomear colunas
+                df_completo = df_completo[[
                     "posicao_antiguidade", "nome", "matricula", "data_admissao_fmt",
-                    "unidade_origem", "status", "resultado", "vaga_obtida",
+                    "unidade_origem", "status_visual", "resultado", "vaga_obtida",
                     "designacao_origem", "observacao"
                 ]].rename(columns={
                     "posicao_antiguidade": "Pos.",
@@ -1674,26 +1698,16 @@ def main():
                     "matricula": "Matrícula",
                     "data_admissao_fmt": "Data Admissão",
                     "unidade_origem": "Unidade de Origem",
-                    "status": "Status",
-                    "resultado": "Resultado",
+                    "status_visual": "Status",
+                    "resultado": "Anexo",
                     "vaga_obtida": "Vaga Obtida",
                     "designacao_origem": "Designação Origem",
                     "observacao": "Observação"
                 })
 
-                def highlight_status_completo(row):
-                    if row["Status"] == "APROVADO":
-                        if row["Designação Origem"] == "SIM":
-                            return ["background-color: #fff3cd"] * len(row)  # Amarelo - aprovado com ressalva
-                        return ["background-color: #d4edda"] * len(row)  # Verde
-                    elif row["Status"] == "DESCLASSIFICADO":
-                        return ["background-color: #f8d7da"] * len(row)  # Vermelho
-                    elif row["Status"] == "NÃO OBTEVE VAGA":
-                        return ["background-color: #e2e3e5"] * len(row)  # Cinza
-                    return [""] * len(row)
-
+                # Usar dataframe sem estilização para melhor performance
                 st.dataframe(
-                    df_completo.style.apply(highlight_status_completo, axis=1),
+                    df_completo,
                     width="stretch",
                     hide_index=True
                 )
