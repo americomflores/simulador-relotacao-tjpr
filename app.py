@@ -1620,33 +1620,24 @@ def main():
                 df_filtrado = df_filtrado[df_filtrado["status"] == filtro_status]
 
             # Tabela resumida (sem Data Admissão e Observação para reduzir largura)
-            # Adicionar indicador visual de status para melhor performance
-            df_exibir = df_filtrado.copy()
-
-            # Criar coluna de status visual com emoji
-            def get_status_emoji(row):
-                status = row["status"]
-                designacao = row["designacao_origem"]
-
-                if status == "APROVADO":
-                    if designacao == "SIM":
-                        return "🟡"  # Amarelo - com designação
-                    return "🟢"  # Verde - sem designação
-                elif status == "DESCLASSIFICADO":
-                    return "🔴"
-                elif status == "NÃO OBTEVE VAGA":
-                    return "⚪"
-                return "⚪"
-
-            df_exibir["status_emoji"] = df_exibir.apply(get_status_emoji, axis=1)
-
-            # Selecionar e renomear colunas
-            df_exibir = df_exibir[[
-                "posicao_antiguidade", "status_emoji", "nome", "unidade_origem", "status",
+            df_exibir = df_filtrado[[
+                "posicao_antiguidade", "nome", "unidade_origem", "status",
                 "resultado", "vaga_obtida", "designacao_origem"
-            ]].rename(columns={
+            ]].copy()
+
+            # Adicionar coluna auxiliar para styling (mais rápido)
+            df_exibir["_bg_color"] = df_exibir.apply(
+                lambda row: "#fff3cd" if row["status"] == "APROVADO" and row["designacao_origem"] == "SIM"
+                else "#d4edda" if row["status"] == "APROVADO"
+                else "#f8d7da" if row["status"] == "DESCLASSIFICADO"
+                else "#e2e3e5" if row["status"] == "NÃO OBTEVE VAGA"
+                else "",
+                axis=1
+            )
+
+            # Renomear colunas
+            df_exibir = df_exibir.rename(columns={
                 "posicao_antiguidade": "Pos.",
-                "status_emoji": "🏆",
                 "nome": "Nome",
                 "unidade_origem": "Origem",
                 "status": "Status",
@@ -1655,23 +1646,20 @@ def main():
                 "designacao_origem": "Designação"
             })
 
-            # Usar dataframe com column_config para cores (mais leve que .style.apply)
+            # Função otimizada para styling de linha inteira
+            def highlight_row(row):
+                color = row["_bg_color"]
+                return [f"background-color: {color}" if color else ""] * len(row)
+
+            # Remover coluna auxiliar antes de exibir
+            df_styled = df_exibir.drop(columns=["_bg_color"])
+
             st.dataframe(
-                df_exibir,
+                df_styled.style.apply(lambda row: highlight_row(df_exibir.loc[row.name]), axis=1),
                 width="stretch",
                 hide_index=True,
                 height=500,
-                column_config={
-                    "🏆": st.column_config.TextColumn(
-                        "🏆",
-                        width="small",
-                        help="🟢 Aprovado sem designação | 🟡 Aprovado com designação | 🔴 Desclassificado | ⚪ Sem vaga"
-                    ),
-                    "Status": st.column_config.TextColumn(
-                        "Status",
-                        width="medium",
-                    ),
-                }
+                use_container_width=True
             )
 
             st.caption(f"Exibindo: {len(df_filtrado)} de {len(df_resultado)} servidores")
@@ -1687,20 +1675,25 @@ def main():
 
             # Expander com detalhes completos
             with st.expander("📋 Ver Detalhes Completos (com Data Admissão, Matrícula e Observações)"):
-                # Criar status visual para o expander também
-                df_completo = df_filtrado.copy()
-
-                # Adicionar emoji de status
-                df_completo["status_emoji"] = df_completo.apply(get_status_emoji, axis=1)
-
-                # Selecionar e renomear colunas
-                df_completo = df_completo[[
-                    "posicao_antiguidade", "status_emoji", "nome", "matricula", "data_admissao_fmt",
+                df_completo = df_filtrado[[
+                    "posicao_antiguidade", "nome", "matricula", "data_admissao_fmt",
                     "unidade_origem", "status", "resultado", "vaga_obtida",
                     "designacao_origem", "observacao"
-                ]].rename(columns={
+                ]].copy()
+
+                # Adicionar coluna auxiliar para styling
+                df_completo["_bg_color"] = df_completo.apply(
+                    lambda row: "#fff3cd" if row["status"] == "APROVADO" and row["designacao_origem"] == "SIM"
+                    else "#d4edda" if row["status"] == "APROVADO"
+                    else "#f8d7da" if row["status"] == "DESCLASSIFICADO"
+                    else "#e2e3e5" if row["status"] == "NÃO OBTEVE VAGA"
+                    else "",
+                    axis=1
+                )
+
+                # Renomear colunas
+                df_completo = df_completo.rename(columns={
                     "posicao_antiguidade": "Pos.",
-                    "status_emoji": "🏆",
                     "nome": "Nome",
                     "matricula": "Matrícula",
                     "data_admissao_fmt": "Data Admissão",
@@ -1712,17 +1705,19 @@ def main():
                     "observacao": "Observação"
                 })
 
-                # Usar dataframe otimizado
+                # Função otimizada para styling
+                def highlight_row_completo(row):
+                    color = row["_bg_color"]
+                    return [f"background-color: {color}" if color else ""] * len(row)
+
+                # Remover coluna auxiliar antes de exibir
+                df_completo_styled = df_completo.drop(columns=["_bg_color"])
+
                 st.dataframe(
-                    df_completo,
+                    df_completo_styled.style.apply(lambda row: highlight_row_completo(df_completo.loc[row.name]), axis=1),
                     width="stretch",
                     hide_index=True,
-                    column_config={
-                        "🏆": st.column_config.TextColumn(
-                            "🏆",
-                            width="small",
-                        ),
-                    }
+                    use_container_width=True
                 )
             
             st.divider()
