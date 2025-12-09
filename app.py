@@ -636,19 +636,21 @@ def calcular_resultado(df_inscricoes):
                     dados_origem_final = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao[lotacao_origem])
                     if dados_origem_final:
                         df.at[idx, "status_origem_final"] = dados_origem_final["status"]
-                        
+
                         # Determinar se precisa designação na origem
                         # Conforme item 3.14 do Edital: designação apenas se a saída OCASIONAR DÉFICIT
                         if dados_origem_final["status"] == "DEFICITÁRIA":
                             df.at[idx, "designacao_origem"] = "SIM"
                         else:
                             df.at[idx, "designacao_origem"] = "NÃO"
-                    
-                    # Liberar vaga no Anexo II
-                    if lotacao_origem in vagas_anexo2:
-                        vagas_anexo2[lotacao_origem] += 1
-                    else:
-                        vagas_anexo2[lotacao_origem] = 1
+
+                        # NOVA REGRA: Liberar vaga no Anexo II APENAS se a origem ficar DEFICITÁRIA
+                        # Isso permite que terceiros ocupem a vaga apenas quando há real necessidade de substituição
+                        if dados_origem_final["status"] == "DEFICITÁRIA":
+                            if lotacao_origem in vagas_anexo2:
+                                vagas_anexo2[lotacao_origem] += 1
+                            else:
+                                vagas_anexo2[lotacao_origem] = 1
             else:
                 servidores_para_anexo2.append(idx)
         elif escolha_a1:
