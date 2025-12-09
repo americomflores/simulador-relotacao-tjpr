@@ -1623,44 +1623,50 @@ def main():
             # Adicionar indicador visual de status para melhor performance
             df_exibir = df_filtrado.copy()
 
-            # Criar coluna de status visual (ícone + texto)
-            def get_status_visual(row):
+            # Criar coluna de status visual com emoji
+            def get_status_emoji(row):
                 status = row["status"]
                 designacao = row["designacao_origem"]
 
                 if status == "APROVADO":
                     if designacao == "SIM":
-                        return "🟡 APROVADO*"  # Amarelo - com designação
-                    return "🟢 APROVADO"  # Verde - sem designação
+                        return "🟡"  # Amarelo - com designação
+                    return "🟢"  # Verde - sem designação
                 elif status == "DESCLASSIFICADO":
-                    return "🔴 DESCLASSIFICADO"
+                    return "🔴"
                 elif status == "NÃO OBTEVE VAGA":
-                    return "⚪ SEM VAGA"
-                return status
+                    return "⚪"
+                return "⚪"
 
-            df_exibir["status_visual"] = df_exibir.apply(get_status_visual, axis=1)
+            df_exibir["status_emoji"] = df_exibir.apply(get_status_emoji, axis=1)
 
             # Selecionar e renomear colunas
             df_exibir = df_exibir[[
-                "posicao_antiguidade", "nome", "unidade_origem", "status_visual",
+                "posicao_antiguidade", "status_emoji", "nome", "unidade_origem", "status",
                 "resultado", "vaga_obtida", "designacao_origem"
             ]].rename(columns={
                 "posicao_antiguidade": "Pos.",
+                "status_emoji": "🏆",
                 "nome": "Nome",
                 "unidade_origem": "Origem",
-                "status_visual": "Status",
+                "status": "Status",
                 "resultado": "Anexo",
                 "vaga_obtida": "Vaga Obtida",
                 "designacao_origem": "Designação"
             })
 
-            # Usar dataframe sem estilização para melhor performance
+            # Usar dataframe com column_config para cores (mais leve que .style.apply)
             st.dataframe(
                 df_exibir,
                 width="stretch",
                 hide_index=True,
                 height=500,
                 column_config={
+                    "🏆": st.column_config.TextColumn(
+                        "🏆",
+                        width="small",
+                        help="🟢 Aprovado sem designação | 🟡 Aprovado com designação | 🔴 Desclassificado | ⚪ Sem vaga"
+                    ),
                     "Status": st.column_config.TextColumn(
                         "Status",
                         width="medium",
@@ -1673,43 +1679,50 @@ def main():
             # Legenda de cores
             st.markdown("""
             **Legenda:**
-            - 🟢 APROVADO - pode sair imediatamente (designação = NÃO)
-            - 🟡 APROVADO* - fica na origem até substituição (designação = SIM)
-            - 🔴 DESCLASSIFICADO - estágio probatório
-            - ⚪ SEM VAGA - não obteve vaga
+            - 🟢 Aprovado (designação = NÃO) - pode sair imediatamente
+            - 🟡 Aprovado (designação = SIM) - fica na origem até substituição
+            - 🔴 Desclassificado - estágio probatório
+            - ⚪ Não obteve vaga
             """)
 
             # Expander com detalhes completos
             with st.expander("📋 Ver Detalhes Completos (com Data Admissão, Matrícula e Observações)"):
-                # Criar status visual para o expander também (sem estilização pesada)
+                # Criar status visual para o expander também
                 df_completo = df_filtrado.copy()
 
-                # Status visual
-                df_completo["status_visual"] = df_completo.apply(get_status_visual, axis=1)
+                # Adicionar emoji de status
+                df_completo["status_emoji"] = df_completo.apply(get_status_emoji, axis=1)
 
                 # Selecionar e renomear colunas
                 df_completo = df_completo[[
-                    "posicao_antiguidade", "nome", "matricula", "data_admissao_fmt",
-                    "unidade_origem", "status_visual", "resultado", "vaga_obtida",
+                    "posicao_antiguidade", "status_emoji", "nome", "matricula", "data_admissao_fmt",
+                    "unidade_origem", "status", "resultado", "vaga_obtida",
                     "designacao_origem", "observacao"
                 ]].rename(columns={
                     "posicao_antiguidade": "Pos.",
+                    "status_emoji": "🏆",
                     "nome": "Nome",
                     "matricula": "Matrícula",
                     "data_admissao_fmt": "Data Admissão",
                     "unidade_origem": "Unidade de Origem",
-                    "status_visual": "Status",
+                    "status": "Status",
                     "resultado": "Anexo",
                     "vaga_obtida": "Vaga Obtida",
                     "designacao_origem": "Designação Origem",
                     "observacao": "Observação"
                 })
 
-                # Usar dataframe sem estilização para melhor performance
+                # Usar dataframe otimizado
                 st.dataframe(
                     df_completo,
                     width="stretch",
-                    hide_index=True
+                    hide_index=True,
+                    column_config={
+                        "🏆": st.column_config.TextColumn(
+                            "🏆",
+                            width="small",
+                        ),
+                    }
                 )
             
             st.divider()
