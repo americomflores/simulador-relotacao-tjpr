@@ -658,7 +658,21 @@ def calcular_resultado(df_inscricoes):
             servidores_para_anexo2.append(idx)
         else:
             servidores_para_anexo2.append(idx)
-    
+
+    # TRANSFERIR VAGAS SOBRANTES DO ANEXO I PARA O ANEXO II
+    # Após a Fase 1, as vagas do Anexo I que não foram preenchidas
+    # devem ficar disponíveis para escolha no Anexo II
+    for codigo_a1, quantidade_sobrante in vagas_anexo1.items():
+        if quantidade_sobrante > 0:
+            # Encontrar o código correspondente no Anexo II
+            codigo_a2 = mapeamento_a1_para_a2.get(codigo_a1)
+            if codigo_a2:
+                # Adicionar as vagas sobrantes ao pool do Anexo II
+                if codigo_a2 in vagas_anexo2:
+                    vagas_anexo2[codigo_a2] += quantidade_sobrante
+                else:
+                    vagas_anexo2[codigo_a2] = quantidade_sobrante
+
     # FASE 2: Processar Anexo II
     # Conforme item 3.11: se possível deferimento em ambas as unidades (A1 e A2),
     # será concedido deferimento para a unidade originalmente indicada no Anexo I
