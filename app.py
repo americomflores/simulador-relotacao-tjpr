@@ -604,8 +604,6 @@ def calcular_resultado(df_inscricoes):
     ajustes_lotacao = {}  # codigo_unidade -> ajuste acumulado
 
     vagas_anexo2 = {}
-    # Rastrear quantas vagas de cada código vieram do saldo do Anexo I
-    vagas_saldo_anexo1 = {}  # codigo_a2 -> quantidade de vagas do saldo do Anexo I
     servidores_para_anexo2 = []
     
     # FASE 1: Processar Anexo I
@@ -661,26 +659,6 @@ def calcular_resultado(df_inscricoes):
         else:
             servidores_para_anexo2.append(idx)
 
-    # TRANSFERIR VAGAS SOBRANTES DO ANEXO I PARA O ANEXO II
-    # Após a Fase 1, as vagas do Anexo I que não foram preenchidas
-    # devem ficar disponíveis para escolha no Anexo II
-    for codigo_a1, quantidade_sobrante in vagas_anexo1.items():
-        if quantidade_sobrante > 0:
-            # Encontrar o código correspondente no Anexo II
-            codigo_a2 = mapeamento_a1_para_a2.get(codigo_a1)
-            if codigo_a2:
-                # Adicionar as vagas sobrantes ao pool do Anexo II
-                if codigo_a2 in vagas_anexo2:
-                    vagas_anexo2[codigo_a2] += quantidade_sobrante
-                else:
-                    vagas_anexo2[codigo_a2] = quantidade_sobrante
-
-                # Rastrear que essas vagas vieram do saldo do Anexo I
-                if codigo_a2 in vagas_saldo_anexo1:
-                    vagas_saldo_anexo1[codigo_a2] += quantidade_sobrante
-                else:
-                    vagas_saldo_anexo1[codigo_a2] = quantidade_sobrante
-
     # FASE 2: Processar Anexo II
     # Conforme item 3.11: se possível deferimento em ambas as unidades (A1 e A2),
     # será concedido deferimento para a unidade originalmente indicada no Anexo I
@@ -723,23 +701,11 @@ def calcular_resultado(df_inscricoes):
         if vaga_escolhida:
             vagas_anexo2[vaga_escolhida] -= 1
 
-            # Determinar o tipo de vaga obtida
-            eh_vaga_saldo_anexo1 = False
-            if vaga_escolhida in vagas_saldo_anexo1 and vagas_saldo_anexo1[vaga_escolhida] > 0:
-                eh_vaga_saldo_anexo1 = True
-                vagas_saldo_anexo1[vaga_escolhida] -= 1
-
             # Atribuir resultado baseado no tipo de vaga
             if origem_vaga == "ANEXO I (via A2)":
-                if eh_vaga_saldo_anexo1:
-                    resultado_final = "Anexo II (vaga remanescente do Anexo I - saldo)"
-                else:
-                    resultado_final = "Anexo I (vaga primária incluída na análise do Anexo II - item 3.11)"
+                resultado_final = "Anexo I (vaga primária incluída na análise do Anexo II - item 3.11)"
             else:  # origem_vaga == "ANEXO II"
-                if eh_vaga_saldo_anexo1:
-                    resultado_final = "Anexo II (vaga remanescente do Anexo I - saldo)"
-                else:
-                    resultado_final = "Anexo II (vaga de servidor a relotar - item 3.9)"
+                resultado_final = "Anexo II (vaga de servidor a relotar - item 3.9)"
 
             df.at[idx, "status"] = "APROVADO"
             df.at[idx, "resultado"] = resultado_final
@@ -1186,12 +1152,13 @@ def main():
     sheet = conectar_sheets()
     df_inscricoes = carregar_inscricoes(sheet)
     
-    # Criar abas (6 abas organizadas)
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    # Criar abas (7 abas organizadas)
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
         "🏆 Resultado",
         "✍️ Inscrição",
         "👥 Inscritos",
         "📋 Vagas",
+        "💼 Vagas Sobrantes",
         "📈 Lotação",
         "🗺️ RAJs"
     ])
@@ -2085,11 +2052,115 @@ def main():
             
             total_demanda_a2 = df_a2["Demanda"].sum()
             st.caption(f"Total: {len(df_a2)} unidades | {total_demanda_a2} servidores interessados")
-    
+
     # =========================================================================
-    # ABA 5: LOTAÇÃO DAS UNIDADES
+    # ABA 5: VAGAS SOBRANTES POR RAJ
     # =========================================================================
     with tab5:
+        st.header("💼 Vagas Sobrantes por RAJ")
+
+        if df_inscricoes.empty:
+            st.info("Execute a simulação primeiro para ver as vagas sobrantes.")
+        else:
+            # Calcular resultado para obter vagas restantes
+            df_resultado, vagas_restantes_a1, vagas_disponiveis_a2, ajustes_lotacao = calcular_resultado(df_inscricoes)
+
+            st.markdown("### 📊 Visão Geral")
+
+            # Calcular totais
+            total_sobrantes_a1 = sum(vagas_restantes_a1.values())
+            total_disponiveis_a2 = sum(vagas_disponiveis_a2.values())
+
+            col1, col2 = st.columns(2)
+            col1.metric("🔴 Vagas Sobrantes Anexo I", total_sobrantes_a1)
+            col2.metric("🟢 Vagas Disponíveis Anexo II", total_disponiveis_a2)
+
+            st.divider()
+
+            # Preparar dados por RAJ - Anexo I
+            st.markdown("### 🔴 Anexo I - Vagas Sobrantes por RAJ")
+            st.caption("Vagas do Anexo I (déficit) que não foram escolhidas na primeira análise")
+
+            dados_raj_a1 = {}
+            for codigo, qtd_sobrante in vagas_restantes_a1.items():
+                if qtd_sobrante > 0:
+                    info = ANEXO_I[codigo]
+                    comarca = info['comarca']
+                    unidade = info['unidade']
+                    raj = obter_raj_da_comarca(comarca)
+
+                    if raj not in dados_raj_a1:
+                        dados_raj_a1[raj] = []
+
+                    dados_raj_a1[raj].append({
+                        'Comarca': comarca,
+                        'Unidade': unidade,
+                        'Vagas Sobrantes': qtd_sobrante,
+                        'Código': codigo
+                    })
+
+            if dados_raj_a1:
+                # Ordenar RAJs
+                rajs_ordenadas_a1 = sorted(dados_raj_a1.keys())
+
+                for raj in rajs_ordenadas_a1:
+                    total_raj = sum(v['Vagas Sobrantes'] for v in dados_raj_a1[raj])
+                    with st.expander(f"**{raj}** ({total_raj} vagas sobrantes)"):
+                        df_raj = pd.DataFrame(dados_raj_a1[raj])
+                        df_raj = df_raj.sort_values('Comarca')
+                        st.dataframe(
+                            df_raj[['Comarca', 'Unidade', 'Vagas Sobrantes']],
+                            hide_index=True,
+                            use_container_width=True
+                        )
+            else:
+                st.success("✅ Todas as vagas do Anexo I foram preenchidas!")
+
+            st.divider()
+
+            # Preparar dados por RAJ - Anexo II
+            st.markdown("### 🟢 Anexo II - Vagas Disponíveis por RAJ")
+            st.caption("Vagas liberadas por servidores que saíram e causaram déficit na origem")
+
+            dados_raj_a2 = {}
+            for codigo, qtd_disponivel in vagas_disponiveis_a2.items():
+                if qtd_disponivel > 0:
+                    info = ANEXO_II[codigo]
+                    comarca = info['comarca']
+                    unidade = info['unidade']
+                    raj = obter_raj_da_comarca(comarca)
+
+                    if raj not in dados_raj_a2:
+                        dados_raj_a2[raj] = []
+
+                    dados_raj_a2[raj].append({
+                        'Comarca': comarca,
+                        'Unidade': unidade,
+                        'Vagas Disponíveis': qtd_disponivel,
+                        'Código': codigo
+                    })
+
+            if dados_raj_a2:
+                # Ordenar RAJs
+                rajs_ordenadas_a2 = sorted(dados_raj_a2.keys())
+
+                for raj in rajs_ordenadas_a2:
+                    total_raj = sum(v['Vagas Disponíveis'] for v in dados_raj_a2[raj])
+                    with st.expander(f"**{raj}** ({total_raj} vagas disponíveis)"):
+                        df_raj = pd.DataFrame(dados_raj_a2[raj])
+                        df_raj = df_raj.sort_values('Comarca')
+                        st.dataframe(
+                            df_raj[['Comarca', 'Unidade', 'Vagas Disponíveis']],
+                            hide_index=True,
+                            use_container_width=True
+                        )
+            else:
+                st.info("ℹ️ Nenhuma vaga do Anexo II foi liberada ainda (nenhum servidor aprovado causou déficit na origem).")
+
+    # =========================================================================
+    # ABA 6: LOTAÇÃO DAS UNIDADES
+    # =========================================================================
+    with tab6:
         st.header("📈 Lotação das Unidades Judiciárias")
         st.info("Dados da Tabela de Lotação de Pessoal (TLP) - 2º Semestre 2025. Fonte: BI do TJPR.")
         
@@ -2207,9 +2278,9 @@ def main():
         st.caption(f"Exibindo: {len(df_lotacao)} de {total_unidades} unidades")
     
     # =========================================================================
-    # ABA 6: RAJS
+    # ABA 7: RAJS
     # =========================================================================
-    with tab6:
+    with tab7:
         st.header("🗺️ Regiões Administrativas Judiciárias (RAJs)")
         st.info("Análise dos candidatos **APROVADOS** por região de **ORIGEM** (lotação atual). Criada pela Resolução nº 441/2024 do TJPR.")
         
