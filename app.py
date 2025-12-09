@@ -1681,8 +1681,19 @@ def main():
                     "observacao": "Observação"
                 })
 
+                def highlight_status_completo(row):
+                    if row["Status"] == "APROVADO":
+                        if row["Designação Origem"] == "SIM":
+                            return ["background-color: #fff3cd"] * len(row)  # Amarelo - aprovado com ressalva
+                        return ["background-color: #d4edda"] * len(row)  # Verde
+                    elif row["Status"] == "DESCLASSIFICADO":
+                        return ["background-color: #f8d7da"] * len(row)  # Vermelho
+                    elif row["Status"] == "NÃO OBTEVE VAGA":
+                        return ["background-color: #e2e3e5"] * len(row)  # Cinza
+                    return [""] * len(row)
+
                 st.dataframe(
-                    df_completo.style.apply(highlight_status, axis=1),
+                    df_completo.style.apply(highlight_status_completo, axis=1),
                     width="stretch",
                     hide_index=True
                 )
