@@ -10,6 +10,53 @@ from data import ANEXO_I, ANEXO_II
 from lotacao_data import LOTACAO_POR_CODIGO, LOTACAO_COMPLETA
 from lista_classificatoria import LISTA_CLASSIFICATORIA
 from config.matricula_posicao_map import MATRICULA_POSICAO_MAP
+from config.constants import (
+    FUZZY_MATCH_HIGH,
+    FUZZY_MATCH_MEDIUM,
+    LISTA_SIZE,
+    LISTA_MIN_POSICAO,
+    LISTA_MAX_POSICAO,
+    NOME_MIN_LENGTH,
+    STATUS_APROVADO,
+    STATUS_DESCLASSIFICADO,
+    STATUS_NAO_OBTEVE,
+    OPCAO_NAO_ESCOLHEU
+)
+from services.simulacao_service import (
+    obter_status_lotacao,
+    obter_dados_lotacao,
+    calcular_lotacao_dinamica,
+    verificar_estagio_probatorio
+)
+from utils.ui_helpers import (
+    construir_opcoes_selectbox,
+    extrair_codigo_da_opcao,
+    formatar_codigo_para_exibicao,
+    encontrar_indice_opcao,
+    extrair_comarca_da_string
+)
+from config.rajs_config import RAJS
+from services.rajs_service import (
+    obter_raj_da_comarca,
+    obter_numero_raj,
+    obter_comarcas_da_raj,
+    obter_sede_da_raj,
+    listar_todas_rajs,
+    contar_servidores_por_raj
+)
+from services.search_service import (
+    buscar_servidor_por_nome,
+    buscar_servidor_por_matricula,
+    buscar_servidor_por_posicao,
+    determinar_qualidade_match
+)
+from services.export_service import (
+    gerar_excel_resultado,
+    gerar_excel_inscricoes,
+    gerar_excel_logs,
+    gerar_excel_comparacao,
+    gerar_excel_vagas_disponiveis
+)
 import gspread
 from google.oauth2.service_account import Credentials
 import json
@@ -93,95 +140,25 @@ DATA_LIMITE_ESTAGIO = date(2022, 11, 26)
 # REGIÕES ADMINISTRATIVAS JUDICIÁRIAS (RAJs)
 # =============================================================================
 
-RAJS = {
-    "RAJ 1 - Região Metropolitana de Curitiba e Litoral": {
-        "sede": "Curitiba",
-        "comarcas": [
-            "Curitiba", "Almirante Tamandaré", "Antonina", "Araucária", "Bocaiúva do Sul",
-            "Campina Grande do Sul", "Campo Largo", "Cerro Azul", "Colombo", "Fazenda Rio Grande",
-            "Guaratuba", "Matinhos", "Morretes", "Paranaguá", "Pinhais", "Piraquara",
-            "Pontal do Paraná", "Quatro Barras", "Rio Branco do Sul", "São José dos Pinhais"
-        ]
-    },
-    "RAJ 2 - Ponta Grossa": {
-        "sede": "Ponta Grossa",
-        "comarcas": [
-            "Ponta Grossa", "Imbituva", "Ipiranga", "Jaguariaíva", "Mallet", "Palmeira",
-            "Piraí do Sul", "Rebouças", "Reserva", "São João do Triunfo", "Sengés",
-            "Teixeira Soares", "Tibagi", "Castro", "Irati", "Lapa", "Rio Negro",
-            "São Mateus do Sul", "Telêmaco Borba", "União da Vitória"
-        ]
-    },
-    "RAJ 3 - Guarapuava": {
-        "sede": "Guarapuava",
-        "comarcas": [
-            "Guarapuava", "Cândido de Abreu", "Cantagalo", "Iretama", "Manoel Ribas",
-            "Palmital", "Pinhão", "Prudentópolis", "Ivaiporã", "Laranjeiras do Sul", "Pitanga"
-        ]
-    },
-    "RAJ 4 - Francisco Beltrão": {
-        "sede": "Francisco Beltrão",
-        "comarcas": [
-            "Francisco Beltrão", "Ampére", "Barracão", "Clevelândia", "Coronel Vivida",
-            "Marmeleiro", "Mangueirinha", "Realeza", "Salto do Lontra", "São João",
-            "Chopinzinho", "Dois Vizinhos", "Palmas", "Pato Branco", "Santo Antônio do Sudoeste"
-        ]
-    },
-    "RAJ 5 - Foz do Iguaçu": {
-        "sede": "Foz do Iguaçu",
-        "comarcas": [
-            "Foz do Iguaçu", "Matelândia", "Santa Helena", "São Miguel do Iguaçu", "Medianeira"
-        ]
-    },
-    "RAJ 6 - Cascavel": {
-        "sede": "Cascavel",
-        "comarcas": [
-            "Cascavel", "Assis Chateaubriand", "Campina da Lagoa", "Capanema",
-            "Capitão Leônidas Marques", "Catanduvas", "Corbélia", "Formosa do Oeste",
-            "Guaraniaçu", "Mamborê", "Marechal Cândido Rondon", "Nova Aurora",
-            "Palotina", "Quedas do Iguaçu", "Toledo", "Ubiratã"
-        ]
-    },
-    "RAJ 7 - Umuarama": {
-        "sede": "Umuarama",
-        "comarcas": [
-            "Umuarama", "Alto Paraná", "Alto Piquiri", "Altônia", "Cianorte", "Cidade Gaúcha",
-            "Cruzeiro do Oeste", "Goioerê", "Guaíra", "Icaraíma", "Iporã", "Loanda",
-            "Nova Londrina", "Paraíso do Norte", "Paranavaí", "Pérola", "Santa Isabel do Ivaí",
-            "Terra Rica", "Terra Roxa", "Xambrê"
-        ]
-    },
-    "RAJ 8 - Maringá": {
-        "sede": "Maringá",
-        "comarcas": [
-            "Maringá", "Astorga", "Barbosa Ferraz", "Campo Mourão", "Centenário do Sul",
-            "Colorado", "Engenheiro Beltrão", "Jaguapitã", "Jandaia do Sul", "Mandaguaçu",
-            "Mandaguari", "Marialva", "Nova Esperança", "Paiçandu", "Paranacity",
-            "Peabiru", "Santa Fé", "São João do Ivaí", "Sarandi", "Terra Boa"
-        ]
-    },
-    "RAJ 9 - Londrina": {
-        "sede": "Londrina",
-        "comarcas": [
-            "Londrina", "Congonhinhas", "Faxinal", "Grandes Rios", "Marilândia do Sul",
-            "Nova Fátima", "Ortigueira", "Primeiro de Maio", "São Jerônimo da Serra",
-            "Sertanópolis", "Uraí", "Apucarana", "Arapongas", "Assaí", "Bela Vista do Paraíso",
-            "Cambé", "Cornélio Procópio", "Ibiporã", "Porecatu", "Rolândia"
-        ]
-    },
-    "RAJ 10 - Jacarezinho": {
-        "sede": "Jacarezinho",
-        "comarcas": [
-            "Jacarezinho", "Arapoti", "Cambará", "Carlópolis", "Curiúva", "Joaquim Távora",
-            "Ribeirão Claro", "Ribeirão do Pinhal", "Santa Mariana", "Siqueira Campos",
-            "Tomazina", "Andirá", "Bandeirantes", "Ibaiti", "Santo Antônio da Platina",
-            "Wenceslau Braz"
-        ]
-    }
-}
-
 def normalizar_comarca(nome):
-    """Normaliza nome de comarca para comparação"""
+    """
+    Normaliza nome de comarca para comparação consistente.
+
+    Remove espaços extras, converte para title case e aplica correções ortográficas
+    específicas para comarcas do Paraná (acentuação, preposições, etc).
+
+    Args:
+        nome: Nome da comarca a ser normalizado
+
+    Returns:
+        Nome normalizado com acentuação e capitalização corretas
+
+    Example:
+        >>> normalizar_comarca("foz do iguacu")
+        'Foz do Iguaçu'
+        >>> normalizar_comarca("SAO JOSE  DOS  PINHAIS")
+        'São José dos Pinhais'
+    """
     if not nome:
         return ""
     nome = " ".join(nome.split()).title()
@@ -247,104 +224,12 @@ def normalizar_comarca(nome):
     return nome
 
 
-def obter_raj_da_comarca(comarca):
-    """Retorna a RAJ de uma comarca"""
-    comarca_norm = normalizar_comarca(comarca)
-    
-    for raj_nome, raj_info in RAJS.items():
-        for c in raj_info["comarcas"]:
-            if normalizar_comarca(c).lower() == comarca_norm.lower():
-                return raj_nome
-    
-    return "Não identificada"
-
-
-# =============================================================================
-# FUNÇÕES DE LOTAÇÃO PARADIGMA
-# =============================================================================
-
-def obter_status_lotacao(codigo_unidade):
-    """Retorna o status de lotação de uma unidade (SUPERAVITÁRIA, EQUILIBRADA, DEFICITÁRIA)"""
-    if codigo_unidade in LOTACAO_POR_CODIGO:
-        return LOTACAO_POR_CODIGO[codigo_unidade]["status"]
-    return "NÃO IDENTIFICADA"
-
-def obter_dados_lotacao(codigo_unidade):
-    """Retorna todos os dados de lotação de uma unidade"""
-    if codigo_unidade in LOTACAO_POR_CODIGO:
-        return LOTACAO_POR_CODIGO[codigo_unidade]
-    return None
-
-def calcular_lotacao_dinamica(codigo_unidade, ajuste=0):
-    """
-    Calcula a lotação considerando ajustes dinâmicos.
-    ajuste: número de servidores a adicionar (+) ou remover (-)
-    """
-    dados = obter_dados_lotacao(codigo_unidade)
-    if not dados:
-        return None
-    
-    nova_lotacao_real = dados["lotacao_real"] + ajuste
-    nova_diferenca = nova_lotacao_real - dados["lotacao_paradigma"]
-    
-    if nova_diferenca > 0:
-        novo_status = "SUPERAVITÁRIA"
-    elif nova_diferenca == 0:
-        novo_status = "EQUILIBRADA"
-    else:
-        novo_status = "DEFICITÁRIA"
-    
-    return {
-        "lotacao_real": nova_lotacao_real,
-        "lotacao_paradigma": dados["lotacao_paradigma"],
-        "diferenca": nova_diferenca,
-        "status": novo_status
-    }
 
 
 # =============================================================================
 # BUSCA NA LISTA CLASSIFICATÓRIA
 # =============================================================================
 
-def buscar_posicao_por_nome(nome_inscricao, threshold=85):
-    """
-    Busca posição na lista classificatória por nome usando fuzzy matching.
-
-    Args:
-        nome_inscricao: Nome do servidor
-        threshold: Limite mínimo de similaridade (0-100)
-
-    Returns:
-        Tupla (posicao, score, nome_display) ou None se não encontrar
-    """
-    if not nome_inscricao or len(nome_inscricao.strip()) < 3:
-        return None
-
-    melhor_match = None
-    melhor_score = 0
-    melhor_nome = ""
-
-    nome_busca = nome_inscricao.upper().strip()
-
-    for posicao, dados in LISTA_CLASSIFICATORIA.items():
-        # Tenta match com nome original (sem numeração)
-        score_original = fuzz.ratio(nome_busca, dados["nome_original"].upper())
-
-        # Tenta match com nome display (com numeração se houver)
-        score_display = fuzz.ratio(nome_busca, dados["nome_display"].upper())
-
-        # Usa o melhor score
-        score = max(score_original, score_display)
-
-        if score > melhor_score:
-            melhor_score = score
-            melhor_match = posicao
-            melhor_nome = dados["nome_display"]
-
-    if melhor_score >= threshold:
-        return (melhor_match, melhor_score, melhor_nome)
-
-    return None
 
 
 # =============================================================================
@@ -517,14 +402,15 @@ def buscar_inscricao(sheet, matricula):
     """Busca inscrição por matrícula"""
     if sheet is None:
         return None
-    
+
     try:
         registros = sheet.get_all_records()
         for reg in registros:
             if str(reg.get("matricula", "")) == str(matricula):
                 return reg
         return None
-    except:
+    except Exception as e:
+        st.error(f"Erro ao buscar inscrição: {e}")
         return None
 
 
@@ -532,21 +418,34 @@ def buscar_inscricao(sheet, matricula):
 # LÓGICA DE SIMULAÇÃO COM LOTAÇÃO DINÂMICA
 # =============================================================================
 
-def verificar_estagio_probatorio(data_admissao):
-    """Verifica se servidor está em estágio probatório"""
-    if data_admissao is None or pd.isna(data_admissao):
-        return True
-    return data_admissao > DATA_LIMITE_ESTAGIO
-
-
 def calcular_resultado(df_inscricoes):
     """
-    Calcula o resultado da simulação com lotação dinâmica.
-    Inclui cálculo de "Designação na Origem" baseado no status da unidade.
-    
-    Implementa item 3.11 do Edital:
-    "Se, durante a análise do Anexo II, for possível o deferimento em ambas as unidades,
-    será concedido o deferimento para a unidade originalmente indicada no Anexo I."
+    Calcula o resultado da simulação de relotação em duas fases.
+
+    Implementa as regras do Edital 04/2025:
+    - Fase 1: Processa Anexo I (vagas com déficit)
+    - Fase 2: Processa Anexo II (todas as unidades)
+    - Item 3.11: Prioriza escolha original do Anexo I se ambas disponíveis
+    - Item 3.14: Calcula designação na origem se saída ocasionar déficit
+
+    Utiliza lotação dinâmica: quando servidor sai de uma unidade, ela pode ficar
+    disponível no Anexo II. A ordem de processamento é pela posição_lista_classificatoria
+    (posição 1 = maior prioridade).
+
+    Args:
+        df_inscricoes: DataFrame com inscrições dos servidores.
+            Colunas esperadas: nome, matricula, data_admissao, lotacao_atual,
+            escolha_anexo1, escolha_anexo2, posicao_lista_classificatoria
+
+    Returns:
+        tuple: (df_resultado, vagas_anexo1, vagas_anexo2, ajustes_lotacao)
+            - df_resultado: DataFrame com status de cada servidor (APROVADO/DESCLASSIFICADO/NÃO OBTEVE VAGA)
+            - vagas_anexo1: dict com vagas restantes do Anexo I
+            - vagas_anexo2: dict com vagas disponíveis do Anexo II
+            - ajustes_lotacao: dict com ajustes acumulados por unidade
+
+    Raises:
+        ValueError: Se df_inscricoes não tiver colunas obrigatórias
     """
     if df_inscricoes.empty:
         return pd.DataFrame(), {}, {}, {}
@@ -783,93 +682,6 @@ def calcular_demanda(df_inscricoes):
     return demanda_a1, demanda_a2
 
 
-def gerar_excel_resultado(df_resultado):
-    """
-    Gera um arquivo Excel com o resultado da simulação.
-    Retorna bytes do arquivo para download.
-    """
-    output = BytesIO()
-
-    # Adicionar unidade de origem formatada
-    df_resultado_copy = df_resultado.copy()
-    df_resultado_copy["unidade_origem"] = df_resultado_copy["lotacao_atual"].apply(
-        lambda x: f"{ANEXO_II[x]['comarca']} - {ANEXO_II[x]['unidade']}" if x and x in ANEXO_II else "-"
-    )
-
-    # Preparar DataFrame para exportação
-    df_export = df_resultado_copy[[
-        "posicao_antiguidade", "nome", "matricula", "data_admissao",
-        "unidade_origem", "status", "resultado", "vaga_obtida", "designacao_origem", "observacao"
-    ]].copy()
-
-    # Formatar data
-    df_export["data_admissao"] = df_export["data_admissao"].apply(
-        lambda x: x.strftime("%d/%m/%Y") if pd.notna(x) else ""
-    )
-
-    # Renomear colunas
-    df_export.columns = [
-        "Posição", "Nome", "Matrícula", "Data Admissão",
-        "Unidade de Origem", "Status", "Resultado", "Vaga Obtida", "Designação Origem", "Observação"
-    ]
-
-    # Criar Excel com pandas
-    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        df_export.to_excel(writer, sheet_name='Resultado Simulação', index=False)
-
-    output.seek(0)
-    return output.getvalue()
-
-
-def gerar_excel_inscricoes(df_inscricoes):
-    """
-    Gera um arquivo Excel com todas as inscrições.
-    """
-    output = BytesIO()
-    
-    df_export = df_inscricoes.copy()
-    
-    # Formatar data
-    if "data_admissao" in df_export.columns:
-        df_export["data_admissao"] = df_export["data_admissao"].apply(
-            lambda x: x.strftime("%d/%m/%Y") if pd.notna(x) else ""
-        )
-    
-    # Adicionar descrições das unidades
-    df_export["lotacao_desc"] = df_export["lotacao_atual"].apply(
-        lambda x: f"{ANEXO_II[x]['comarca']} - {ANEXO_II[x]['unidade']}" if x in ANEXO_II else x
-    )
-    df_export["escolha_a1_desc"] = df_export["escolha_anexo1"].apply(
-        lambda x: f"{ANEXO_I[x]['comarca']} - {ANEXO_I[x]['unidade']}" if x and x in ANEXO_I else "-"
-    )
-    df_export["escolha_a2_desc"] = df_export["escolha_anexo2"].apply(
-        lambda x: f"{ANEXO_II[x]['comarca']} - {ANEXO_II[x]['unidade']}" if x and x in ANEXO_II else "-"
-    )
-    
-    # Criar Excel com pandas
-    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        df_export.to_excel(writer, sheet_name='Inscrições', index=False)
-    
-    output.seek(0)
-    return output.getvalue()
-
-
-def gerar_excel_logs(df_inscricoes):
-    """
-    Gera um arquivo Excel com logs de alterações.
-    """
-    output = BytesIO()
-    
-    colunas_log = ["nome", "matricula", "registrado_por", "alterado_por", "data_alteracao", "data_inscricao"]
-    df_export = df_inscricoes[[c for c in colunas_log if c in df_inscricoes.columns]].copy()
-    
-    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        df_export.to_excel(writer, sheet_name='Logs de Alterações', index=False)
-    
-    output.seek(0)
-    return output.getvalue()
-
-
 def normalizar_nome(nome):
     """
     Normaliza um nome para comparação:
@@ -1005,8 +817,30 @@ def processar_csv_edital(uploaded_file):
 
 def comparar_edital_simulador(df_csv, df_inscricoes):
     """
-    Compara os dados do CSV oficial com as inscrições do simulador.
-    Retorna dicionário com resultados da comparação.
+    Compara resultado oficial do TJPR com simulação.
+
+    Realiza fuzzy matching entre servidores do CSV oficial e inscrições do simulador
+    para identificar acertos, erros e discrepâncias entre a previsão do simulador
+    e o resultado real do edital.
+
+    Args:
+        df_csv: DataFrame processado do CSV oficial (via processar_csv_edital)
+        df_inscricoes: DataFrame com inscrições do simulador
+
+    Returns:
+        dict: {
+            'df_comparacao': DataFrame com comparação lado a lado,
+            'df_nao_encontrados': DataFrame com servidores do CSV não encontrados no simulador,
+            'acertos': int - número de previsões corretas,
+            'erros': int - número de previsões incorretas,
+            'nao_encontrados': int - servidores do CSV sem match no simulador
+        }
+
+    Example:
+        >>> df_csv = processar_csv_edital(uploaded_file)
+        >>> df_inscricoes = carregar_inscricoes(sheet)
+        >>> resultado = comparar_edital_simulador(df_csv, df_inscricoes)
+        >>> print(f"Acurácia: {resultado['acertos']}/{resultado['acertos']+resultado['erros']}")
     """
     resultados = {
         'coincidentes': [],      # Estão nos dois
@@ -1210,7 +1044,7 @@ def main():
                 if posicao_sugerida in LISTA_CLASSIFICATORIA:
                     nome_encontrado = LISTA_CLASSIFICATORIA[posicao_sugerida]['nome_display']
             elif nome_busca_auto and len(nome_busca_auto.strip()) >= 3:
-                resultado = buscar_posicao_por_nome(nome_busca_auto)
+                resultado = buscar_servidor_por_nome(nome_busca_auto)
                 if resultado:
                     posicao_sugerida, score, nome_lista = resultado
                     if score >= 95:
@@ -1258,7 +1092,8 @@ def main():
                 if inscricao_existente and inscricao_existente.get("data_admissao"):
                     try:
                         data_default = datetime.strptime(inscricao_existente["data_admissao"], "%d/%m/%Y").date()
-                    except:
+                    except (ValueError, TypeError) as e:
+                        # Data em formato inválido, usar None como default
                         pass
                 
                 data_admissao = st.date_input(
@@ -1272,15 +1107,12 @@ def main():
                 if pd.notna(data_admissao) and data_admissao > DATA_LIMITE_ESTAGIO:
                     st.warning(f"⚠️ Servidor em ESTÁGIO PROBATÓRIO (admitido após {DATA_LIMITE_ESTAGIO.strftime('%d/%m/%Y')}). Será desclassificado conforme edital.")
                 
-                opcoes_lotacao = [""] + [f"{k} - {v['comarca']} - {v['unidade']}" for k, v in ANEXO_II.items()]
-                
+                opcoes_lotacao = construir_opcoes_selectbox(ANEXO_II, default_text="", incluir_vazio=True)
+
                 lotacao_default = 0
                 if inscricao_existente and inscricao_existente.get("lotacao_atual"):
                     codigo_lot = inscricao_existente["lotacao_atual"]
-                    for i, op in enumerate(opcoes_lotacao):
-                        if op.startswith(codigo_lot + " -"):
-                            lotacao_default = i
-                            break
+                    lotacao_default = encontrar_indice_opcao(opcoes_lotacao, codigo_lot)
                 
                 lotacao_atual = st.selectbox(
                     "Lotação atual (onde você trabalha):",
@@ -1288,15 +1120,12 @@ def main():
                     index=lotacao_default
                 )
                 
-                opcoes_a1 = ["(Não escolheu)"] + [f"{k} - {v['comarca']} - {v['unidade']} ({v['quantidade']} vagas)" for k, v in ANEXO_I.items()]
-                
+                opcoes_a1 = construir_opcoes_selectbox(ANEXO_I, default_text=OPCAO_NAO_ESCOLHEU, incluir_vazio=True, mostrar_quantidade=True)
+
                 escolha_a1_default = 0
                 if inscricao_existente and inscricao_existente.get("escolha_anexo1"):
                     codigo_a1 = inscricao_existente["escolha_anexo1"]
-                    for i, op in enumerate(opcoes_a1):
-                        if op.startswith(codigo_a1 + " -"):
-                            escolha_a1_default = i
-                            break
+                    escolha_a1_default = encontrar_indice_opcao(opcoes_a1, codigo_a1)
                 
                 escolha_a1 = st.selectbox(
                     "1ª Opção - Vaga com déficit (Anexo I):",
@@ -1304,15 +1133,12 @@ def main():
                     index=escolha_a1_default
                 )
                 
-                opcoes_a2 = ["(Não escolheu)"] + [f"{k} - {v['comarca']} - {v['unidade']}" for k, v in ANEXO_II.items()]
-                
+                opcoes_a2 = construir_opcoes_selectbox(ANEXO_II, default_text=OPCAO_NAO_ESCOLHEU, incluir_vazio=True)
+
                 escolha_a2_default = 0
                 if inscricao_existente and inscricao_existente.get("escolha_anexo2"):
                     codigo_a2 = inscricao_existente["escolha_anexo2"]
-                    for i, op in enumerate(opcoes_a2):
-                        if op.startswith(codigo_a2 + " -"):
-                            escolha_a2_default = i
-                            break
+                    escolha_a2_default = encontrar_indice_opcao(opcoes_a2, codigo_a2)
                 
                 escolha_a2 = st.selectbox(
                     "2ª Opção - Qualquer unidade (Anexo II):",
@@ -1321,8 +1147,8 @@ def main():
                 )
                 
                 # Extrair códigos para verificações
-                codigo_lotacao_temp = lotacao_atual.split(" - ")[0] if lotacao_atual else ""
-                codigo_escolha_a2_temp = escolha_a2.split(" - ")[0] if escolha_a2 != "(Não escolheu)" else ""
+                codigo_lotacao_temp = extrair_codigo_da_opcao(lotacao_atual, default_vazio="")
+                codigo_escolha_a2_temp = extrair_codigo_da_opcao(escolha_a2, default_vazio=OPCAO_NAO_ESCOLHEU)
                 
                 # ALERTA DE CONFLITO: origem = destino
                 if codigo_lotacao_temp and codigo_escolha_a2_temp and codigo_lotacao_temp == codigo_escolha_a2_temp:
@@ -1360,9 +1186,9 @@ def main():
                     elif posicao_lista not in LISTA_CLASSIFICATORIA:
                         st.error(f"❌ **Posição {posicao_lista} não encontrada na Lista Classificatória!**\n\nVerifique a posição correta.")
                     else:
-                        codigo_lotacao = lotacao_atual.split(" - ")[0] if lotacao_atual else ""
-                        codigo_escolha_a1 = escolha_a1.split(" - ")[0] if escolha_a1 != "(Não escolheu)" else ""
-                        codigo_escolha_a2 = escolha_a2.split(" - ")[0] if escolha_a2 != "(Não escolheu)" else ""
+                        codigo_lotacao = extrair_codigo_da_opcao(lotacao_atual, default_vazio="")
+                        codigo_escolha_a1 = extrair_codigo_da_opcao(escolha_a1, default_vazio=OPCAO_NAO_ESCOLHEU)
+                        codigo_escolha_a2 = extrair_codigo_da_opcao(escolha_a2, default_vazio=OPCAO_NAO_ESCOLHEU)
 
                         dados = {
                             "nome": nome,
@@ -1891,8 +1717,9 @@ def main():
                 comarcas_count = {}
                 for _, row in df_resultado.iterrows():
                     if row['status'] == 'APROVADO' and row['vaga_obtida'] and row['vaga_obtida'] != '-':
-                        comarca = row['vaga_obtida'].split(' - ')[0]
-                        comarcas_count[comarca] = comarcas_count.get(comarca, 0) + 1
+                        comarca = extrair_comarca_da_string(row['vaga_obtida'])
+                        if comarca:
+                            comarcas_count[comarca] = comarcas_count.get(comarca, 0) + 1
 
                 if comarcas_count:
                     top_comarcas = sorted(comarcas_count.items(), key=lambda x: x[1], reverse=True)[:5]
@@ -2087,7 +1914,7 @@ def main():
                     info = ANEXO_I[codigo]
                     comarca = info['comarca']
                     unidade = info['unidade']
-                    raj = obter_raj_da_comarca(comarca)
+                    raj = obter_raj_da_comarca(comarca, normalizar_func=normalizar_comarca)
 
                     if raj not in dados_raj_a1:
                         dados_raj_a1[raj] = []
@@ -2128,7 +1955,7 @@ def main():
                     info = ANEXO_II[codigo]
                     comarca = info['comarca']
                     unidade = info['unidade']
-                    raj = obter_raj_da_comarca(comarca)
+                    raj = obter_raj_da_comarca(comarca, normalizar_func=normalizar_comarca)
 
                     if raj not in dados_raj_a2:
                         dados_raj_a2[raj] = []
@@ -2264,7 +2091,8 @@ def main():
                     return "color: green; font-weight: bold"
                 elif int(val) < 0:
                     return "color: red; font-weight: bold"
-            except:
+            except (ValueError, TypeError):
+                # Valor não numérico, sem coloração
                 pass
             return ""
         
