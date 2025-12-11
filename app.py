@@ -57,6 +57,27 @@ from services.export_service import (
     gerar_excel_comparacao,
     gerar_excel_vagas_disponiveis
 )
+from utils.error_handlers import (
+    handle_error,
+    handle_success,
+    handle_warning,
+    handle_info,
+    safe_execute
+)
+from utils.ui_components import (
+    card,
+    info_card,
+    badge,
+    alert_box,
+    progress_bar,
+    status_badge_for_resultado,
+    metric_card,
+    styled_dataframe,
+    section_header,
+    loading_spinner,
+    empty_state,
+    divider_with_text
+)
 import gspread
 from google.oauth2.service_account import Credentials
 import json
@@ -376,7 +397,7 @@ def salvar_inscricao(sheet, dados):
 
         return True
     except Exception as e:
-        st.error(f"Erro ao salvar: {e}")
+        handle_error(e, "salvar_inscricao", show_to_user=True)
         return False
 
 
@@ -983,8 +1004,9 @@ def main():
     """)
 
     # Conectar ao Google Sheets
-    sheet = conectar_sheets()
-    df_inscricoes = carregar_inscricoes(sheet)
+    with loading_spinner("Conectando ao banco de dados..."):
+        sheet = conectar_sheets()
+        df_inscricoes = carregar_inscricoes(sheet)
     
     # Criar abas (7 abas organizadas)
     tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
@@ -1105,7 +1127,10 @@ def main():
                 )
                 
                 if pd.notna(data_admissao) and data_admissao > DATA_LIMITE_ESTAGIO:
-                    st.warning(f"⚠️ Servidor em ESTÁGIO PROBATÓRIO (admitido após {DATA_LIMITE_ESTAGIO.strftime('%d/%m/%Y')}). Será desclassificado conforme edital.")
+                    alert_box(
+                        f"Servidor em ESTÁGIO PROBATÓRIO (admitido após {DATA_LIMITE_ESTAGIO.strftime('%d/%m/%Y')}). Será desclassificado conforme edital.",
+                        alert_type="warning"
+                    )
                 
                 opcoes_lotacao = construir_opcoes_selectbox(ANEXO_II, default_text="", incluir_vazio=True)
 
@@ -1152,7 +1177,10 @@ def main():
                 
                 # ALERTA DE CONFLITO: origem = destino
                 if codigo_lotacao_temp and codigo_escolha_a2_temp and codigo_lotacao_temp == codigo_escolha_a2_temp:
-                    st.error("⚠️ **CONFLITO:** Você escolheu a mesma unidade como origem e destino no Anexo II. Isso não faz sentido!")
+                    alert_box(
+                        "CONFLITO: Você escolheu a mesma unidade como origem e destino no Anexo II. Isso não faz sentido!",
+                        alert_type="error"
+                    )
                 
                 # RESUMO/PREVIEW antes de salvar
                 st.divider()
@@ -1202,7 +1230,7 @@ def main():
                         }
 
                         if salvar_inscricao(sheet, dados):
-                            st.success("✅ Inscrição salva com sucesso!")
+                            handle_success("✅ Inscrição salva com sucesso!", show_balloons=True)
                             st.cache_resource.clear()
                             st.rerun()
         
@@ -1368,28 +1396,39 @@ def main():
     # ABA 1: RESULTADO E DASHBOARD
     # =========================================================================
     with tab1:
-        st.header("🏆 Resultado da Simulação")
-        
+        section_header("Resultado da Simulação", icon="🏆", subtitle="Edital nº 4/2025 - Técnico Judiciário")
+
         if df_inscricoes.empty:
-            st.info("Nenhum servidor inscrito ainda. O resultado aparecerá quando houver inscrições.")
+            empty_state(
+                "Nenhum servidor inscrito ainda",
+                icon="📭",
+                suggestion="O resultado aparecerá quando houver inscrições. Faça sua inscrição na aba ✍️ Inscrição"
+            )
         else:
-            df_resultado, vagas_restantes_a1, vagas_disponiveis_a2, ajustes_lotacao = calcular_resultado(df_inscricoes)
-            
+            with loading_spinner("Calculando resultado da simulação..."):
+                df_resultado, vagas_restantes_a1, vagas_disponiveis_a2, ajustes_lotacao = calcular_resultado(df_inscricoes)
+
             col1, col2, col3, col4 = st.columns(4)
-            
+
             total = len(df_resultado)
             # Contar aprovados por Anexo I e Anexo II
             aprovados_a1 = len(df_resultado[df_resultado["resultado"].str.startswith("Anexo I", na=False)])
             aprovados_a2 = len(df_resultado[df_resultado["resultado"].str.startswith("Anexo II", na=False)])
             desclass = len(df_resultado[df_resultado["status"] == "DESCLASSIFICADO"])
-            
+
             # Contar designações na origem
             com_designacao = len(df_resultado[df_resultado["designacao_origem"] == "SIM"])
-            
-            col1.metric("Total Inscritos", total)
-            col2.metric("Aprovados Anexo I", aprovados_a1, help="Inclui direto e via item 3.11")
-            col3.metric("Aprovados Anexo II", aprovados_a2)
-            col4.metric("Com Designação na Origem", com_designacao, help="Aprovados que precisarão aguardar substituição")
+
+            with col1:
+                metric_card("Total Inscritos", str(total), icon="👥", color="blue")
+            with col2:
+                metric_card("Aprovados Anexo I", str(aprovados_a1),
+                           delta="Inclui direto e via item 3.11", icon="✅", color="green")
+            with col3:
+                metric_card("Aprovados Anexo II", str(aprovados_a2), icon="✅", color="green")
+            with col4:
+                metric_card("Com Designação", str(com_designacao),
+                           delta="Aguardam substituição", icon="⏳", color="orange")
             
             st.divider()
             
