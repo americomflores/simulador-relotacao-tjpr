@@ -311,7 +311,7 @@ def section_header(title: str, icon: str = "📌", subtitle: str = ""):
         subtitle: Subtítulo opcional
 
     Example:
-        >>> section_header("Resultado da Simulação", icon="🏆", subtitle="Edital 04/2025")
+        >>> section_header("Resultado da Simulação", icon="🏆", subtitle="Edital 01/2026")
     """
     st.markdown(f"""
     <div style="

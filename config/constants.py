@@ -23,14 +23,14 @@ FUZZY_MATCH_LOW = 70
 # LISTA CLASSIFICATÓRIA
 # =============================================================================
 
-# Tamanho da lista classificatória do Edital 04/2025
-LISTA_SIZE = 1268
+# Tamanho da lista classificatória do Edital 01/2026
+LISTA_SIZE = 1291
 
 # Posição mínima válida na lista
 LISTA_MIN_POSICAO = 1
 
 # Posição máxima válida na lista
-LISTA_MAX_POSICAO = 1268
+LISTA_MAX_POSICAO = 1291
 
 
 # =============================================================================
@@ -52,7 +52,7 @@ RESULTADO_ANEXO_I = "ANEXO I"
 RESULTADO_ANEXO_II = "ANEXO II"
 RESULTADO_ANEXO_I_VIA_A2 = "ANEXO I (via A2)"
 RESULTADO_SEM_VAGA = "Sem vaga"
-RESULTADO_ESTAGIO = "Estágio Probatório"
+# RESULTADO_ESTAGIO removido - Edital 01/2026 permite servidores em estágio probatório
 
 
 # =============================================================================

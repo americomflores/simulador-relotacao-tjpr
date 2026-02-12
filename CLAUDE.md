@@ -2,7 +2,7 @@
 
 ## 📋 Visão Geral do Projeto
 
-Aplicação Streamlit para simular o processo de relotação de servidores do Tribunal de Justiça do Paraná (Edital nº 4/2025 - Técnico Judiciário).
+Aplicação Streamlit para simular o processo de relotação de servidores do Tribunal de Justiça do Paraná (Edital nº 01/2026 - Técnico Judiciário).
 
 **Stack Tecnológico:**
 - Python 3.11 + Streamlit
@@ -17,7 +17,7 @@ simulador-relotacao-tjpr/
 ├── app.py                           # Aplicação principal (3.600+ linhas)
 ├── data.py                          # ANEXO_I e ANEXO_II (vagas do edital)
 ├── lotacao_data.py                  # Dados de lotação paradigma das unidades
-├── lista_classificatoria.py         # Lista Classificatória Edital 04/2025 (1268 servidores)
+├── lista_classificatoria.py         # Lista Classificatória Edital 01/2026 (1291 servidores)
 ├── requirements.txt                 # Dependências Python
 ├── .streamlit/
 │   └── config.toml                 # Configuração do Streamlit
@@ -32,7 +32,7 @@ simulador-relotacao-tjpr/
 │   └── simulacao_service.py        # Lógica de cálculo de resultados
 ├── config/                          # Configurações do sistema
 │   ├── auth_config.py              # AUTH_CODES, ADMIN_TELEFONES, ADMIN_SENHA
-│   ├── settings.py                 # DATA_LIMITE_ESTAGIO
+│   ├── settings.py                 # Configurações do sistema (estágio probatório removido em 01/2026)
 │   └── telefone_posicao_map.py     # Mapeamento telefone → posição (19 telefones)
 ├── utils/                           # Utilitários
 │   ├── logger.py                   # Sistema de logging
@@ -98,7 +98,7 @@ Login → Google Sheets ↔ carregar_inscricoes()
 **Estrutura das colunas (11 colunas):**
 - A: nome
 - B: matricula
-- C: data_admissao (MANTIDO para validação de estágio probatório)
+- C: data_admissao (MANTIDO para informação, mas não há mais restrição de estágio probatório em 01/2026)
 - D: lotacao_atual
 - E: escolha_anexo1
 - F: escolha_anexo2
@@ -106,19 +106,18 @@ Login → Google Sheets ↔ carregar_inscricoes()
 - H: registrado_por (auditoria)
 - I: alterado_por (auditoria)
 - J: data_alteracao (auditoria)
-- **K: posicao_lista_classificatoria** (NOVO - Edital 04/2025)
+- **K: posicao_lista_classificatoria** (posição na lista classificatória)
 
 ## 🎯 Regras de Negócio Críticas
 
-### 1. Período Probatório
-- **DATA_LIMITE_ESTAGIO**: 26/11/2022
-- Servidores admitidos APÓS essa data são DESCLASSIFICADOS
+### 1. Estágio Probatório
+- **Edital 01/2026**: Servidores em estágio probatório **PODEM participar** da relotação
+- (Restrição removida - era DATA_LIMITE_ESTAGIO no edital anterior)
 
 ### 2. Critério de Prioridade
-- **ÚNICO critério**: Posição na Lista Classificatória (Edital 04/2025)
-- Posição 1 = maior prioridade, posição 1268 = menor prioridade
-- **MUDANÇA IMPORTANTE:** Sistema foi migrado de ordenação por `data_admissao` para `posicao_lista_classificatoria`
-- **`data_admissao` MANTIDA** apenas para validação de estágio probatório (não afeta mais a ordem)
+- **ÚNICO critério**: Posição na Lista Classificatória (Edital 01/2026)
+- Posição 1 = maior prioridade, posição 1291 = menor prioridade
+- A `data_admissao` é mantida apenas para informação, não afeta a ordem
 
 ### 3. Processamento em Duas Fases
 

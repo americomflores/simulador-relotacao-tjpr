@@ -1,6 +1,6 @@
 """
 Simulador de Relotação - TJPR
-Edital nº 4/2025 - Técnico Judiciário
+Edital nº 01/2026 - Técnico Judiciário
 """
 
 import streamlit as st
@@ -25,8 +25,8 @@ from config.constants import (
 from services.simulacao_service import (
     obter_status_lotacao,
     obter_dados_lotacao,
-    calcular_lotacao_dinamica,
-    verificar_estagio_probatorio
+    calcular_lotacao_dinamica
+    # verificar_estagio_probatorio removido - Edital 01/2026 permite servidores em estágio probatório
 )
 from utils.ui_helpers import (
     construir_opcoes_selectbox,
@@ -153,8 +153,9 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Data limite para estágio probatório (3 anos antes de 26/11/2025)
-DATA_LIMITE_ESTAGIO = date(2022, 11, 26)
+# Edital 01/2026: Não há mais restrição de estágio probatório
+# Servidores em estágio probatório PODEM participar da relotação
+# (DATA_LIMITE_ESTAGIO removido)
 
 
 # =============================================================================
@@ -443,7 +444,7 @@ def calcular_resultado(df_inscricoes):
     """
     Calcula o resultado da simulação de relotação em duas fases.
 
-    Implementa as regras do Edital 04/2025:
+    Implementa as regras do Edital 01/2026:
     - Fase 1: Processa Anexo I (vagas com déficit)
     - Fase 2: Processa Anexo II (todas as unidades)
     - Item 3.11: Prioriza escolha original do Anexo I se ambas disponíveis
@@ -506,14 +507,9 @@ def calcular_resultado(df_inscricoes):
                 mapeamento_a1_para_a2[codigo_a1] = codigo_a2
                 break
     
-    # Marcar desclassificados por estágio probatório
-    for idx, row in df.iterrows():
-        if verificar_estagio_probatorio(row["data_admissao"]):
-            df.at[idx, "status"] = "DESCLASSIFICADO"
-            df.at[idx, "resultado"] = "Estágio Probatório"
-            df.at[idx, "observacao"] = f"Admitido após {DATA_LIMITE_ESTAGIO.strftime('%d/%m/%Y')}"
-            df.at[idx, "designacao_origem"] = "-"
-    
+    # Edital 01/2026: Servidores em estágio probatório PODEM participar
+    # (Validação de estágio probatório removida)
+
     # Controle de vagas Anexo I
     vagas_anexo1 = {}
     for codigo, info in ANEXO_I.items():
@@ -994,13 +990,13 @@ def comparar_edital_simulador(df_csv, df_inscricoes):
 
 def main():
     st.title("⚖️ Simulador de Relotação - TJPR")
-    st.caption("Edital nº 4/2025 - Técnico Judiciário")
+    st.caption("Edital nº 01/2026 - Técnico Judiciário")
 
     # Aviso importante
     st.warning("""
-    ⚠️ **ATENÇÃO:** Este é um simulador **não oficial**, criado apenas para auxiliar na tomada de decisão.
-    O resultado oficial depende exclusivamente da análise do TJPR conforme Edital nº 4/2025.
-    Não me responsabilizo por decisões ou interpretações feitas a partir destas informações.
+    ⚠️ **AVISO IMPORTANTE:** Este simulador é **não oficial** e serve apenas para você se planejar melhor.
+    O resultado real só sai depois da análise oficial do TJPR seguindo o Edital nº 4/2025.
+    Use este simulador para testar suas opções, mas saiba que o resultado oficial pode ser diferente.
     """)
 
     # Conectar ao Google Sheets
@@ -1010,13 +1006,13 @@ def main():
     
     # Criar abas (7 abas organizadas)
     tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-        "🏆 Resultado",
-        "✍️ Inscrição",
-        "👥 Inscritos",
-        "📋 Vagas",
-        "💼 Vagas Sobrantes",
-        "📈 Lotação",
-        "🗺️ RAJs"
+        "🏆 Resultado da Simulação",
+        "✍️ Minha Inscrição",
+        "👥 Lista de Inscritos",
+        "📋 Vagas do Edital",
+        "📊 Análise de Vagas",
+        "📈 Lotação das Unidades",
+        "🗺️ Regiões (RAJs)"
     ])
     
     # Calcular demanda (quantos escolheram cada vaga)
@@ -1093,10 +1089,10 @@ def main():
                 posicao_lista = st.number_input(
                     "Posição na Lista Classificatória:",
                     min_value=1,
-                    max_value=1268,
+                    max_value=1291,
                     value=int(posicao_default) if posicao_default else 1,
                     step=1,
-                    help="Posição do servidor na Lista Classificatória do Edital 04/2025 (1 a 1268)"
+                    help="Posição do servidor na Lista Classificatória do Edital 01/2026 (1 a 1291)"
                 )
 
                 # Validar e mostrar dados da posição informada
@@ -1126,12 +1122,9 @@ def main():
                     format="DD/MM/YYYY"
                 )
                 
-                if pd.notna(data_admissao) and data_admissao > DATA_LIMITE_ESTAGIO:
-                    alert_box(
-                        f"Servidor em ESTÁGIO PROBATÓRIO (admitido após {DATA_LIMITE_ESTAGIO.strftime('%d/%m/%Y')}). Será desclassificado conforme edital.",
-                        alert_type="warning"
-                    )
-                
+                # Edital 01/2026: Servidores em estágio probatório PODEM participar
+                # (Aviso de estágio probatório removido)
+
                 opcoes_lotacao = construir_opcoes_selectbox(ANEXO_II, default_text="", incluir_vazio=True)
 
                 lotacao_default = 0
@@ -1140,9 +1133,10 @@ def main():
                     lotacao_default = encontrar_indice_opcao(opcoes_lotacao, codigo_lot)
                 
                 lotacao_atual = st.selectbox(
-                    "Lotação atual (onde você trabalha):",
+                    "Lotação Atual:",
                     opcoes_lotacao,
-                    index=lotacao_default
+                    index=lotacao_default,
+                    help="Unidade judiciária onde você está lotado atualmente"
                 )
                 
                 opcoes_a1 = construir_opcoes_selectbox(ANEXO_I, default_text=OPCAO_NAO_ESCOLHEU, incluir_vazio=True, mostrar_quantidade=True)
@@ -1153,9 +1147,10 @@ def main():
                     escolha_a1_default = encontrar_indice_opcao(opcoes_a1, codigo_a1)
                 
                 escolha_a1 = st.selectbox(
-                    "1ª Opção - Vaga com déficit (Anexo I):",
+                    "1ª Escolha - Anexo I (Vagas Prioritárias com Déficit):",
                     opcoes_a1,
-                    index=escolha_a1_default
+                    index=escolha_a1_default,
+                    help="50 unidades judiciárias que estão com déficit de servidores. Opcional: você pode deixar em branco se preferir."
                 )
                 
                 opcoes_a2 = construir_opcoes_selectbox(ANEXO_II, default_text=OPCAO_NAO_ESCOLHEU, incluir_vazio=True)
@@ -1166,9 +1161,10 @@ def main():
                     escolha_a2_default = encontrar_indice_opcao(opcoes_a2, codigo_a2)
                 
                 escolha_a2 = st.selectbox(
-                    "2ª Opção - Qualquer unidade (Anexo II):",
+                    "2ª Escolha - Anexo II (Todas as Unidades Judiciárias):",
                     opcoes_a2,
-                    index=escolha_a2_default
+                    index=escolha_a2_default,
+                    help="Mais de 300 unidades judiciárias. Você pode escolher apenas esta opção se preferir, sem escolher Anexo I."
                 )
                 
                 # Extrair códigos para verificações
@@ -1209,8 +1205,8 @@ def main():
                         st.error("❌ Não é possível salvar: origem e destino são iguais!")
                     elif not nome or not matricula or not data_admissao or not lotacao_atual:
                         st.error("Preencha todos os campos obrigatórios!")
-                    elif not posicao_lista or posicao_lista < 1 or posicao_lista > 1268:
-                        st.error("❌ **Posição inválida!**\n\nInforme uma posição entre 1 e 1268.")
+                    elif not posicao_lista or posicao_lista < 1 or posicao_lista > 1291:
+                        st.error("❌ **Posição inválida!**\n\nInforme uma posição entre 1 e 1291.")
                     elif posicao_lista not in LISTA_CLASSIFICATORIA:
                         st.error(f"❌ **Posição {posicao_lista} não encontrada na Lista Classificatória!**\n\nVerifique a posição correta.")
                     else:
@@ -1257,17 +1253,16 @@ def main():
             
             st.subheader("ℹ️ Informações")
             st.markdown("""
-            **Regras do Edital:**
-            - Servidores em **estágio probatório** (admitidos após 26/11/2022) serão desclassificados
-            - Servidores relotados há menos de 2 anos também são desclassificados (verificar manualmente)
-            - Critério de desempate: **antiguidade** (data de admissão mais antiga)
-            
+            **Regras do Edital 01/2026:**
+            - Servidores relotados há menos de 2 anos são desclassificados (verificar manualmente)
+            - Critério de prioridade: **posição na Lista Classificatória**
+
             **Como funciona:**
             1. Primeiro são analisadas as escolhas do **Anexo I** (vagas deficitárias)
             2. Quem consegue vaga no Anexo I, libera sua lotação atual
             3. As vagas liberadas ficam disponíveis para o **Anexo II**
-            4. O mais antigo sempre tem prioridade
-            
+            4. A posição na lista classificatória define a prioridade
+
             **Designação na Origem (item 3.14):**
             - Se sua saída **ocasionar déficit** na origem, você será designado para continuar lá até substituição
             - Se sua saída **não ocasionar déficit**, você pode ir imediatamente para a nova unidade
@@ -1302,10 +1297,8 @@ def main():
                 lambda x: x.strftime("%d/%m/%Y") if pd.notna(x) else ""
             )
             
-            df_display["estagio_probatorio"] = df_display["data_admissao"].apply(
-                lambda x: "⚠️ SIM" if pd.notna(x) and x > DATA_LIMITE_ESTAGIO else "Não"
-            )
-            
+            # Edital 01/2026: Coluna de estágio probatório removida (todos podem participar)
+
             # Adicionar status de lotação da origem
             df_display["status_origem"] = df_display["lotacao_atual"].apply(obter_status_lotacao)
             
@@ -1320,37 +1313,29 @@ def main():
             )
             
             # BUSCA POR NOME OU MATRÍCULA
-            col_busca1, col_busca2 = st.columns([3, 1])
-            with col_busca1:
-                busca_servidor = st.text_input("🔍 Buscar servidor:", key="busca_servidor", 
-                                                placeholder="Digite nome ou matrícula...")
-            with col_busca2:
-                filtro_estagio = st.selectbox("Estágio Probatório:", ["Todos", "Não", "⚠️ SIM"], key="filtro_estagio")
-            
+            busca_servidor = st.text_input("🔍 Buscar servidor:", key="busca_servidor",
+                                            placeholder="Digite nome ou matrícula...")
+
             # Aplicar filtros
             df_filtrado = df_display.copy()
-            
+
             if busca_servidor:
                 mask = df_filtrado.apply(
-                    lambda x: busca_servidor.lower() in str(x["nome"]).lower() or 
-                              busca_servidor.lower() in str(x["matricula"]).lower(), 
+                    lambda x: busca_servidor.lower() in str(x["nome"]).lower() or
+                              busca_servidor.lower() in str(x["matricula"]).lower(),
                     axis=1
                 )
                 df_filtrado = df_filtrado[mask]
-            
-            if filtro_estagio != "Todos":
-                df_filtrado = df_filtrado[df_filtrado["estagio_probatorio"] == filtro_estagio]
-            
+
             st.dataframe(
                 df_filtrado[[
-                    "posicao", "nome", "matricula", "data_admissao_fmt", 
-                    "estagio_probatorio", "status_origem", "lotacao_desc", "escolha_a1_desc", "escolha_a2_desc"
+                    "posicao", "nome", "matricula", "data_admissao_fmt",
+                    "status_origem", "lotacao_desc", "escolha_a1_desc", "escolha_a2_desc"
                 ]].rename(columns={
                     "posicao": "Pos.",
                     "nome": "Nome",
                     "matricula": "Matrícula",
                     "data_admissao_fmt": "Data Admissão",
-                    "estagio_probatorio": "Est. Probatório",
                     "status_origem": "Status Origem",
                     "lotacao_desc": "Lotação Atual",
                     "escolha_a1_desc": "Escolha Anexo I",
@@ -1396,7 +1381,7 @@ def main():
     # ABA 1: RESULTADO E DASHBOARD
     # =========================================================================
     with tab1:
-        section_header("Resultado da Simulação", icon="🏆", subtitle="Edital nº 4/2025 - Técnico Judiciário")
+        section_header("Resultado da Simulação", icon="🏆", subtitle="Edital nº 01/2026 - Técnico Judiciário")
 
         if df_inscricoes.empty:
             empty_state(
@@ -1435,23 +1420,21 @@ def main():
             # Explicação sobre Designação na Origem
             with st.expander("ℹ️ O que significa 'Designação na Origem'?"):
                 st.markdown("""
-                **Baseado no item 3.14 do Edital:**
-                
-                > "O deferimento de pedido de relotação que **ocasionar déficit** de técnico judiciário na unidade de origem 
-                > implicará **designação** do servidor relotado para continuar prestando serviços na unidade de origem, 
-                > até a substituição por outro servidor."
-                
-                | Designação | Significado |
+                **O que é "Designação na Origem"?**
+
+                É quando você consegue a vaga, mas precisa continuar trabalhando na sua unidade atual até chegar um substituto.
+
+                | Designação | O que acontece? |
                 |------------|-------------|
-                | **NÃO** | A saída do servidor **não ocasiona déficit**. A unidade fica SUPERAVITÁRIA ou EQUILIBRADA após a saída. O servidor pode ir embora imediatamente! ✅ |
-                | **SIM** | A saída do servidor **ocasiona ou agrava déficit**. A unidade fica DEFICITÁRIA após a saída. O servidor é relotado oficialmente, MAS fica designado para continuar trabalhando na origem até substituição. ⚠️ |
-                
-                **⚠️ ATENÇÃO (item 3.15):** Se não vier substituição até o prazo de vigência do concurso, a relotação é **tornada sem efeito** e o servidor **retorna à unidade de lotação originária**.
-                
-                **Resumo:**
-                - 🟢 Origem fica **SUPERAVITÁRIA** após saída → Designação = NÃO
-                - 🟡 Origem fica **EQUILIBRADA** após saída → Designação = NÃO  
-                - 🔴 Origem fica **DEFICITÁRIA** após saída → Designação = SIM
+                | **NÃO** | ✅ Sua saída **não deixa a unidade abaixo do mínimo** de servidores. Você pode ir para a nova unidade imediatamente! |
+                | **SIM** | ⚠️ Sua saída **deixaria a unidade abaixo do mínimo**. Você foi aprovado e será transferido oficialmente, MAS continua trabalhando na unidade atual até chegarem novos servidores. |
+
+                **⚠️ Atenção Importante:** Se não chegarem substitutos até o final da validade do concurso, sua transferência pode ser cancelada e você volta oficialmente para a unidade de origem.
+
+                **Como saber se terei que ficar designado?**
+                - 🟢 Se a unidade ficar **acima do mínimo** depois que você sair → Designação = NÃO
+                - 🟡 Se a unidade ficar **no mínimo exato** depois que você sair → Designação = NÃO
+                - 🔴 Se a unidade ficar **abaixo do mínimo** depois que você sair → Designação = SIM
                 """)
             
             st.subheader("📊 Resultado por Ordem de Antiguidade")
@@ -1542,7 +1525,6 @@ def main():
             **Legenda:**
             - 🟢 Aprovado (designação = NÃO) - pode sair imediatamente
             - 🟡 Aprovado (designação = SIM) - fica na origem até substituição
-            - 🔴 Desclassificado - estágio probatório
             - ⚪ Não obteve vaga
             """)
 
@@ -1803,7 +1785,7 @@ def main():
         
         if opcao_vagas == "📋 Anexo I (Vagas com Déficit)":
             st.subheader("Vagas com Déficit (Anexo I)")
-            st.info("Estas são as vagas prioritárias com déficit de servidores. A coluna **Demanda** mostra quantos servidores escolheram cada vaga.")
+            st.info("💡 **Anexo I** = 50 unidades que precisam urgentemente de servidores. A coluna **Demanda** mostra quantos servidores querem ir para cada unidade.")
             
             dados_a1 = []
             for codigo, info in ANEXO_I.items():
@@ -1857,7 +1839,7 @@ def main():
         
         else:  # Anexo II
             st.subheader("Todas as Unidades (Anexo II)")
-            st.info("Estas são todas as unidades judiciárias. A coluna **Demanda** mostra quantos servidores escolheram cada unidade como 2ª opção.")
+            st.info("💡 **Anexo II** = Todas as 300+ unidades judiciárias do TJPR. A coluna **Demanda** mostra quantos servidores querem ir para cada unidade (escolha 2ª opção).")
             
             dados_a2 = []
             for codigo, info in ANEXO_II.items():
@@ -1923,10 +1905,10 @@ def main():
     # ABA 5: VAGAS SOBRANTES POR RAJ
     # =========================================================================
     with tab5:
-        st.header("💼 Vagas Sobrantes por RAJ")
+        st.header("📊 Análise de Vagas Disponíveis")
 
         if df_inscricoes.empty:
-            st.info("Execute a simulação primeiro para ver as vagas sobrantes.")
+            st.info("📝 Faça inscrições primeiro para poder ver esta análise.")
         else:
             # Calcular resultado para obter vagas restantes
             df_resultado, vagas_restantes_a1, vagas_disponiveis_a2, ajustes_lotacao = calcular_resultado(df_inscricoes)
@@ -1944,8 +1926,8 @@ def main():
             st.divider()
 
             # Preparar dados por RAJ - Anexo I
-            st.markdown("### 🔴 Anexo I - Vagas Sobrantes por RAJ")
-            st.caption("Vagas do Anexo I (déficit) que não foram escolhidas na primeira análise")
+            st.markdown("### 🔴 Anexo I - Vagas que Ninguém Escolheu")
+            st.caption("Vagas prioritárias que ainda estão disponíveis porque ninguém as escolheu como 1ª opção")
 
             dados_raj_a1 = {}
             for codigo, qtd_sobrante in vagas_restantes_a1.items():
@@ -1985,8 +1967,8 @@ def main():
             st.divider()
 
             # Preparar dados por RAJ - Anexo II
-            st.markdown("### 🟢 Anexo II - Vagas Disponíveis por RAJ")
-            st.caption("Vagas liberadas por servidores que saíram e causaram déficit na origem")
+            st.markdown("### 🟢 Anexo II - Vagas que Ficaram Abertas")
+            st.caption("Vagas que abriram porque servidores saíram e a unidade de origem ficou precisando de gente")
 
             dados_raj_a2 = {}
             for codigo, qtd_disponivel in vagas_disponiveis_a2.items():
@@ -2021,31 +2003,31 @@ def main():
                             use_container_width=True
                         )
             else:
-                st.info("ℹ️ Nenhuma vaga do Anexo II foi liberada ainda (nenhum servidor aprovado causou déficit na origem).")
+                st.info("ℹ️ Nenhuma vaga do Anexo II abriu ainda. Vagas só abrem quando servidores saem e deixam a unidade de origem precisando de gente.")
 
     # =========================================================================
     # ABA 6: LOTAÇÃO DAS UNIDADES
     # =========================================================================
     with tab6:
         st.header("📈 Lotação das Unidades Judiciárias")
-        st.info("Dados da Tabela de Lotação de Pessoal (TLP) - 2º Semestre 2025. Fonte: BI do TJPR.")
-        
+        st.info("📊 Dados oficiais do TJPR mostrando quantos servidores tem cada unidade (Lotação Real) e quantos deveriam ter pelo mínimo legal (Lotação Paradigma CNJ 219/2016).")
+
         # Explicação
         with st.expander("ℹ️ Como interpretar os dados"):
             st.markdown("""
             **Colunas:**
-            - **Lotação Real (LR)**: Total de servidores atualmente lotados na unidade
-            - **Lotação Paradigma (LP)**: Mínimo de servidores necessários segundo a Resolução CNJ 219/2016
-            - **Diferença**: Lotação Real - Lotação Paradigma
-            
-            **Status:**
-            - 🟢 **SUPERAVITÁRIA**: Mais servidores que o necessário (diferença > 0)
-            - 🟡 **EQUILIBRADA**: Exatamente o necessário (diferença = 0)
-            - 🔴 **DEFICITÁRIA**: Menos servidores que o necessário (diferença < 0)
-            
-            **Impacto na Relotação (item 3.14 do Edital):**
-            - Se a saída do servidor **ocasionar déficit** na origem (unidade fica DEFICITÁRIA) → servidor fica **designado** para continuar na origem até substituição
-            - Se a saída **não ocasionar déficit** (unidade fica EQUILIBRADA ou SUPERAVITÁRIA) → servidor pode sair **imediatamente**
+            - **Lotação Real**: Quantidade de servidores que trabalham na unidade hoje
+            - **Lotação Paradigma**: Quantidade mínima de servidores necessária (definida pelo CNJ)
+            - **Diferença**: Quantos servidores a mais ou a menos a unidade tem
+
+            **Status (Situação da Unidade):**
+            - 🟢 **SUPERAVITÁRIA** (Acima do mínimo): Tem mais servidores que o necessário
+            - 🟡 **EQUILIBRADA** (No mínimo): Tem exatamente o necessário
+            - 🔴 **DEFICITÁRIA** (Abaixo do mínimo): Faltam servidores
+
+            **Impacto na sua Relotação:**
+            - Se sua saída **deixar a unidade abaixo do mínimo** (DEFICITÁRIA) → você será designado para ficar até chegar um substituto ⚠️
+            - Se sua saída **NÃO deixar a unidade abaixo do mínimo** → você pode sair imediatamente ✅
             """)
         
         # Métricas gerais
@@ -2057,9 +2039,9 @@ def main():
         deficit = len([u for u in LOTACAO_COMPLETA if u["status"] == "DEFICITÁRIA"])
         
         col1.metric("Total Unidades", total_unidades)
-        col2.metric("🟢 Superavitárias", superavit)
-        col3.metric("🟡 Equilibradas", equilibrada)
-        col4.metric("🔴 Deficitárias", deficit)
+        col2.metric("🟢 Acima do Mínimo", superavit, help="Unidades com mais servidores que o necessário")
+        col3.metric("🟡 No Mínimo", equilibrada, help="Unidades com exatamente o necessário")
+        col4.metric("🔴 Abaixo do Mínimo", deficit, help="Unidades com menos servidores que o necessário")
         
         st.divider()
         
@@ -2149,7 +2131,7 @@ def main():
     # =========================================================================
     with tab7:
         st.header("🗺️ Regiões Administrativas Judiciárias (RAJs)")
-        st.info("Análise dos candidatos **APROVADOS** por região de **ORIGEM** (lotação atual). Criada pela Resolução nº 441/2024 do TJPR.")
+        st.info("📍 Veja quantos servidores **aprovados** existem em cada região geográfica do Paraná (baseado na unidade onde trabalham atualmente).")
         
         if df_inscricoes.empty:
             st.warning("Nenhum servidor inscrito ainda.")

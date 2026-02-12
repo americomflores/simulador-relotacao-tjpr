@@ -16,7 +16,7 @@ def sample_inscricoes():
         "data_admissao": [
             date(2020, 1, 15),
             date(2021, 3, 20),
-            date(2022, 12, 1)  # Em estágio probatório
+            date(2022, 12, 1)  # Edital 01/2026: estágio probatório não é mais restrição
         ],
         "lotacao_atual": ["A2-001", "A2-002", "A2-003"],
         "escolha_anexo1": ["A1-001", "A1-002", ""],

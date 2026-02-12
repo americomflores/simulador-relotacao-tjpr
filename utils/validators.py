@@ -5,7 +5,7 @@ import re
 from datetime import date
 from data import ANEXO_I, ANEXO_II
 from exceptions import ValidationError
-from config.settings import DATA_LIMITE_ESTAGIO
+# DATA_LIMITE_ESTAGIO removido - Edital 01/2026 permite servidores em estágio probatório
 
 
 def validar_telefone(telefone):

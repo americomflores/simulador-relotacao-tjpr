@@ -1,8 +1,6 @@
 """
 Configurações e constantes do sistema.
 """
-from datetime import date
-
-# Data limite para estágio probatório (3 anos antes de 26/11/2025)
-DATA_LIMITE_ESTAGIO = date(2022, 11, 26)
-
+# Edital 01/2026: Não há mais restrição de estágio probatório
+# Servidores em estágio probatório PODEM participar da relotação
+# (DATA_LIMITE_ESTAGIO removido)
