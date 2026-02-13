@@ -2511,8 +2511,8 @@ LOTACAO_POR_CODIGO = {
         "comarca": "Londrina",
         "unidade": "11ª VARA CÍVEL E EMPRESARIAL REGIONAL",
         "lotacao_real": 6,
-        "lotacao_paradigma": 0,
-        "diferenca": 6,
+        "lotacao_paradigma": 5,
+        "diferenca": 1,
         "status": "SUPERAVITÁRIA",
     },
     "A2-313": {
@@ -7675,8 +7675,8 @@ LOTACAO_COMPLETA = [
         "comarca": "Londrina",
         "unidade": "11ª VARA CÍVEL E EMPRESARIAL REGIONAL",
         "lotacao_real": 6,
-        "lotacao_paradigma": 0,
-        "diferenca": 6,
+        "lotacao_paradigma": 5,
+        "diferenca": 1,
         "status": "SUPERAVITÁRIA",
     },
     {
