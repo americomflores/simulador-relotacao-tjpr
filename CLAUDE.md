@@ -14,10 +14,11 @@ Aplicação Streamlit para simular o processo de relotação de servidores do Tr
 
 ```
 simulador-relotacao-tjpr/
-├── app.py                           # Aplicação principal (3.600+ linhas)
+├── app.py                           # Aplicação principal (~2.300 linhas; parte da lógica em services/config/utils)
 ├── data.py                          # ANEXO_I e ANEXO_II (vagas do edital)
 ├── lotacao_data.py                  # Dados de lotação paradigma das unidades
 ├── lista_classificatoria.py         # Lista Classificatória Edital 01/2026 (1291 servidores)
+├── exceptions.py                    # Exceções do sistema (ConfigurationError, SheetsError, etc.)
 ├── requirements.txt                 # Dependências Python
 ├── .streamlit/
 │   └── config.toml                 # Configuração do Streamlit
@@ -27,18 +28,33 @@ simulador-relotacao-tjpr/
 │   ├── migrar_inscricoes_existentes.py     # Migra inscrições com fuzzy matching
 │   └── atualizar_csv_com_posicoes.py       # Atualiza CSV com posições
 ├── services/                        # Módulos de serviços
-│   ├── auth_service.py             # Autenticação e autorização
-│   ├── sheets_service.py           # Operações com Google Sheets
-│   └── simulacao_service.py        # Lógica de cálculo de resultados
+│   ├── auth_service.py             # Autenticação e autorização (verificar_login, verificar_admin)
+│   ├── sheets_service.py           # Operações com Google Sheets (implementação alternativa)
+│   ├── simulacao_service.py        # Lógica de cálculo (obter_status_lotacao, calcular_lotacao_dinamica)
+│   ├── export_service.py          # Exportação Excel (inscrições, resultados, logs)
+│   ├── search_service.py          # Busca na lista classificatória (por nome, matrícula, posição)
+│   └── rajs_service.py            # Funções de RAJs (obter_raj_da_comarca, obter_comarcas_da_raj, etc.)
 ├── config/                          # Configurações do sistema
-│   ├── auth_config.py              # AUTH_CODES, ADMIN_TELEFONES, ADMIN_SENHA
+│   ├── auth_config.py              # AUTH_CODES, ADMIN_TELEFONES, ADMIN_SENHA (get_auth_codes, etc.)
 │   ├── settings.py                 # Configurações do sistema (estágio probatório removido em 01/2026)
+│   ├── constants.py                # Constantes (fuzzy match, lista, status)
+│   ├── rajs_config.py             # Dados das 10 RAJs
+│   ├── matricula_posicao_map.py    # Mapeamento matrícula → posição na lista
 │   └── telefone_posicao_map.py     # Mapeamento telefone → posição (19 telefones)
 ├── utils/                           # Utilitários
 │   ├── logger.py                   # Sistema de logging
 │   ├── formatters.py               # Formatação de dados
 │   ├── normalizers.py              # Normalização de strings
-│   └── validators.py               # Validações
+│   ├── validators.py               # Validações
+│   ├── error_handlers.py           # Tratamento de erros (handle_error, safe_execute, etc.)
+│   ├── ui_components.py            # Componentes de UI (card, badge, styled_dataframe, etc.)
+│   └── ui_helpers.py              # Helpers de UI (construir_opcoes_selectbox, extrair_codigo_da_opcao, etc.)
+├── tests/                           # Testes
+│   ├── conftest.py                 # Fixtures pytest
+│   ├── test_simulacao.py           # Testes da lógica de simulação
+│   ├── test_sheets.py              # Testes do Google Sheets
+│   ├── test_validators.py          # Testes de validação
+│   └── test_auth.py                # Testes de autenticação
 └── logs/                            # Logs da aplicação (auto-gerado)
     └── simulador_YYYYMMDD.log      # Logs diários
 ```
@@ -47,15 +63,32 @@ simulador-relotacao-tjpr/
 
 ### app.py (Arquivo Principal)
 
-**Seções principais:**
-1. **Configuração** (linhas 18-83): CSS, page config, responsividade mobile
-2. **Administradores** (linhas 89-98): Telefones admin e senha
-3. **Códigos de Autenticação** (linhas 101-216): Mapeamento telefone → código (108 usuários)
-4. **RAJs** (linhas 316-482): 10 Regiões Administrativas Judiciárias
-5. **Google Sheets** (linhas 529-705): Conexão e operações de CRUD
-6. **Lógica de Simulação** (linhas 709-916): Cálculo de resultados
-7. **Interface Principal** (linhas 2299-3583): 7 abas para usuários comuns
-8. **Painel Admin** (linhas 1298-2296): 8 abas para administradores
+Aplicação principal (~2.300 linhas). Parte da lógica está em `services/`, `config/` e `utils/`; o app importa deles (auth, RAJs, simulação, busca, exportação, UI).
+
+**Seções principais (faixas aproximadas):**
+1. **Configuração** (~18-156): CSS, page config, responsividade mobile
+2. **Google Sheets** (~262-423): Conexão e CRUD usados pela UI — `conectar_sheets`, `carregar_inscricoes`, `salvar_inscricao`, `excluir_inscricao`, `buscar_inscricao`
+3. **Lógica de Simulação** (~443+): `calcular_resultado` (2 fases), `calcular_demanda`; funções auxiliares como `obter_status_lotacao` e `calcular_lotacao_dinamica` vêm de `services/simulacao_service.py`
+4. **Busca e comparação com edital** (~677+): `normalizar_nome`, `processar_csv_edital`, `comparar_edital_simulador`
+5. **Interface** (~991+): `main()` com 7 abas (Resultado, Inscrição, Inscritos, Vagas, Análise de Vagas, Lotação, RAJs)
+
+Autenticação e RAJs não ficam no app: credenciais em `config/auth_config.py`, validação em `services/auth_service.py`; dados das RAJs em `config/rajs_config.py`, funções em `services/rajs_service.py`. Existe também `services/sheets_service.py` com implementação alternativa de conexão/CRUD (11 colunas incluindo K); a UI atual usa as funções do app.py.
+
+### config/auth_config.py e services/auth_service.py (Autenticação)
+
+- **auth_config.py**: Credenciais e lista de usuários — `AUTH_CODES`, `ADMIN_TELEFONES`, `ADMIN_SENHA` (via `get_auth_codes()`, `get_admin_telefones()`, `get_admin_senha()`; podem vir de `secrets.toml` ou valores padrão).
+- **auth_service.py**: Validação — `verificar_login(telefone, codigo)`, `verificar_admin(telefone, senha)`, `formatar_telefone_display`, `limpar_telefone`.
+
+No estado atual, o app **não exibe tela de login** na UI (acesso direto ao conteúdo). Os módulos de autenticação existem e podem ser reativados.
+
+### Google Sheets (Base de Dados)
+
+A conexão e o CRUD de inscrições usados pela interface estão no **app.py** (`conectar_sheets`, `carregar_inscricoes`, `salvar_inscricao`, `excluir_inscricao`). Opcionalmente existe `services/sheets_service.py` com funções equivalentes e cabeçalhos em 11 colunas. A planilha usa 11 colunas (A–K), incluindo **K: posicao_lista_classificatoria**.
+
+### config/rajs_config.py e services/rajs_service.py (RAJs)
+
+- **rajs_config.py**: Dicionário **RAJS** com as 10 Regiões Administrativas Judiciárias.
+- **rajs_service.py**: `obter_raj_da_comarca`, `obter_numero_raj`, `obter_comarcas_da_raj`, `obter_sede_da_raj`, `listar_todas_rajs`, `contar_servidores_por_raj`.
 
 ### data.py
 
@@ -73,25 +106,28 @@ Dados de lotação real vs paradigma (CNJ 219/2016):
 
 ## 🔐 Sistema de Autenticação
 
-**Dois níveis de acesso:**
+**Dois níveis de acesso** (implementados em `config/auth_config.py` e `services/auth_service.py`):
 
-1. **Usuários Comuns**: 108 telefones cadastrados em `AUTH_CODES` (app.py linhas 104-216)
+1. **Usuários Comuns**: Telefones cadastrados em `AUTH_CODES` (em `auth_config.py`; pode vir de `secrets.toml` ou padrão)
    - Formato: telefone (11 dígitos) → código (TJPR-XXXXXX)
-   - Acesso: inscrições, resultados, simulações
+   - Validação: `verificar_login(telefone, codigo)` em `auth_service.py`
 
-2. **Administradores**: Lista `ADMIN_TELEFONES` + senha `ADMIN_SENHA = "swift"`
-   - Apenas 1 admin: "41997813606"
-   - Acesso: painel administrativo completo
+2. **Administradores**: Lista `ADMIN_TELEFONES` + senha `ADMIN_SENHA` (em `auth_config.py`; padrão: "41997813606", "swift")
+   - Validação: `verificar_admin(telefone, senha)` em `auth_service.py`
+
+**Nota:** Na versão atual da UI, o app **não exibe tela de login** — o acesso ao conteúdo é direto. Os módulos de autenticação estão disponíveis para uso ou reativação.
 
 ## 📊 Fluxo de Dados
 
 ```
-Login → Google Sheets ↔ carregar_inscricoes()
-                           ↓
-                    calcular_resultado()
-                           ↓
-              Interface (7 abas) / Admin (8 abas)
+Google Sheets ↔ carregar_inscricoes() (app.py)
+                    ↓
+             calcular_resultado() (app.py)
+                    ↓
+             Interface (7 abas)
 ```
+
+(Login existe nos módulos `auth_config`/`auth_service` mas não é usado na UI atual.)
 
 ### Google Sheets (Base de Dados)
 
@@ -156,49 +192,49 @@ else:
 
 ## 🧮 Funções Principais
 
-### Autenticação
-- `verificar_login(telefone, codigo)` → Valida credenciais
-- `tela_login()` → Renderiza tela de login
-- `get_usuario_logado()` → Retorna telefone formatado do usuário logado
+### Autenticação (services/auth_service.py)
+- `verificar_login(telefone, codigo)` → Valida credenciais (usa AUTH_CODES de auth_config)
+- `verificar_admin(telefone, senha)` → Valida admin
+- `formatar_telefone_display(telefone)`, `limpar_telefone(telefone)`
 
-### Google Sheets
+### Google Sheets (app.py — usadas pela UI)
 - `conectar_sheets()` → Conexão com Google Sheets (@st.cache_resource)
 - `carregar_inscricoes(sheet)` → Carrega dados em DataFrame
-- `salvar_inscricao(sheet, dados, telefone)` → Salva/atualiza inscrição com auditoria
-- `excluir_inscricao(sheet, matricula, telefone)` → Remove inscrição
+- `salvar_inscricao(sheet, dados)` → Salva/atualiza inscrição com auditoria
+- `excluir_inscricao(sheet, matricula)` → Remove inscrição
+- `buscar_inscricao(sheet, matricula)` → Busca inscrição por matrícula
 
 ### Lógica de Negócio
-- `calcular_resultado(df_inscricoes)` → Executa simulação completa (2 fases)
-- `verificar_estagio_probatorio(data_admissao)` → Verifica se está em estágio
-- `calcular_lotacao_dinamica(codigo, ajuste)` → Calcula lotação após ajustes
+- **app.py**: `calcular_resultado(df_inscricoes)` → Executa simulação completa (2 fases)
+- **services/simulacao_service.py**: `obter_status_lotacao(codigo)`, `obter_dados_lotacao(codigo)`, `calcular_lotacao_dinamica(codigo, ajuste)`  
+  (Edital 01/2026: `verificar_estagio_probatorio` foi removido — estágio probatório pode participar.)
+
+### RAJs (services/rajs_service.py)
+- `obter_raj_da_comarca(comarca)`, `obter_numero_raj`, `obter_comarcas_da_raj`, `obter_sede_da_raj`, `listar_todas_rajs`, `contar_servidores_por_raj`
+
+### Busca na lista classificatória (services/search_service.py)
+- `buscar_servidor_por_nome(nome)`, `buscar_servidor_por_matricula(matricula)`, `buscar_servidor_por_posicao(posicao)`, `determinar_qualidade_match`
+
+### Exportação (services/export_service.py)
+- `gerar_excel_resultado`, `gerar_excel_inscricoes`, `gerar_excel_logs`, `gerar_excel_comparacao`, `gerar_excel_vagas_disponiveis`
 
 ### Utilitários
-- `normalizar_comarca(nome)` → Normaliza nomes de comarcas (40+ variações)
-- `obter_raj_da_comarca(comarca)` → Retorna RAJ da comarca
-- `obter_status_lotacao(codigo)` → Status: SUPERAVITÁRIA/EQUILIBRADA/DEFICITÁRIA
+- **app.py**: `normalizar_comarca(nome)` → Normaliza nomes de comarcas (40+ variações)
+- **utils**: formatters, normalizers, validators; **utils/error_handlers**: `handle_error`, `safe_execute`, etc.; **utils/ui_components**: `card`, `badge`, `styled_dataframe`, etc.
 
 ## 🖥️ Interface do Usuário
 
-### Usuários Comuns (7 Abas)
+### 7 Abas (conforme app.py)
 
-1. **✍️ Inscrição**: Formulário de cadastro/edição
-2. **👥 Inscritos**: Lista todos os inscritos (pesquisável/filtrável)
-3. **🏆 Resultado**: Resultado completo da simulação com métricas
-4. **🎯 Simulador**: Simulação pessoal + comparador de cenários
-5. **📋 Vagas**: Visualização Anexo I e II com demanda
-6. **📈 Lotação**: Tabela completa de lotação paradigma
-7. **🗺️ RAJs**: Análise geográfica por região
+1. **🏆 Resultado da Simulação**: Resultado completo da simulação com métricas
+2. **✍️ Minha Inscrição**: Formulário de cadastro/edição
+3. **👥 Lista de Inscritos**: Lista todos os inscritos (pesquisável/filtrável)
+4. **📋 Vagas do Edital**: Visualização Anexo I e II com demanda
+5. **📊 Análise de Vagas**: Análise de vagas
+6. **📈 Lotação das Unidades**: Tabela completa de lotação paradigma
+7. **🗺️ Regiões (RAJs)**: Análise geográfica por região
 
-### Administradores (8 Abas Adicionais)
-
-1. **📊 Visão Geral**: Métricas do sistema e atividades recentes
-2. **👥 Gestão de Usuários**: Lista todos os 108 usuários cadastrados
-3. **📝 Gestão de Inscrições**: Administração avançada de inscrições
-4. **📋 Logs de Atividades**: Auditoria completa (quem fez o quê)
-5. **📥 Exportar Dados**: Download Excel (inscrições/resultados/logs)
-6. **📤 Comparar com Edital Oficial**: Upload CSV do TJPR e comparação fuzzy
-7. **🏠 Vagas RMC**: Foco em Região Metropolitana de Curitiba (20 comarcas ordenadas por distância)
-8. **⚙️ Configurações**: Informações do sistema
+Não há painel de administrador na UI atual. Os módulos de autenticação (`auth_config`, `auth_service`) permitem implementar ou reativar um painel admin no futuro.
 
 ## 🔧 Configuração e Deploy
 
@@ -234,7 +270,7 @@ O projeto inclui `.devcontainer/devcontainer.json` configurado para:
 
 ### CSS Customizado
 
-O app.py inclui CSS responsivo (linhas 29-83) para:
+O app.py inclui CSS responsivo (bloco no início do arquivo) para:
 - Telas móveis (max-width: 768px)
 - Redução de padding e fontes em dispositivos pequenos
 - Scroll horizontal em tabelas
@@ -272,17 +308,18 @@ secondaryBackgroundColor = "#F0F2F6"
 ## 🚨 Pontos de Atenção para AI Assistants
 
 ### ⚠️ NUNCA modificar sem consultar:
-1. **AUTH_CODES** (linhas 104-216): Lista de usuários autorizados
-2. **ADMIN_TELEFONES/ADMIN_SENHA** (linhas 93-98): Credenciais administrativas
-3. **DATA_LIMITE_ESTAGIO** (linha 86): Data crítica do edital
-4. **Lógica de calcular_resultado()**: Implementa regras do edital oficial
+1. **AUTH_CODES** e **ADMIN_TELEFONES/ADMIN_SENHA** em `config/auth_config.py`: Lista de usuários autorizados e credenciais administrativas
+2. **Lógica de calcular_resultado()** (app.py): Implementa regras do edital oficial
+
+(DATA_LIMITE_ESTAGIO foi removido no Edital 01/2026; não existe mais no código.)
 
 ### ✅ Seguro para modificar:
 - CSS e estilos visuais
 - Mensagens de interface
-- Funções de formatação/exibição
-- Exportação de dados
+- Funções de formatação/exibição (utils/formatters, normalizers)
+- Exportação de dados (services/export_service)
 - Normalização de nomes/comarcas
+- Componentes e helpers de UI (utils/ui_components, utils/ui_helpers, utils/error_handlers)
 
 ### 🔍 Ao fazer alterações:
 1. **Backup de dados**: Google Sheets mantém histórico, mas cuidado com alterações estruturais
@@ -314,6 +351,8 @@ O código implementa especificamente os itens:
 - Confirmar que `lotacao_data.py` tem todos os códigos necessários
 - Checar se alguma inscrição tem código de unidade inexistente
 
+Se usar `services/sheets_service.py` em vez das funções do app.py, verificar que os cabeçalhos da planilha incluem as 11 colunas (até K: posicao_lista_classificatoria).
+
 ---
 
-**Última atualização**: Baseado no commit `b235a1f` - Remoção de funções obsoletas
+**Última atualização**: Revisado em fev/2026 — alinhado à estrutura refatorada (services, config, utils) e à versão atual do app
