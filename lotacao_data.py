@@ -1,16 +1,16 @@
 """
-Dados de Lotação Paradigma - TJPR
-Atualizado em: 13/02/2026 03:04:11
-Fonte: LotacaoReal.csv + Anexos III e IV + Correções manuais
+Dados de Lotacao Paradigma - TJPR
+Atualizado em: 13/02/2026 03:07:43
+Fonte: LotacaoReal.csv + Anexos III e IV + Correcoes manuais
 
 Campos:
-  - lotacao_real: Atualizado de LotacaoReal.csv + correções manuais
+  - lotacao_real: Atualizado de LotacaoReal.csv + correcoes manuais
   - lotacao_paradigma: Atualizado dos Anexos III e IV
   - diferenca: lotacao_real - lotacao_paradigma
-  - status: SUPERAVITÁRIA (>0), EQUILIBRADA (=0), DEFICITÁRIA (<0)
+  - status: SUPERAVITARIA (>0), EQUILIBRADA (=0), DEFICITARIA (<0)
 """
 
-# Mapeamento: Código Anexo II -> Dados de Lotação
+# Mapeamento: Codigo Anexo II -> Dados de Lotacao
 LOTACAO_POR_CODIGO = {
     "A2-001": {
         "comarca": "Almirante Tamandaré",
@@ -463,10 +463,10 @@ LOTACAO_POR_CODIGO = {
     "A2-057": {
         "comarca": "Cambé",
         "unidade": "1ª VARA CÍVEL E DA FAZENDA PÚBLICA",
-        "lotacao_real": 6,
+        "lotacao_real": 8,
         "lotacao_paradigma": 8,
-        "diferenca": -2,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     "A2-058": {
         "comarca": "Cambé",
@@ -1295,10 +1295,10 @@ LOTACAO_POR_CODIGO = {
     "A2-161": {
         "comarca": "Curitiba",
         "unidade": "1ª VARA DE INFRAÇÕES PENAIS CONTRA CRIANÇAS, ADOLESCENTES E IDOSOS",
-        "lotacao_real": 5,
+        "lotacao_real": 6,
         "lotacao_paradigma": 6,
-        "diferenca": -1,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     "A2-162": {
         "comarca": "Curitiba",
@@ -1351,10 +1351,10 @@ LOTACAO_POR_CODIGO = {
     "A2-168": {
         "comarca": "Curitiba",
         "unidade": "26ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 5,
+        "lotacao_real": 6,
         "lotacao_paradigma": 6,
-        "diferenca": -1,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     "A2-169": {
         "comarca": "Curitiba",
@@ -1519,10 +1519,10 @@ LOTACAO_POR_CODIGO = {
     "A2-189": {
         "comarca": "Curitiba",
         "unidade": "CENTRAL DE GARANTIAS ESPECIALIZADA",
-        "lotacao_real": 5,
+        "lotacao_real": 14,
         "lotacao_paradigma": 14,
-        "diferenca": -9,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     "A2-190": {
         "comarca": "Curitiba",
@@ -1543,10 +1543,10 @@ LOTACAO_POR_CODIGO = {
     "A2-192": {
         "comarca": "Curitiba",
         "unidade": "SECRETARIA ESPECIALIZADA EM MOVIMENTAÇÕES PROCESSUAIS DAS EXECUÇÕES PENAIS, MEDIDAS ALTERNATIVAS E CORREGEDORIA DOS PRESÍDIOS",
-        "lotacao_real": 5,
+        "lotacao_real": 30,
         "lotacao_paradigma": 30,
-        "diferenca": -25,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     "A2-193": {
         "comarca": "Curitiba",
@@ -3007,10 +3007,10 @@ LOTACAO_POR_CODIGO = {
     "A2-375": {
         "comarca": "Maringá",
         "unidade": "3ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 8,
+        "lotacao_real": 11,
         "lotacao_paradigma": 11,
-        "diferenca": -3,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     "A2-376": {
         "comarca": "Maringá",
@@ -3159,10 +3159,10 @@ LOTACAO_POR_CODIGO = {
     "A2-394": {
         "comarca": "Matinhos",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CRIMINAL",
-        "lotacao_real": 7,
+        "lotacao_real": 8,
         "lotacao_paradigma": 8,
-        "diferenca": -1,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     "A2-395": {
         "comarca": "Medianeira",
@@ -4862,7 +4862,7 @@ LOTACAO_POR_CODIGO = {
     },
 }
 
-# Lista completa de lotação (para compatibilidade)
+# Lista completa de lotacao (para compatibilidade)
 LOTACAO_COMPLETA = [
     {
         "codigo": "A2-001",
@@ -5372,10 +5372,10 @@ LOTACAO_COMPLETA = [
         "codigo": "A2-057",
         "comarca": "Cambé",
         "unidade": "1ª VARA CÍVEL E DA FAZENDA PÚBLICA",
-        "lotacao_real": 6,
+        "lotacao_real": 8,
         "lotacao_paradigma": 8,
-        "diferenca": -2,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     {
         "codigo": "A2-058",
@@ -6308,10 +6308,10 @@ LOTACAO_COMPLETA = [
         "codigo": "A2-161",
         "comarca": "Curitiba",
         "unidade": "1ª VARA DE INFRAÇÕES PENAIS CONTRA CRIANÇAS, ADOLESCENTES E IDOSOS",
-        "lotacao_real": 5,
+        "lotacao_real": 6,
         "lotacao_paradigma": 6,
-        "diferenca": -1,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     {
         "codigo": "A2-162",
@@ -6371,10 +6371,10 @@ LOTACAO_COMPLETA = [
         "codigo": "A2-168",
         "comarca": "Curitiba",
         "unidade": "26ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 5,
+        "lotacao_real": 6,
         "lotacao_paradigma": 6,
-        "diferenca": -1,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     {
         "codigo": "A2-169",
@@ -6560,10 +6560,10 @@ LOTACAO_COMPLETA = [
         "codigo": "A2-189",
         "comarca": "Curitiba",
         "unidade": "CENTRAL DE GARANTIAS ESPECIALIZADA",
-        "lotacao_real": 5,
+        "lotacao_real": 14,
         "lotacao_paradigma": 14,
-        "diferenca": -9,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     {
         "codigo": "A2-190",
@@ -6587,10 +6587,10 @@ LOTACAO_COMPLETA = [
         "codigo": "A2-192",
         "comarca": "Curitiba",
         "unidade": "SECRETARIA ESPECIALIZADA EM MOVIMENTAÇÕES PROCESSUAIS DAS EXECUÇÕES PENAIS, MEDIDAS ALTERNATIVAS E CORREGEDORIA DOS PRESÍDIOS",
-        "lotacao_real": 5,
+        "lotacao_real": 30,
         "lotacao_paradigma": 30,
-        "diferenca": -25,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     {
         "codigo": "A2-193",
@@ -8234,10 +8234,10 @@ LOTACAO_COMPLETA = [
         "codigo": "A2-375",
         "comarca": "Maringá",
         "unidade": "3ª VARA CÍVEL E EMPRESARIAL REGIONAL",
-        "lotacao_real": 8,
+        "lotacao_real": 11,
         "lotacao_paradigma": 11,
-        "diferenca": -3,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     {
         "codigo": "A2-376",
@@ -8405,10 +8405,10 @@ LOTACAO_COMPLETA = [
         "codigo": "A2-394",
         "comarca": "Matinhos",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CRIMINAL",
-        "lotacao_real": 7,
+        "lotacao_real": 8,
         "lotacao_paradigma": 8,
-        "diferenca": -1,
-        "status": "DEFICITÁRIA",
+        "diferenca": 0,
+        "status": "EQUILIBRADA",
     },
     {
         "codigo": "A2-395",
