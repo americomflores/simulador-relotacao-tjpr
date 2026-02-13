@@ -360,6 +360,23 @@ def main():
     output_lines.append('}')
     output_lines.append('')
 
+    # Gerar LOTACAO_COMPLETA (lista para compatibilidade)
+    output_lines.append('# Lista completa de lotação (para compatibilidade)')
+    output_lines.append('LOTACAO_COMPLETA = [')
+    for codigo in sorted(novo_mapeamento.keys(), key=lambda x: int(x.split('-')[1])):
+        dados = novo_mapeamento[codigo]
+        output_lines.append('    {')
+        output_lines.append(f'        "codigo": "{codigo}",')
+        output_lines.append(f'        "comarca": "{dados["comarca"]}",')
+        output_lines.append(f'        "unidade": "{dados["unidade"]}",')
+        output_lines.append(f'        "lotacao_real": {dados["lotacao_real"]},')
+        output_lines.append(f'        "lotacao_paradigma": {dados["lotacao_paradigma"]},')
+        output_lines.append(f'        "diferenca": {dados["diferenca"]},')
+        output_lines.append(f'        "status": "{dados["status"]}",')
+        output_lines.append('    },')
+    output_lines.append(']')
+    output_lines.append('')
+
     # Escrever arquivo
     output_path = os.path.join(base_dir, 'lotacao_data.py')
     with open(output_path, 'w', encoding='utf-8') as f:
