@@ -1519,10 +1519,10 @@ LOTACAO_POR_CODIGO = {
     "A2-189": {
         "comarca": "Curitiba",
         "unidade": "CENTRAL DE GARANTIAS ESPECIALIZADA",
-        "lotacao_real": 14,
+        "lotacao_real": 13,
         "lotacao_paradigma": 14,
-        "diferenca": 0,
-        "status": "EQUILIBRADA",
+        "diferenca": -1,
+        "status": "DEFICITÁRIA",
     },
     "A2-190": {
         "comarca": "Curitiba",
@@ -6560,10 +6560,10 @@ LOTACAO_COMPLETA = [
         "codigo": "A2-189",
         "comarca": "Curitiba",
         "unidade": "CENTRAL DE GARANTIAS ESPECIALIZADA",
-        "lotacao_real": 14,
+        "lotacao_real": 13,
         "lotacao_paradigma": 14,
-        "diferenca": 0,
-        "status": "EQUILIBRADA",
+        "diferenca": -1,
+        "status": "DEFICITÁRIA",
     },
     {
         "codigo": "A2-190",

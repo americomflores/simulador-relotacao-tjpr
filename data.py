@@ -220,6 +220,7 @@ ANEXO_I = {
     "A1-210": {"comarca": "União da Vitória", "unidade": "2ª VARA CÍVEL E DA FAZENDA PÚBLICA", "quantidade": 1},
     "A1-211": {"comarca": "União da Vitória", "unidade": "2ª VARA CRIMINAL", "quantidade": 3},
     "A1-212": {"comarca": "Wenceslau Braz", "unidade": "JUÍZO ÚNICO", "quantidade": 2},
+    "A1-213": {"comarca": "Curitiba", "unidade": "CENTRAL DE GARANTIAS ESPECIALIZADA", "quantidade": 1},
 }
 
 # =============================================================================
