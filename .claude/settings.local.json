@@ -9,7 +9,14 @@
       "Bash(git add:*)",
       "Bash(git push:*)",
       "WebFetch(domain:www.tjpr.jus.br)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(pip install:*)",
+      "Bash(dir:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)",
+      "Bash(python3:*)",
+      "Bash(find:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []

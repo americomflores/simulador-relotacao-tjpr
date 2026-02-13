@@ -995,7 +995,7 @@ def main():
     # Aviso importante
     st.warning("""
     ⚠️ **AVISO IMPORTANTE:** Este simulador é **não oficial** e serve apenas para você se planejar melhor.
-    O resultado real só sai depois da análise oficial do TJPR seguindo o Edital nº 4/2025.
+    O resultado real só sai depois da análise oficial do TJPR seguindo o Edital nº 1/2026.
     Use este simulador para testar suas opções, mas saiba que o resultado oficial pode ser diferente.
     """)
 
@@ -2325,7 +2325,7 @@ def footer():
     st.divider()
     st.caption("""
     ⚠️ **ATENÇÃO:** Este é um simulador não oficial, criado apenas para auxiliar na tomada de decisão. 
-    O resultado oficial depende exclusivamente da análise do TJPR conforme Edital nº 4/2025.
+    O resultado oficial depende exclusivamente da análise do TJPR conforme Edital nº 1/2026.
     """)
 
 
