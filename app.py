@@ -540,7 +540,7 @@ def calcular_resultado(df_inscricoes):
             if vagas_anexo1[escolha_a1] > 0:
                 vagas_anexo1[escolha_a1] -= 1
                 df.at[idx, "status"] = "APROVADO"
-                df.at[idx, "resultado"] = "Anexo I (vaga deficitária disponibilizada - item 3.8)"
+                df.at[idx, "resultado"] = "Anexo I (vaga deficitária disponibilizada - item 2.1)"
                 df.at[idx, "vaga_obtida"] = f"{ANEXO_I[escolha_a1]['comarca']} - {ANEXO_I[escolha_a1]['unidade']}"
                 
                 # Atualizar ajustes de lotação
@@ -554,7 +554,7 @@ def calcular_resultado(df_inscricoes):
                         df.at[idx, "status_origem_final"] = dados_origem_final["status"]
 
                         # Determinar se precisa designação na origem
-                        # Conforme item 3.14 do Edital: designação apenas se a saída OCASIONAR DÉFICIT
+                        # Conforme item 3.16 do Edital: designação apenas se a saída OCASIONAR DÉFICIT
                         if dados_origem_final["status"] == "DEFICITÁRIA":
                             df.at[idx, "designacao_origem"] = "SIM"
                         else:
@@ -619,9 +619,9 @@ def calcular_resultado(df_inscricoes):
 
             # Atribuir resultado baseado no tipo de vaga
             if origem_vaga == "ANEXO I (via A2)":
-                resultado_final = "Anexo I (vaga primária incluída na análise do Anexo II - item 3.11)"
+                resultado_final = "Anexo I (vaga primária incluída na análise do Anexo II - item 3.13)"
             else:  # origem_vaga == "ANEXO II"
-                resultado_final = "Anexo II (vaga de servidor a relotar - item 3.9)"
+                resultado_final = "Anexo II (vaga de servidor a relotar - item 3.11)"
 
             df.at[idx, "status"] = "APROVADO"
             df.at[idx, "resultado"] = resultado_final
@@ -638,12 +638,12 @@ def calcular_resultado(df_inscricoes):
                     df.at[idx, "status_origem_final"] = dados_origem_final["status"]
                     
                     # Determinar se precisa designação na origem
-                    # Conforme item 3.14 do Edital: designação apenas se a saída OCASIONAR DÉFICIT
+                    # Conforme item 3.16 do Edital: designação apenas se a saída OCASIONAR DÉFICIT
                     if dados_origem_final["status"] == "DEFICITÁRIA":
                         df.at[idx, "designacao_origem"] = "SIM"
                     else:
                         df.at[idx, "designacao_origem"] = "NÃO"
-                
+
                 # Liberar vaga no Anexo II
                 if lotacao_origem in vagas_anexo2:
                     vagas_anexo2[lotacao_origem] += 1
@@ -1076,6 +1076,16 @@ def main():
 
             st.divider()
 
+            # Aviso sobre verificações manuais necessárias (Edital 01/2026)
+            st.warning("""
+**Verificações Manuais Necessárias (Edital 01/2026):**
+
+Antes de confirmar a inscrição, verifique se o servidor:
+- Está lotado em unidade do **1º Grau de Jurisdição** (Item 3.2)
+- **NÃO** foi relotado a pedido há menos de **2 anos** da data de publicação do edital - 10/02/2026 (Item 3.3)
+- Se relotou no Edital 04/2025 e permaneceu designado na origem, só pode participar se atender ao item 3.3 (Item 3.3.2)
+""")
+
             with st.form("form_inscricao"):
                 nome = st.text_input(
                     "Nome completo:",
@@ -1409,7 +1419,7 @@ def main():
                 metric_card("Total Inscritos", str(total), icon="👥", color="blue")
             with col2:
                 metric_card("Aprovados Anexo I", str(aprovados_a1),
-                           delta="Inclui direto e via item 3.11", icon="✅", color="green")
+                           delta="Inclui direto e via item 3.13", icon="✅", color="green")
             with col3:
                 metric_card("Aprovados Anexo II", str(aprovados_a2), icon="✅", color="green")
             with col4:
@@ -1437,7 +1447,20 @@ def main():
                 - 🟡 Se a unidade ficar **no mínimo exato** depois que você sair → Designação = NÃO
                 - 🔴 Se a unidade ficar **abaixo do mínimo** depois que você sair → Designação = SIM
                 """)
-            
+
+            # Nota sobre verificações manuais (Edital 01/2026)
+            st.info("""
+**Nota sobre o Edital 01/2026:**
+
+Este simulador **NÃO verifica automaticamente**:
+- Se o servidor está lotado em 1º grau (Item 3.2)
+- Se houve relotação nos últimos 2 anos (Item 3.3)
+- Regras especiais para unidades em estatização (Item 3.4)
+- Servidores de unidades superavitárias ou já designados de ofício (Item 3.18)
+
+Essas verificações são feitas manualmente pela Secretaria de Gestão de Pessoas.
+""")
+
             st.subheader("📊 Resultado por Ordem de Antiguidade")
 
             df_resultado["data_admissao_fmt"] = df_resultado["data_admissao"].apply(

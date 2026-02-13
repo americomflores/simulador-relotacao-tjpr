@@ -171,7 +171,7 @@ if tem_vaga_disponivel(escolha_anexo1):
 ```python
 # Para quem NÃO conseguiu Anexo I:
 if escolha_anexo1_disponivel_via_anexo2 AND escolha_anexo2_disponivel:
-    # Item 3.11: Preferência pela escolha original do Anexo I
+    # Item 3.13: Preferência pela escolha original do Anexo I
     conceder_anexo1_via_anexo2()
 elif escolha_anexo2_disponivel:
     conceder_anexo2()
@@ -179,7 +179,7 @@ else:
     status = "NÃO OBTEVE VAGA"
 ```
 
-### 4. Designação na Origem (Item 3.14)
+### 4. Designação na Origem (Item 3.16)
 
 Após conceder vaga, calcula se a saída do servidor CAUSA DÉFICIT na origem:
 
@@ -327,13 +327,27 @@ secondaryBackgroundColor = "#F0F2F6"
 3. **Auditoria**: Todas as modificações em inscrições DEVEM registrar `alterado_por` e `data_alteracao`
 4. **Session state**: Usar `st.rerun()` após mudanças de estado importantes
 
-## 📚 Referências do Edital
+## 📚 Referências do Edital 01/2026
 
-O código implementa especificamente os itens:
-- **Item 3.2**: Estágio probatório
-- **Item 3.11**: Preferência Anexo I quando ambos disponíveis
-- **Item 3.14**: Designação na origem por déficit
-- **Item 3.15**: Vaga condicionada à substituição
+### Itens implementados automaticamente:
+- **Item 1.1**: Servidores em estágio probatório PODEM participar
+- **Item 2.1**: Anexo I - vagas com déficit e unidades em estatização
+- **Item 3.9**: Análise segue ordem da lista classificatória
+- **Item 3.10**: Anexo I avaliado primeiro
+- **Item 3.11**: Anexo II apenas para unidades deficitárias após Anexo I
+- **Item 3.12**: Aprovados no Anexo I excluídos da análise do Anexo II
+- **Item 3.13**: Preferência pela escolha original do Anexo I quando ambos disponíveis
+- **Item 3.14**: Lotação dinâmica atualizada durante análise
+- **Item 3.16**: Designação na origem se a saída causar déficit
+- **Item 3.17**: Vaga condicionada à substituição (ato tornado sem efeito se não houver)
+
+### Itens que requerem verificação MANUAL (não implementados no código):
+- **Item 3.2**: Servidor não lotado em 1º grau (DESCLASSIFICADO)
+- **Item 3.3**: Relotado há menos de 2 anos (DESCLASSIFICADO, exceto se todos assim)
+- **Item 3.3.1**: Exceção: preferência ao relotado há mais tempo
+- **Item 3.3.2**: Servidores do Edital 04/2025 designados na origem
+- **Item 3.4**: Unidades em estatização: designação na origem até data específica
+- **Item 3.18**: Servidores de unidades superavitárias ou já designados de ofício não precisam de designação
 
 ## 🐛 Troubleshooting Comum
 
