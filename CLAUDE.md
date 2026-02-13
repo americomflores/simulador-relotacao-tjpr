@@ -226,13 +226,13 @@ else:
 
 ### 7 Abas (conforme app.py)
 
-1. **🏆 Resultado da Simulação**: Resultado completo da simulação com métricas
-2. **✍️ Minha Inscrição**: Formulário de cadastro/edição
-3. **👥 Lista de Inscritos**: Lista todos os inscritos (pesquisável/filtrável)
-4. **📋 Vagas do Edital**: Visualização Anexo I e II com demanda
-5. **📊 Análise de Vagas**: Análise de vagas
-6. **📈 Lotação das Unidades**: Tabela completa de lotação paradigma
-7. **🗺️ Regiões (RAJs)**: Análise geográfica por região
+1. **🏆 Resultado**: Resultado completo da simulação (quem foi aprovado, designação na origem, vagas restantes)
+2. **✍️ Minha Inscrição**: Formulário de cadastro/edição de inscrição
+3. **👥 Inscritos**: Lista de todos os inscritos (pesquisável/filtrável)
+4. **📋 Vagas do Edital (Anexos I e II)**: Catálogo de vagas com quantidade e demanda (quantos escolheram cada unidade)
+5. **📊 Vagas após a simulação**: O que restou do Anexo I (não preenchidas) e vagas abertas no Anexo II (por RAJ), após rodar a simulação
+6. **📈 Lotação**: Tabela de lotação paradigma (real vs paradigma, status por unidade)
+7. **🗺️ Regiões (RAJs)**: Análise geográfica por região administrativa
 
 Não há painel de administrador na UI atual. Os módulos de autenticação (`auth_config`, `auth_service`) permitem implementar ou reativar um painel admin no futuro.
 

@@ -1004,14 +1004,14 @@ def main():
         sheet = conectar_sheets()
         df_inscricoes = carregar_inscricoes(sheet)
     
-    # Criar abas (7 abas organizadas)
+    # Criar abas (7 abas: resultado, inscrição, lista, catálogo de vagas, vagas após sim, lotação, RAJs)
     tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-        "🏆 Resultado da Simulação",
+        "🏆 Resultado",
         "✍️ Minha Inscrição",
-        "👥 Lista de Inscritos",
-        "📋 Vagas do Edital",
-        "📊 Análise de Vagas",
-        "📈 Lotação das Unidades",
+        "👥 Inscritos",
+        "📋 Vagas do Edital (Anexos I e II)",
+        "📊 Vagas após a simulação",
+        "📈 Lotação",
         "🗺️ Regiões (RAJs)"
     ])
     
@@ -1272,7 +1272,8 @@ def main():
     # ABA 3: SERVIDORES INSCRITOS
     # =========================================================================
     with tab3:
-        st.header("👥 Servidores Inscritos")
+        st.header("👥 Lista de Inscritos")
+        st.caption("Todos os servidores que se inscreveram na relotação")
         
         if df_inscricoes.empty:
             st.info("Nenhum servidor inscrito ainda.")
@@ -1771,7 +1772,8 @@ def main():
     # ABA 4: VAGAS (Anexo I e II)
     # =========================================================================
     with tab4:
-        st.header("📋 Vagas Disponíveis")
+        st.header("📋 Vagas do Edital")
+        st.caption("Catálogo de vagas com quantidade e demanda (quantos inscritos escolheram cada unidade)")
         
         # Sub-seções com radio button
         opcao_vagas = st.radio(
@@ -1902,10 +1904,11 @@ def main():
             st.caption(f"Total: {len(df_a2)} unidades | {total_demanda_a2} servidores interessados")
 
     # =========================================================================
-    # ABA 5: VAGAS SOBRANTES POR RAJ
+    # ABA 5: VAGAS APÓS A SIMULAÇÃO (por RAJ)
     # =========================================================================
     with tab5:
-        st.header("📊 Análise de Vagas Disponíveis")
+        st.header("📊 Vagas após a simulação")
+        st.caption("O que restou do Anexo I (não preenchidas) e o que abriu no Anexo II (vagas liberadas por quem saiu), agrupado por região")
 
         if df_inscricoes.empty:
             st.info("📝 Faça inscrições primeiro para poder ver esta análise.")
@@ -1916,22 +1919,22 @@ def main():
             st.markdown("### 📊 Visão Geral")
 
             # Calcular totais
-            total_sobrantes_a1 = sum(vagas_restantes_a1.values())
+            total_nao_preenchidas_a1 = sum(vagas_restantes_a1.values())
             total_disponiveis_a2 = sum(vagas_disponiveis_a2.values())
 
             col1, col2 = st.columns(2)
-            col1.metric("🔴 Vagas Sobrantes Anexo I", total_sobrantes_a1)
-            col2.metric("🟢 Vagas Disponíveis Anexo II", total_disponiveis_a2)
+            col1.metric("🔴 Vagas não preenchidas (Anexo I)", total_nao_preenchidas_a1)
+            col2.metric("🟢 Vagas abertas (Anexo II)", total_disponiveis_a2)
 
             st.divider()
 
             # Preparar dados por RAJ - Anexo I
-            st.markdown("### 🔴 Anexo I - Vagas que Ninguém Escolheu")
-            st.caption("Vagas prioritárias que ainda estão disponíveis porque ninguém as escolheu como 1ª opção")
+            st.markdown("### 🔴 Anexo I - Vagas não preenchidas")
+            st.caption("Vagas com déficit que continuam abertas porque ninguém as escolheu como 1ª opção")
 
             dados_raj_a1 = {}
-            for codigo, qtd_sobrante in vagas_restantes_a1.items():
-                if qtd_sobrante > 0:
+            for codigo, qtd_restante in vagas_restantes_a1.items():
+                if qtd_restante > 0:
                     info = ANEXO_I[codigo]
                     comarca = info['comarca']
                     unidade = info['unidade']
@@ -1943,7 +1946,7 @@ def main():
                     dados_raj_a1[raj].append({
                         'Comarca': comarca,
                         'Unidade': unidade,
-                        'Vagas Sobrantes': qtd_sobrante,
+                        'Vagas não preenchidas': qtd_restante,
                         'Código': codigo
                     })
 
@@ -1952,12 +1955,12 @@ def main():
                 rajs_ordenadas_a1 = sorted(dados_raj_a1.keys())
 
                 for raj in rajs_ordenadas_a1:
-                    total_raj = sum(v['Vagas Sobrantes'] for v in dados_raj_a1[raj])
-                    with st.expander(f"**{raj}** ({total_raj} vagas sobrantes)"):
+                    total_raj = sum(v['Vagas não preenchidas'] for v in dados_raj_a1[raj])
+                    with st.expander(f"**{raj}** ({total_raj} vagas não preenchidas)"):
                         df_raj = pd.DataFrame(dados_raj_a1[raj])
                         df_raj = df_raj.sort_values('Comarca')
                         st.dataframe(
-                            df_raj[['Comarca', 'Unidade', 'Vagas Sobrantes']],
+                            df_raj[['Comarca', 'Unidade', 'Vagas não preenchidas']],
                             hide_index=True,
                             use_container_width=True
                         )
@@ -1967,8 +1970,8 @@ def main():
             st.divider()
 
             # Preparar dados por RAJ - Anexo II
-            st.markdown("### 🟢 Anexo II - Vagas que Ficaram Abertas")
-            st.caption("Vagas que abriram porque servidores saíram e a unidade de origem ficou precisando de gente")
+            st.markdown("### 🟢 Anexo II - Vagas abertas pela simulação")
+            st.caption("Unidades que passaram a ter vaga porque servidores foram aprovados e saíram (origem liberou vaga)")
 
             dados_raj_a2 = {}
             for codigo, qtd_disponivel in vagas_disponiveis_a2.items():
