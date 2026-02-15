@@ -1198,267 +1198,273 @@ def main():
     with tab2:
         st.header("✍️ Inscrição / Edição")
 
-        col1, col2 = st.columns([1, 1])
+        st.subheader("Nova Inscrição ou Edição")
 
-        with col1:
-            st.subheader("Nova Inscrição ou Edição")
-            
-            matricula_busca = st.text_input("Matrícula (para nova inscrição ou editar existente):", key="mat_busca")
-            
-            inscricao_existente = None
-            posicao_por_matricula = None
-            if matricula_busca:
-                inscricao_existente = buscar_inscricao(sheet, matricula_busca)
-                if inscricao_existente:
-                    st.info("✏️ Inscrição encontrada! Os dados serão carregados para edição.")
+        matricula_busca = st.text_input("Matrícula (para nova inscrição ou editar existente):", key="mat_busca")
 
-                    # Verificar se matrícula está mapeada
-                    if matricula_busca in MATRICULA_POSICAO_MAP:
-                        posicao_por_matricula = MATRICULA_POSICAO_MAP[matricula_busca]
-                        st.success(f"✅ Matrícula mapeada! Posição na lista: **{posicao_por_matricula}**")
+        inscricao_existente = None
+        posicao_por_matricula = None
+        if matricula_busca:
+            inscricao_existente = buscar_inscricao(sheet, matricula_busca)
+            if inscricao_existente:
+                st.info("✏️ Inscrição encontrada! Os dados serão carregados para edição.")
 
-            # BUSCA AUTOMÁTICA DE POSIÇÃO - FORA DO FORM (tempo real)
-            st.subheader("🔍 Buscar Servidor na Lista Classificatória")
+                # Verificar se matrícula está mapeada
+                if matricula_busca in MATRICULA_POSICAO_MAP:
+                    posicao_por_matricula = MATRICULA_POSICAO_MAP[matricula_busca]
+                    st.success(f"✅ Matrícula mapeada! Posição na lista: **{posicao_por_matricula}**")
 
-            nome_busca_auto = st.text_input(
-                "Digite o nome completo do servidor:",
-                value=inscricao_existente.get("nome", "") if inscricao_existente else "",
-                help="A busca é feita automaticamente conforme você digita",
-                key="nome_busca_auto"
+        # BUSCA AUTOMÁTICA DE POSIÇÃO - FORA DO FORM (tempo real)
+        st.subheader("🔍 Buscar Servidor na Lista Classificatória")
+
+        # Preencher nome apenas quando inscricao_existente vem da busca por matrícula
+        # (evita sobrescrever a digitação do usuário a cada rerun)
+        if "nome_busca_auto_last_matricula" not in st.session_state:
+            st.session_state.nome_busca_auto_last_matricula = None
+        if matricula_busca and inscricao_existente:
+            if st.session_state.nome_busca_auto_last_matricula != matricula_busca:
+                st.session_state.nome_busca_auto = inscricao_existente.get("nome", "")
+                st.session_state.nome_busca_auto_last_matricula = matricula_busca
+        elif not matricula_busca:
+            st.session_state.nome_busca_auto_last_matricula = None
+
+        nome_busca_auto = st.text_input(
+            "Digite o nome completo do servidor:",
+            help="A busca é feita automaticamente conforme você digita",
+            key="nome_busca_auto"
+        )
+
+        posicao_sugerida = None
+        nome_encontrado = ""
+
+        # Prioridade: posicao_por_matricula > busca por nome
+        if posicao_por_matricula:
+            posicao_sugerida = posicao_por_matricula
+            if posicao_sugerida in LISTA_CLASSIFICATORIA:
+                nome_encontrado = LISTA_CLASSIFICATORIA[posicao_sugerida]['nome_display']
+        elif nome_busca_auto and len(nome_busca_auto.strip()) >= 3:
+            resultado = buscar_servidor_por_nome(nome_busca_auto)
+            if resultado:
+                posicao_sugerida, score, nome_lista = resultado
+                if score >= 95:
+                    st.success(f"✅ **Servidor encontrado na Lista Classificatória!**\n\n**Posição: {posicao_sugerida}**\n\nNome na lista: {nome_lista}")
+                    nome_encontrado = nome_lista
+                elif score >= 85:
+                    st.warning(f"⚠️ **Servidor possivelmente encontrado** (similaridade: {score}%)\n\n**Posição: {posicao_sugerida}**\n\nNome na lista: {nome_lista}\n\n⚠️ Verifique se está correto ou informe a posição manualmente abaixo!")
+                    nome_encontrado = nome_lista
+            else:
+                st.error(f"❌ **Servidor NÃO encontrado automaticamente!**\n\nInforme a posição manualmente no formulário abaixo.")
+
+        # Buscar inscrição existente por nome (evitar duplicidade)
+        if posicao_sugerida and nome_encontrado and inscricao_existente is None:
+            nome_lista_normalizado = nome_encontrado.strip().lower()
+            if not df_inscricoes.empty and "nome" in df_inscricoes.columns:
+                df_match = df_inscricoes[df_inscricoes["nome"].astype(str).str.strip().str.lower() == nome_lista_normalizado]
+                if not df_match.empty:
+                    row = df_match.iloc[0]
+                    inscricao_existente = {}
+                    for col in df_inscricoes.columns:
+                        val = row[col]
+                        if isinstance(val, date):
+                            inscricao_existente[col] = val.strftime("%d/%m/%Y")
+                        elif pd.notna(val):
+                            inscricao_existente[col] = str(val)
+                        else:
+                            inscricao_existente[col] = ""
+                    st.info(f"📋 **Inscrição existente encontrada pelo nome!** Matrícula: **{inscricao_existente.get('matricula', '')}** — dados carregados para edição.")
+
+        st.divider()
+
+        st.warning("⚠️ **Antes de inscrever**, verifique os requisitos do edital. Consulte a aba **❓ Como Usar** para detalhes.")
+
+        # Determinar matrícula para o formulário (da busca direta ou encontrada por nome)
+        matricula_valor = matricula_busca
+        if not matricula_valor and inscricao_existente:
+            matricula_valor = str(inscricao_existente.get("matricula", ""))
+
+        with st.form("form_inscricao"):
+            nome = st.text_input(
+                "Nome completo:",
+                value=nome_encontrado if nome_encontrado else (inscricao_existente.get("nome", "") if inscricao_existente else ""),
+                help="Nome do servidor (preenchido automaticamente se encontrado acima)"
             )
 
-            posicao_sugerida = None
-            nome_encontrado = ""
+            # Campo manual de posição com valor sugerido
+            posicao_default = posicao_sugerida if posicao_sugerida else (inscricao_existente.get("posicao_lista_classificatoria") if inscricao_existente else None)
 
-            # Prioridade: posicao_por_matricula > busca por nome
-            if posicao_por_matricula:
-                posicao_sugerida = posicao_por_matricula
-                if posicao_sugerida in LISTA_CLASSIFICATORIA:
-                    nome_encontrado = LISTA_CLASSIFICATORIA[posicao_sugerida]['nome_display']
-            elif nome_busca_auto and len(nome_busca_auto.strip()) >= 3:
-                resultado = buscar_servidor_por_nome(nome_busca_auto)
-                if resultado:
-                    posicao_sugerida, score, nome_lista = resultado
-                    if score >= 95:
-                        st.success(f"✅ **Servidor encontrado na Lista Classificatória!**\n\n**Posição: {posicao_sugerida}**\n\nNome na lista: {nome_lista}")
-                        nome_encontrado = nome_lista
-                    elif score >= 85:
-                        st.warning(f"⚠️ **Servidor possivelmente encontrado** (similaridade: {score}%)\n\n**Posição: {posicao_sugerida}**\n\nNome na lista: {nome_lista}\n\n⚠️ Verifique se está correto ou informe a posição manualmente abaixo!")
-                        nome_encontrado = nome_lista
-                else:
-                    st.error(f"❌ **Servidor NÃO encontrado automaticamente!**\n\nInforme a posição manualmente no formulário abaixo.")
+            posicao_lista = st.number_input(
+                "Posição na Lista Classificatória:",
+                min_value=1,
+                max_value=1291,
+                value=int(posicao_default) if posicao_default else 1,
+                step=1,
+                help="Posição do servidor na Lista Classificatória do Edital 01/2026 (1 a 1291)"
+            )
 
-            # Buscar inscrição existente por nome (evitar duplicidade)
-            if posicao_sugerida and nome_encontrado and inscricao_existente is None:
-                nome_lista_normalizado = nome_encontrado.strip().lower()
-                if not df_inscricoes.empty and "nome" in df_inscricoes.columns:
-                    df_match = df_inscricoes[df_inscricoes["nome"].astype(str).str.strip().str.lower() == nome_lista_normalizado]
-                    if not df_match.empty:
-                        row = df_match.iloc[0]
-                        inscricao_existente = {}
-                        for col in df_inscricoes.columns:
-                            val = row[col]
-                            if isinstance(val, date):
-                                inscricao_existente[col] = val.strftime("%d/%m/%Y")
-                            elif pd.notna(val):
-                                inscricao_existente[col] = str(val)
-                            else:
-                                inscricao_existente[col] = ""
-                        st.info(f"📋 **Inscrição existente encontrada pelo nome!** Matrícula: **{inscricao_existente.get('matricula', '')}** — dados carregados para edição.")
+            # Validar e mostrar dados da posição informada
+            if posicao_lista and posicao_lista in LISTA_CLASSIFICATORIA:
+                dados_posicao = LISTA_CLASSIFICATORIA[posicao_lista]
+                st.info(f"**Posição {posicao_lista}:** {dados_posicao['nome_display']}")
 
+            matricula = st.text_input(
+                "Matrícula:",
+                value=matricula_valor,
+                disabled=True if matricula_valor else False
+            )
+
+            data_default = None
+            if inscricao_existente and inscricao_existente.get("data_admissao"):
+                try:
+                    data_default = datetime.strptime(inscricao_existente["data_admissao"], "%d/%m/%Y").date()
+                except (ValueError, TypeError):
+                    pass
+
+            # Fallback: usar inicio_cargo da Lista Classificatória
+            if data_default is None and posicao_sugerida and posicao_sugerida in LISTA_CLASSIFICATORIA:
+                try:
+                    inicio_cargo = LISTA_CLASSIFICATORIA[posicao_sugerida].get("inicio_cargo", "")
+                    if inicio_cargo:
+                        data_default = datetime.strptime(inicio_cargo, "%d/%m/%Y").date()
+                except (ValueError, TypeError, KeyError):
+                    pass
+
+            data_admissao = st.date_input(
+                "Data de início do exercício:",
+                value=data_default,
+                min_value=date(1980, 1, 1),
+                max_value=date.today(),
+                format="DD/MM/YYYY"
+            )
+
+            # Edital 01/2026: Servidores em estágio probatório PODEM participar
+            # (Aviso de estágio probatório removido)
+
+            opcoes_lotacao = construir_opcoes_selectbox(ANEXO_II, default_text="", incluir_vazio=True)
+
+            lotacao_default = 0
+            if inscricao_existente and inscricao_existente.get("lotacao_atual"):
+                codigo_lot = inscricao_existente["lotacao_atual"]
+                lotacao_default = encontrar_indice_opcao(opcoes_lotacao, codigo_lot)
+
+            lotacao_atual = st.selectbox(
+                "Lotação Atual:",
+                opcoes_lotacao,
+                index=lotacao_default,
+                help="Unidade judiciária onde você está lotado atualmente"
+            )
+
+            opcoes_a1 = construir_opcoes_selectbox(ANEXO_I, default_text=OPCAO_NAO_ESCOLHEU, incluir_vazio=True, mostrar_quantidade=True)
+
+            escolha_a1_default = 0
+            if inscricao_existente and inscricao_existente.get("escolha_anexo1"):
+                codigo_a1 = inscricao_existente["escolha_anexo1"]
+                escolha_a1_default = encontrar_indice_opcao(opcoes_a1, codigo_a1)
+
+            escolha_a1 = st.selectbox(
+                "1ª Escolha - Anexo I (Vagas Prioritárias com Déficit):",
+                opcoes_a1,
+                index=escolha_a1_default,
+                help="213 unidades judiciárias com 435 vagas para servidores. Opcional: você pode deixar em branco se preferir."
+            )
+
+            opcoes_a2 = construir_opcoes_selectbox(ANEXO_II, default_text=OPCAO_NAO_ESCOLHEU, incluir_vazio=True)
+
+            escolha_a2_default = 0
+            if inscricao_existente and inscricao_existente.get("escolha_anexo2"):
+                codigo_a2 = inscricao_existente["escolha_anexo2"]
+                escolha_a2_default = encontrar_indice_opcao(opcoes_a2, codigo_a2)
+
+            escolha_a2 = st.selectbox(
+                "2ª Escolha - Anexo II (Todas as Unidades Judiciárias):",
+                opcoes_a2,
+                index=escolha_a2_default,
+                help="Mais de 300 unidades judiciárias. Você pode escolher apenas esta opção se preferir, sem escolher Anexo I."
+            )
+
+            # Extrair códigos para verificações
+            codigo_lotacao_temp = extrair_codigo_da_opcao(lotacao_atual, default_vazio="")
+            codigo_escolha_a2_temp = extrair_codigo_da_opcao(escolha_a2, default_vazio=OPCAO_NAO_ESCOLHEU)
+
+            # ALERTA DE CONFLITO: origem = destino
+            if codigo_lotacao_temp and codigo_escolha_a2_temp and codigo_lotacao_temp == codigo_escolha_a2_temp:
+                alert_box(
+                    "CONFLITO: Você escolheu a mesma unidade como origem e destino no Anexo II. Isso não faz sentido!",
+                    alert_type="error"
+                )
+
+            # RESUMO/PREVIEW antes de salvar
             st.divider()
+            st.markdown("**📋 Resumo da Inscrição:**")
 
-            st.warning("⚠️ **Antes de inscrever**, verifique os requisitos do edital. Consulte a aba **❓ Como Usar** para detalhes.")
+            col_resumo1, col_resumo2 = st.columns(2)
+            with col_resumo1:
+                st.markdown(f"**Nome:** {nome if nome else '-'}")
+                st.markdown(f"**Matrícula:** {matricula if matricula else '-'}")
+                st.markdown(f"**Data Admissão:** {data_admissao.strftime('%d/%m/%Y') if data_admissao else '-'}")
 
-            # Determinar matrícula para o formulário (da busca direta ou encontrada por nome)
-            matricula_valor = matricula_busca
-            if not matricula_valor and inscricao_existente:
-                matricula_valor = str(inscricao_existente.get("matricula", ""))
+            with col_resumo2:
+                lotacao_resumo = lotacao_atual.split(" - ", 1)[1] if lotacao_atual and " - " in lotacao_atual else "-"
+                escolha_a1_resumo = escolha_a1.split(" - ", 1)[1] if escolha_a1 != "(Não escolheu)" and " - " in escolha_a1 else "-"
+                escolha_a2_resumo = escolha_a2.split(" - ", 1)[1] if escolha_a2 != "(Não escolheu)" and " - " in escolha_a2 else "-"
 
-            with st.form("form_inscricao"):
-                nome = st.text_input(
-                    "Nome completo:",
-                    value=nome_encontrado if nome_encontrado else (inscricao_existente.get("nome", "") if inscricao_existente else ""),
-                    help="Nome do servidor (preenchido automaticamente se encontrado acima)"
-                )
+                st.markdown(f"**Origem:** {lotacao_resumo[:50]}..." if len(lotacao_resumo) > 50 else f"**Origem:** {lotacao_resumo}")
+                st.markdown(f"**1ª Opção (Anexo I):** {escolha_a1_resumo[:50]}..." if len(escolha_a1_resumo) > 50 else f"**1ª Opção (Anexo I):** {escolha_a1_resumo}")
+                st.markdown(f"**2ª Opção (Anexo II):** {escolha_a2_resumo[:50]}..." if len(escolha_a2_resumo) > 50 else f"**2ª Opção (Anexo II):** {escolha_a2_resumo}")
 
-                # Campo manual de posição com valor sugerido
-                posicao_default = posicao_sugerida if posicao_sugerida else (inscricao_existente.get("posicao_lista_classificatoria") if inscricao_existente else None)
+            submitted = st.form_submit_button("💾 Salvar Inscrição", use_container_width=True)
 
-                posicao_lista = st.number_input(
-                    "Posição na Lista Classificatória:",
-                    min_value=1,
-                    max_value=1291,
-                    value=int(posicao_default) if posicao_default else 1,
-                    step=1,
-                    help="Posição do servidor na Lista Classificatória do Edital 01/2026 (1 a 1291)"
-                )
-
-                # Validar e mostrar dados da posição informada
-                if posicao_lista and posicao_lista in LISTA_CLASSIFICATORIA:
-                    dados_posicao = LISTA_CLASSIFICATORIA[posicao_lista]
-                    st.info(f"**Posição {posicao_lista}:** {dados_posicao['nome_display']}")
-
-                matricula = st.text_input(
-                    "Matrícula:",
-                    value=matricula_valor,
-                    disabled=True if matricula_valor else False
-                )
-                
-                data_default = None
-                if inscricao_existente and inscricao_existente.get("data_admissao"):
-                    try:
-                        data_default = datetime.strptime(inscricao_existente["data_admissao"], "%d/%m/%Y").date()
-                    except (ValueError, TypeError):
-                        pass
-
-                # Fallback: usar inicio_cargo da Lista Classificatória
-                if data_default is None and posicao_sugerida and posicao_sugerida in LISTA_CLASSIFICATORIA:
-                    try:
-                        inicio_cargo = LISTA_CLASSIFICATORIA[posicao_sugerida].get("inicio_cargo", "")
-                        if inicio_cargo:
-                            data_default = datetime.strptime(inicio_cargo, "%d/%m/%Y").date()
-                    except (ValueError, TypeError, KeyError):
-                        pass
-                
-                data_admissao = st.date_input(
-                    "Data de início do exercício:",
-                    value=data_default,
-                    min_value=date(1980, 1, 1),
-                    max_value=date.today(),
-                    format="DD/MM/YYYY"
-                )
-                
-                # Edital 01/2026: Servidores em estágio probatório PODEM participar
-                # (Aviso de estágio probatório removido)
-
-                opcoes_lotacao = construir_opcoes_selectbox(ANEXO_II, default_text="", incluir_vazio=True)
-
-                lotacao_default = 0
-                if inscricao_existente and inscricao_existente.get("lotacao_atual"):
-                    codigo_lot = inscricao_existente["lotacao_atual"]
-                    lotacao_default = encontrar_indice_opcao(opcoes_lotacao, codigo_lot)
-                
-                lotacao_atual = st.selectbox(
-                    "Lotação Atual:",
-                    opcoes_lotacao,
-                    index=lotacao_default,
-                    help="Unidade judiciária onde você está lotado atualmente"
-                )
-                
-                opcoes_a1 = construir_opcoes_selectbox(ANEXO_I, default_text=OPCAO_NAO_ESCOLHEU, incluir_vazio=True, mostrar_quantidade=True)
-
-                escolha_a1_default = 0
-                if inscricao_existente and inscricao_existente.get("escolha_anexo1"):
-                    codigo_a1 = inscricao_existente["escolha_anexo1"]
-                    escolha_a1_default = encontrar_indice_opcao(opcoes_a1, codigo_a1)
-                
-                escolha_a1 = st.selectbox(
-                    "1ª Escolha - Anexo I (Vagas Prioritárias com Déficit):",
-                    opcoes_a1,
-                    index=escolha_a1_default,
-                    help="213 unidades judiciárias com 435 vagas para servidores. Opcional: você pode deixar em branco se preferir."
-                )
-                
-                opcoes_a2 = construir_opcoes_selectbox(ANEXO_II, default_text=OPCAO_NAO_ESCOLHEU, incluir_vazio=True)
-
-                escolha_a2_default = 0
-                if inscricao_existente and inscricao_existente.get("escolha_anexo2"):
-                    codigo_a2 = inscricao_existente["escolha_anexo2"]
-                    escolha_a2_default = encontrar_indice_opcao(opcoes_a2, codigo_a2)
-                
-                escolha_a2 = st.selectbox(
-                    "2ª Escolha - Anexo II (Todas as Unidades Judiciárias):",
-                    opcoes_a2,
-                    index=escolha_a2_default,
-                    help="Mais de 300 unidades judiciárias. Você pode escolher apenas esta opção se preferir, sem escolher Anexo I."
-                )
-                
-                # Extrair códigos para verificações
-                codigo_lotacao_temp = extrair_codigo_da_opcao(lotacao_atual, default_vazio="")
-                codigo_escolha_a2_temp = extrair_codigo_da_opcao(escolha_a2, default_vazio=OPCAO_NAO_ESCOLHEU)
-                
-                # ALERTA DE CONFLITO: origem = destino
+            if submitted:
+                # Verificar conflito novamente
                 if codigo_lotacao_temp and codigo_escolha_a2_temp and codigo_lotacao_temp == codigo_escolha_a2_temp:
-                    alert_box(
-                        "CONFLITO: Você escolheu a mesma unidade como origem e destino no Anexo II. Isso não faz sentido!",
-                        alert_type="error"
-                    )
-                
-                # RESUMO/PREVIEW antes de salvar
-                st.divider()
-                st.markdown("**📋 Resumo da Inscrição:**")
-                
-                col_resumo1, col_resumo2 = st.columns(2)
-                with col_resumo1:
-                    st.markdown(f"**Nome:** {nome if nome else '-'}")
-                    st.markdown(f"**Matrícula:** {matricula if matricula else '-'}")
-                    st.markdown(f"**Data Admissão:** {data_admissao.strftime('%d/%m/%Y') if data_admissao else '-'}")
-                
-                with col_resumo2:
-                    lotacao_resumo = lotacao_atual.split(" - ", 1)[1] if lotacao_atual and " - " in lotacao_atual else "-"
-                    escolha_a1_resumo = escolha_a1.split(" - ", 1)[1] if escolha_a1 != "(Não escolheu)" and " - " in escolha_a1 else "-"
-                    escolha_a2_resumo = escolha_a2.split(" - ", 1)[1] if escolha_a2 != "(Não escolheu)" and " - " in escolha_a2 else "-"
-                    
-                    st.markdown(f"**Origem:** {lotacao_resumo[:50]}..." if len(lotacao_resumo) > 50 else f"**Origem:** {lotacao_resumo}")
-                    st.markdown(f"**1ª Opção (Anexo I):** {escolha_a1_resumo[:50]}..." if len(escolha_a1_resumo) > 50 else f"**1ª Opção (Anexo I):** {escolha_a1_resumo}")
-                    st.markdown(f"**2ª Opção (Anexo II):** {escolha_a2_resumo[:50]}..." if len(escolha_a2_resumo) > 50 else f"**2ª Opção (Anexo II):** {escolha_a2_resumo}")
-                
-                submitted = st.form_submit_button("💾 Salvar Inscrição", use_container_width=True)
-
-                if submitted:
-                    # Verificar conflito novamente
-                    if codigo_lotacao_temp and codigo_escolha_a2_temp and codigo_lotacao_temp == codigo_escolha_a2_temp:
-                        st.error("❌ Não é possível salvar: origem e destino são iguais!")
-                    elif not nome or not matricula or not data_admissao or not lotacao_atual:
-                        st.error("Preencha todos os campos obrigatórios!")
-                    elif not posicao_lista or posicao_lista < 1 or posicao_lista > 1291:
-                        st.error("❌ **Posição inválida!**\n\nInforme uma posição entre 1 e 1291.")
-                    elif posicao_lista not in LISTA_CLASSIFICATORIA:
-                        st.error(f"❌ **Posição {posicao_lista} não encontrada na Lista Classificatória!**\n\nVerifique a posição correta.")
-                    else:
-                        codigo_lotacao = extrair_codigo_da_opcao(lotacao_atual, default_vazio="")
-                        codigo_escolha_a1 = extrair_codigo_da_opcao(escolha_a1, default_vazio=OPCAO_NAO_ESCOLHEU)
-                        codigo_escolha_a2 = extrair_codigo_da_opcao(escolha_a2, default_vazio=OPCAO_NAO_ESCOLHEU)
-
-                        dados = {
-                            "nome": nome,
-                            "matricula": matricula,
-                            "data_admissao": data_admissao.strftime("%d/%m/%Y"),
-                            "lotacao_atual": codigo_lotacao,
-                            "escolha_anexo1": codigo_escolha_a1,
-                            "escolha_anexo2": codigo_escolha_a2,
-                            "data_inscricao": datetime.now().strftime("%d/%m/%Y %H:%M"),
-                            "posicao_lista_classificatoria": posicao_lista
-                        }
-
-                        if salvar_inscricao(sheet, dados):
-                            handle_success("✅ Inscrição salva com sucesso!", show_balloons=True)
-                            st.cache_resource.clear()
-                            st.rerun()
-        
-        with col2:
-            st.subheader("Excluir Inscrição")
-            
-            matricula_excluir = st.text_input("Matrícula para excluir:", key="mat_excluir")
-            
-            if st.button("🗑️ Excluir Inscrição", type="secondary"):
-                if matricula_excluir:
-                    inscricao = buscar_inscricao(sheet, matricula_excluir)
-                    if inscricao:
-                        sucesso, nome = excluir_inscricao(sheet, matricula_excluir)
-                        if sucesso:
-                            st.success(f"Inscrição de {inscricao['nome']} excluída!")
-                            st.cache_resource.clear()
-                            st.rerun()
-                    else:
-                        st.error("Matrícula não encontrada!")
+                    st.error("❌ Não é possível salvar: origem e destino são iguais!")
+                elif not nome or not matricula or not data_admissao or not lotacao_atual:
+                    st.error("Preencha todos os campos obrigatórios!")
+                elif not posicao_lista or posicao_lista < 1 or posicao_lista > 1291:
+                    st.error("❌ **Posição inválida!**\n\nInforme uma posição entre 1 e 1291.")
+                elif posicao_lista not in LISTA_CLASSIFICATORIA:
+                    st.error(f"❌ **Posição {posicao_lista} não encontrada na Lista Classificatória!**\n\nVerifique a posição correta.")
                 else:
-                    st.error("Informe a matrícula!")
-            
-            st.divider()
-            
-            st.info("💡 Dúvidas sobre regras, inscrição ou resultado? Consulte a aba **❓ Como Usar**.")
+                    codigo_lotacao = extrair_codigo_da_opcao(lotacao_atual, default_vazio="")
+                    codigo_escolha_a1 = extrair_codigo_da_opcao(escolha_a1, default_vazio=OPCAO_NAO_ESCOLHEU)
+                    codigo_escolha_a2 = extrair_codigo_da_opcao(escolha_a2, default_vazio=OPCAO_NAO_ESCOLHEU)
+
+                    dados = {
+                        "nome": nome,
+                        "matricula": matricula,
+                        "data_admissao": data_admissao.strftime("%d/%m/%Y"),
+                        "lotacao_atual": codigo_lotacao,
+                        "escolha_anexo1": codigo_escolha_a1,
+                        "escolha_anexo2": codigo_escolha_a2,
+                        "data_inscricao": datetime.now().strftime("%d/%m/%Y %H:%M"),
+                        "posicao_lista_classificatoria": posicao_lista
+                    }
+
+                    if salvar_inscricao(sheet, dados):
+                        handle_success("✅ Inscrição salva com sucesso!", show_balloons=True)
+                        st.cache_resource.clear()
+                        st.rerun()
+
+        st.subheader("Excluir Inscrição")
+
+        matricula_excluir = st.text_input("Matrícula para excluir:", key="mat_excluir")
+
+        if st.button("🗑️ Excluir Inscrição", type="secondary"):
+            if matricula_excluir:
+                inscricao = buscar_inscricao(sheet, matricula_excluir)
+                if inscricao:
+                    sucesso, nome = excluir_inscricao(sheet, matricula_excluir)
+                    if sucesso:
+                        st.success(f"Inscrição de {inscricao['nome']} excluída!")
+                        st.cache_resource.clear()
+                        st.rerun()
+                else:
+                    st.error("Matrícula não encontrada!")
+            else:
+                st.error("Informe a matrícula!")
+
+        st.divider()
+
+        st.info("💡 Dúvidas sobre regras, inscrição ou resultado? Consulte a aba **❓ Como Usar**.")
     
     # =========================================================================
     # ABA 3: SERVIDORES INSCRITOS
