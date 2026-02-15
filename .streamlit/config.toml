@@ -1,9 +1,17 @@
 [theme]
+base = "light"
 primaryColor = "#1E88E5"
 backgroundColor = "#FFFFFF"
 secondaryBackgroundColor = "#F0F2F6"
 textColor = "#262730"
 font = "sans serif"
+
+# Tema escuro nativo: fundo escuro + texto claro (incluindo dataframes)
+[theme.dark]
+primaryColor = "#60a5fa"
+backgroundColor = "#0e0e1a"
+secondaryBackgroundColor = "#1e1e2e"
+textColor = "#e8e8e8"
 
 [server]
 maxUploadSize = 5

@@ -121,13 +121,13 @@ TEMAS = {
         "plotly_template": "plotly_white",
     },
     "dark": {
-        "row_approved": "#b8e0c8",
-        "row_waiting": "#f0e8a8",
-        "row_rejected": "#f0b8b8",
-        "row_no_vacancy": "#d8d8d8",
-        "status_superavit": "#b8e0c8",
-        "status_equilibrada": "#f0e8a8",
-        "status_deficitaria": "#f0b8b8",
+        "row_approved": "#1a3d2e",
+        "row_waiting": "#3d3419",
+        "row_rejected": "#3d1f1f",
+        "row_no_vacancy": "#2d2d2d",
+        "status_superavit": "#1a3d2e",
+        "status_equilibrada": "#3d3419",
+        "status_deficitaria": "#3d1f1f",
         "text_positive": "#4ade80",
         "text_negative": "#f87171",
         "chart_green": "#4ade80",
@@ -142,17 +142,27 @@ TEMAS = {
 }
 
 
-def get_tema():
-    return TEMAS["dark"] if st.session_state.get("dark_mode") else TEMAS["light"]
-
-
 if "dark_mode" not in st.session_state:
     st.session_state.dark_mode = False
 
-st.sidebar.toggle("🌙 Modo Escuro", key="dark_mode")
 
-# CSS com custom properties para suporte a Light/Dark mode
-_dark = st.session_state.get("dark_mode", False)
+def get_tema():
+    try:
+        is_dark = getattr(st.context.theme, "type", "light") == "dark"
+    except Exception:
+        is_dark = st.session_state.dark_mode
+    return TEMAS["dark"] if is_dark else TEMAS["light"]
+
+
+# Usa tema nativo do Streamlit (Settings → Theme → Dark/Light) para dataframes
+# com texto claro em modo escuro. Fallback para toggle customizado se st.context.theme não existir.
+try:
+    _dark = getattr(st.context.theme, "type", "light") == "dark"
+except Exception:
+    _dark = st.session_state.dark_mode
+    st.sidebar.toggle("🌙 Modo Escuro", key="dark_mode")
+else:
+    st.sidebar.caption("🌙 Modo escuro: ☰ → Settings → Theme → Dark")
 
 _css_vars_light = """
 :root {
@@ -235,18 +245,10 @@ input, textarea, select, [data-baseweb="select"],
 h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown {
     color: #e0e0e0 !important;
 }
-/* DataFrames no modo escuro: fundo claro para contraste e legibilidade
-   (Streamlit usa Glide Data Grid; texto padrão é escuro, então fundo claro garante leitura) */
+/* DataFrames no modo escuro: tema nativo do Streamlit (config [theme.dark])
+   já aplica fundo escuro + texto claro. Apenas ajustes de consistência. */
 [data-testid="stDataFrame"] {
-    background-color: #e8ecf0 !important;
     border-radius: 8px;
-}
-/* Texto das células (se renderizado como DOM, não canvas) */
-[data-testid="stDataFrame"] table td,
-[data-testid="stDataFrame"] table th,
-[data-testid="stDataFrame"] [role="gridcell"],
-[data-testid="stDataFrame"] [role="columnheader"] {
-    color: #262730 !important;
 }
 .stTabs [data-baseweb="tab"] {
     color: #9ca3af !important;
