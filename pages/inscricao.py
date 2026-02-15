@@ -101,6 +101,10 @@ def busca_servidor():
     st.session_state["_nome_encontrado"] = nome_encontrado
     st.session_state["_matricula_busca"] = matricula_busca
 
+    if posicao_sugerida and nome_encontrado:
+        if st.button("✅ Preencher formulário com os dados encontrados", type="primary"):
+            st.rerun()
+
 
 busca_servidor()
 
