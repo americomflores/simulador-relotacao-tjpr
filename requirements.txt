@@ -3,7 +3,6 @@ pandas
 gspread
 google-auth
 openpyxl
-plotly>=5.0.0
 
 # PDF extraction and text matching (for migration)
 pdfplumber>=0.10.0
