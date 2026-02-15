@@ -1012,8 +1012,9 @@ def main():
         sheet = conectar_sheets()
         df_inscricoes = carregar_inscricoes(sheet)
     
-    # Criar abas (7 abas: resultado, inscrição, lista, catálogo de vagas, vagas após sim, lotação, RAJs)
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+    # Criar abas (8 abas: ajuda, resultado, inscrição, lista, catálogo de vagas, vagas após sim, lotação, RAJs)
+    tab_ajuda, tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+        "❓ Como Usar",
         "🏆 Resultado",
         "✍️ Minha Inscrição",
         "👥 Inscritos",
@@ -1102,15 +1103,7 @@ def main():
 
             st.divider()
 
-            # Aviso sobre verificações manuais necessárias (Edital 01/2026)
-            st.warning("""
-**Verificações Manuais Necessárias (Edital 01/2026):**
-
-Antes de confirmar a inscrição, verifique se o servidor:
-- Está lotado em unidade do **1º Grau de Jurisdição** (Item 3.2)
-- **NÃO** foi relotado a pedido há menos de **2 anos** da data de publicação do edital - 10/02/2026 (Item 3.3)
-- Se relotou no Edital 04/2025 e permaneceu designado na origem, só pode participar se atender ao item 3.3 (Item 3.3.2)
-""")
+            st.warning("⚠️ **Antes de inscrever**, verifique os requisitos do edital. Consulte a aba **❓ Como Usar** para detalhes.")
 
             # Determinar matrícula para o formulário (da busca direta ou encontrada por nome)
             matricula_valor = matricula_busca
@@ -1300,22 +1293,7 @@ Antes de confirmar a inscrição, verifique se o servidor:
             
             st.divider()
             
-            st.subheader("ℹ️ Informações")
-            st.markdown("""
-            **Regras do Edital 01/2026:**
-            - Servidores relotados há menos de 2 anos são desclassificados (verificar manualmente)
-            - Critério de prioridade: **posição na Lista Classificatória**
-
-            **Como funciona:**
-            1. Primeiro são analisadas as escolhas do **Anexo I** (vagas deficitárias)
-            2. Quem consegue vaga no Anexo I, libera sua lotação atual
-            3. As vagas liberadas ficam disponíveis para o **Anexo II**
-            4. A posição na lista classificatória define a prioridade
-
-            **Designação na Origem (item 3.14):**
-            - Se sua saída **ocasionar déficit** na origem, você será designado para continuar lá até substituição
-            - Se sua saída **não ocasionar déficit**, você pode ir imediatamente para a nova unidade
-            """)
+            st.info("💡 Dúvidas sobre regras, inscrição ou resultado? Consulte a aba **❓ Como Usar**.")
     
     # =========================================================================
     # ABA 3: SERVIDORES INSCRITOS
@@ -1428,6 +1406,180 @@ Antes de confirmar a inscrição, verifique se o servidor:
                     st.info("Registros antigos não possuem informações de log. Novas inscrições terão essa informação automaticamente.")
     
     # =========================================================================
+    # ABA AJUDA: COMO USAR O SIMULADOR
+    # =========================================================================
+    with tab_ajuda:
+        st.header("❓ Como Usar o Simulador")
+        st.caption("Tire suas dúvidas sobre o simulador e as regras do Edital 01/2026")
+
+        # Seção 1 — O que é este simulador?
+        st.subheader("📌 O que é este simulador?")
+
+        with st.expander("O que é este simulador?"):
+            st.markdown("""
+Este é um simulador **não oficial** criado para ajudar servidores do TJPR a se planejarem para o processo de relotação do Edital nº 01/2026 (Técnico Judiciário).
+
+**O que ele faz:**
+- Permite que você simule sua inscrição e veja o resultado provável
+- Mostra quantas pessoas escolheram cada unidade (demanda)
+- Calcula se você ficaria designado na origem ou não
+
+**O que ele NÃO faz:**
+- Não substitui o resultado oficial do TJPR
+- Não garante que o resultado será igual ao oficial
+- O resultado real depende da análise da Secretaria de Gestão de Pessoas
+            """)
+
+        with st.expander("Como funciona o processo de relotação?"):
+            st.markdown("""
+O processo segue **duas fases**, nesta ordem:
+
+**Fase 1 — Anexo I (vagas deficitárias):**
+- São analisadas primeiro as escolhas do Anexo I (50 unidades com falta de servidores)
+- Os servidores são atendidos **na ordem da Lista Classificatória** (posição 1 = maior prioridade)
+- Quem consegue vaga no Anexo I libera sua lotação atual
+
+**Fase 2 — Anexo II (todas as unidades):**
+- Quem **não** conseguiu vaga no Anexo I é analisado aqui
+- As vagas liberadas na Fase 1 ficam disponíveis
+- Se a escolha original do Anexo I estiver disponível no Anexo II, ela tem preferência (Item 3.13)
+
+**Critério de prioridade:** Somente a posição na Lista Classificatória do Edital 01/2026.
+            """)
+
+        # Seção 2 — Como me inscrever?
+        st.subheader("✍️ Como me inscrever?")
+
+        with st.expander("Como preencher minha inscrição?"):
+            st.markdown("""
+1. Vá para a aba **✍️ Minha Inscrição**
+2. **Busque seu nome** no campo de busca — o sistema vai localizar seus dados na Lista Classificatória
+3. Confira sua **posição na lista** (ela define sua prioridade)
+4. Preencha sua **matrícula** e **data de admissão**
+5. Escolha a **unidade do Anexo I** (1ª opção — vagas deficitárias)
+6. Escolha a **unidade do Anexo II** (2ª opção — todas as unidades)
+7. Clique em **Salvar Inscrição**
+
+💡 **Dica:** Você pode usar a aba **📋 Vagas do Edital** para ver todas as unidades disponíveis e quantas pessoas já escolheram cada uma.
+            """)
+
+        with st.expander("O que é o Anexo I e o Anexo II?"):
+            st.markdown("""
+- **Anexo I** → São **50 unidades com déficit** de servidores (faltam funcionários). É sua **1ª opção** de escolha e é analisada primeiro.
+- **Anexo II** → São **todas as 300+ unidades** judiciárias do TJPR. É sua **2ª opção**, analisada somente se você não conseguir vaga no Anexo I.
+
+Você deve escolher **uma unidade de cada anexo** ao se inscrever.
+            """)
+
+        with st.expander("Posso alterar minha inscrição depois?"):
+            st.markdown("""
+**Sim!** Para alterar ou excluir sua inscrição:
+1. Vá para a aba **✍️ Minha Inscrição**
+2. Busque por **matrícula** ou **nome**
+3. Os dados da inscrição existente serão carregados automaticamente
+4. Faça as alterações desejadas e clique em **Salvar Inscrição**
+
+Para excluir, use o botão **Excluir Inscrição** no final da aba.
+            """)
+
+        # Seção 3 — Entendendo o resultado
+        st.subheader("📊 Entendendo o resultado")
+
+        with st.expander("O que significa 'Designação na Origem'?"):
+            st.markdown("""
+**O que é "Designação na Origem"?**
+
+É quando você consegue a vaga, mas precisa continuar trabalhando na sua unidade atual até chegar um substituto.
+
+| Designação | O que acontece? |
+|------------|-------------|
+| **NÃO** | ✅ Sua saída **não deixa a unidade abaixo do mínimo** de servidores. Você pode ir para a nova unidade imediatamente! |
+| **SIM** | ⚠️ Sua saída **deixaria a unidade abaixo do mínimo**. Você foi aprovado e será transferido oficialmente, MAS continua trabalhando na unidade atual até chegarem novos servidores. |
+
+**⚠️ Atenção Importante:** Se não chegarem substitutos até o final da validade do concurso, sua transferência pode ser cancelada e você volta oficialmente para a unidade de origem.
+
+**Como saber se terei que ficar designado?**
+- 🟢 Se a unidade ficar **acima do mínimo** depois que você sair → Designação = NÃO
+- 🟡 Se a unidade ficar **no mínimo exato** depois que você sair → Designação = NÃO
+- 🔴 Se a unidade ficar **abaixo do mínimo** depois que você sair → Designação = SIM
+            """)
+
+        with st.expander("O que significam as cores no resultado?"):
+            st.markdown("""
+- 🟢 **Verde** — Aprovado (designação = NÃO) → pode sair imediatamente para a nova unidade
+- 🟡 **Amarelo** — Aprovado (designação = SIM) → fica na origem até chegar um substituto
+- ⚪ **Branco** — Não obteve vaga nesta simulação
+            """)
+
+        with st.expander("Por que meu resultado aparece como 'NÃO OBTEVE VAGA'?"):
+            st.markdown("""
+Isso pode acontecer por alguns motivos:
+
+1. **Muita concorrência:** Servidores com posição menor (mais prioritários) na Lista Classificatória preencheram as vagas antes de você
+2. **Unidade sem vaga:** A unidade que você escolheu no Anexo II não ficou deficitária (não abriu vaga)
+3. **Ambas as escolhas indisponíveis:** Nem a vaga do Anexo I nem a do Anexo II estavam disponíveis quando chegou sua vez
+
+💡 **Dica:** Experimente trocar suas escolhas para unidades com menor demanda (menos pessoas disputando) na aba **📋 Vagas do Edital**.
+            """)
+
+        # Seção 4 — Regras do Edital 01/2026
+        st.subheader("📜 Regras do Edital 01/2026")
+
+        with st.expander("Quem pode participar?"):
+            st.markdown("""
+- Servidores **Técnicos Judiciários** lotados em unidades do **1º Grau de Jurisdição**
+- Servidores em **estágio probatório podem participar** (novidade do Edital 01/2026)
+- Servidores relotados a pedido há **menos de 2 anos** da publicação do edital (10/02/2026) são **desclassificados** (Item 3.3)
+- Exceção: se todos os servidores de uma unidade estiverem nessa situação, há preferência ao relotado há mais tempo (Item 3.3.1)
+            """)
+
+        with st.expander("O que o simulador NÃO verifica automaticamente?"):
+            st.markdown("""
+Este simulador **NÃO verifica automaticamente**:
+- Se o servidor está lotado em 1º grau (Item 3.2)
+- Se houve relotação nos últimos 2 anos (Item 3.3)
+- Regras especiais para unidades em estatização (Item 3.4)
+- Servidores de unidades superavitárias ou já designados de ofício (Item 3.18)
+
+Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pessoas** no resultado oficial.
+            """)
+
+        with st.expander("O que é Lotação Paradigma?"):
+            st.markdown("""
+**Colunas da tabela de lotação (aba 📈 Lotação):**
+- **Lotação Real**: Quantidade de servidores que trabalham na unidade hoje
+- **Lotação Paradigma**: Quantidade mínima de servidores necessária (definida pelo CNJ — Resolução 219/2016)
+- **Diferença**: Quantos servidores a mais ou a menos a unidade tem
+
+**Status (Situação da Unidade):**
+- 🟢 **SUPERAVITÁRIA** (Acima do mínimo): Tem mais servidores que o necessário
+- 🟡 **EQUILIBRADA** (No mínimo): Tem exatamente o necessário
+- 🔴 **DEFICITÁRIA** (Abaixo do mínimo): Faltam servidores
+
+**Impacto na sua Relotação:**
+- Se sua saída **deixar a unidade abaixo do mínimo** (DEFICITÁRIA) → você será designado para ficar até chegar um substituto ⚠️
+- Se sua saída **NÃO deixar a unidade abaixo do mínimo** → você pode sair imediatamente ✅
+            """)
+
+        # Seção 5 — Glossário
+        st.subheader("📖 Glossário rápido")
+
+        with st.expander("Ver glossário de termos"):
+            st.markdown("""
+| Termo | Significado |
+|-------|-------------|
+| **Anexo I** | Lista de 50 unidades com déficit de servidores — 1ª opção de escolha |
+| **Anexo II** | Lista de todas as 300+ unidades judiciárias — 2ª opção de escolha |
+| **Lista Classificatória** | Ranking dos 1.291 servidores que define a ordem de prioridade |
+| **Lotação Paradigma** | Número mínimo de servidores que cada unidade deve ter (CNJ 219/2016) |
+| **Designação na Origem** | Obrigação de permanecer na unidade atual até chegar substituto |
+| **RAJ** | Região Administrativa Judiciária — agrupamento geográfico de comarcas |
+| **Superavitária** | Unidade com **mais** servidores que o mínimo necessário |
+| **Equilibrada** | Unidade com **exatamente** o mínimo necessário |
+| **Deficitária** | Unidade com **menos** servidores que o mínimo necessário |
+            """)
+
+    # =========================================================================
     # ABA 1: RESULTADO E DASHBOARD
     # =========================================================================
     with tab1:
@@ -1467,38 +1619,6 @@ Antes de confirmar a inscrição, verifique se o servidor:
             
             st.divider()
             
-            # Explicação sobre Designação na Origem
-            with st.expander("ℹ️ O que significa 'Designação na Origem'?"):
-                st.markdown("""
-                **O que é "Designação na Origem"?**
-
-                É quando você consegue a vaga, mas precisa continuar trabalhando na sua unidade atual até chegar um substituto.
-
-                | Designação | O que acontece? |
-                |------------|-------------|
-                | **NÃO** | ✅ Sua saída **não deixa a unidade abaixo do mínimo** de servidores. Você pode ir para a nova unidade imediatamente! |
-                | **SIM** | ⚠️ Sua saída **deixaria a unidade abaixo do mínimo**. Você foi aprovado e será transferido oficialmente, MAS continua trabalhando na unidade atual até chegarem novos servidores. |
-
-                **⚠️ Atenção Importante:** Se não chegarem substitutos até o final da validade do concurso, sua transferência pode ser cancelada e você volta oficialmente para a unidade de origem.
-
-                **Como saber se terei que ficar designado?**
-                - 🟢 Se a unidade ficar **acima do mínimo** depois que você sair → Designação = NÃO
-                - 🟡 Se a unidade ficar **no mínimo exato** depois que você sair → Designação = NÃO
-                - 🔴 Se a unidade ficar **abaixo do mínimo** depois que você sair → Designação = SIM
-                """)
-
-            # Nota sobre verificações manuais (Edital 01/2026)
-            st.info("""
-**Nota sobre o Edital 01/2026:**
-
-Este simulador **NÃO verifica automaticamente**:
-- Se o servidor está lotado em 1º grau (Item 3.2)
-- Se houve relotação nos últimos 2 anos (Item 3.3)
-- Regras especiais para unidades em estatização (Item 3.4)
-- Servidores de unidades superavitárias ou já designados de ofício (Item 3.18)
-
-Essas verificações são feitas manualmente pela Secretaria de Gestão de Pessoas.
-""")
 
             st.subheader("📊 Resultado por Ordem de Antiguidade")
 
@@ -2034,23 +2154,6 @@ Essas verificações são feitas manualmente pela Secretaria de Gestão de Pesso
         st.header("📈 Lotação das Unidades Judiciárias")
         st.info("📊 Dados oficiais do TJPR mostrando quantos servidores tem cada unidade (Lotação Real) e quantos deveriam ter pelo mínimo legal (Lotação Paradigma CNJ 219/2016).")
 
-        # Explicação
-        with st.expander("ℹ️ Como interpretar os dados"):
-            st.markdown("""
-            **Colunas:**
-            - **Lotação Real**: Quantidade de servidores que trabalham na unidade hoje
-            - **Lotação Paradigma**: Quantidade mínima de servidores necessária (definida pelo CNJ)
-            - **Diferença**: Quantos servidores a mais ou a menos a unidade tem
-
-            **Status (Situação da Unidade):**
-            - 🟢 **SUPERAVITÁRIA** (Acima do mínimo): Tem mais servidores que o necessário
-            - 🟡 **EQUILIBRADA** (No mínimo): Tem exatamente o necessário
-            - 🔴 **DEFICITÁRIA** (Abaixo do mínimo): Faltam servidores
-
-            **Impacto na sua Relotação:**
-            - Se sua saída **deixar a unidade abaixo do mínimo** (DEFICITÁRIA) → você será designado para ficar até chegar um substituto ⚠️
-            - Se sua saída **NÃO deixar a unidade abaixo do mínimo** → você pode sair imediatamente ✅
-            """)
         
         # Métricas gerais
         col1, col2, col3, col4 = st.columns(4)
