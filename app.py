@@ -822,24 +822,20 @@ def calcular_resultado(df_inscricoes):
 
             # Determinar motivo detalhado no resultado
             if escolha_a1 and escolha_a2:
-                resultado_a1 = "Anexo I esgotado" if (escolha_a1 in ANEXO_I) else "Código Anexo I inválido"
-                resultado_a2 = "Anexo II não liberado" if (escolha_a2 in ANEXO_II) else "Código Anexo II inválido"
-                df.at[idx, "resultado"] = f"Sem vaga — {resultado_a1}; {resultado_a2}"
+                motivo_a1 = "todas as vagas já foram preenchidas" if (escolha_a1 in ANEXO_I) else f"código inválido ({escolha_a1})"
+                motivo_a2 = "nenhum servidor saiu da unidade escolhida" if (escolha_a2 in ANEXO_II) else f"código inválido ({escolha_a2})"
+                df.at[idx, "resultado"] = f"Anexo I: {motivo_a1} · Anexo II: {motivo_a2}"
                 df.at[idx, "observacao"] = "Vagas do Anexo I e II não disponíveis"
             elif escolha_a1:
-                if escolha_a1 in ANEXO_I:
-                    df.at[idx, "resultado"] = "Sem vaga — Anexo I esgotado e não liberado no Anexo II"
-                else:
-                    df.at[idx, "resultado"] = "Sem vaga — Código Anexo I inválido"
+                motivo_a1 = "todas as vagas já foram preenchidas" if (escolha_a1 in ANEXO_I) else f"código inválido ({escolha_a1})"
+                df.at[idx, "resultado"] = f"Anexo I: {motivo_a1} · Anexo II: não escolheu unidade"
                 df.at[idx, "observacao"] = df.at[idx, "resultado"]
             elif escolha_a2:
-                if escolha_a2 in ANEXO_II:
-                    df.at[idx, "resultado"] = "Sem vaga — Anexo II não liberado (nenhum servidor saiu da unidade)"
-                else:
-                    df.at[idx, "resultado"] = "Sem vaga — Código Anexo II inválido"
+                motivo_a2 = "nenhum servidor saiu da unidade escolhida" if (escolha_a2 in ANEXO_II) else f"código inválido ({escolha_a2})"
+                df.at[idx, "resultado"] = f"Anexo I: não escolheu unidade · Anexo II: {motivo_a2}"
                 df.at[idx, "observacao"] = df.at[idx, "resultado"]
             else:
-                df.at[idx, "resultado"] = "Sem vaga — não escolheu unidade no Anexo I nem no Anexo II"
+                df.at[idx, "resultado"] = "Não escolheu unidade no Anexo I nem no Anexo II"
                 df.at[idx, "observacao"] = df.at[idx, "resultado"]
             
             df.at[idx, "designacao_origem"] = "-"
@@ -1834,7 +1830,7 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
             # Tabela resumida (sem Data Admissão e Observação para reduzir largura)
             df_exibir = df_filtrado[[
                 "posicao_antiguidade", "nome", "matricula", "unidade_origem", "status",
-                "resultado", "vaga_obtida", "designacao_origem"
+                "vaga_obtida", "resultado", "designacao_origem"
             ]].copy()
 
             # Renomear colunas
@@ -1844,8 +1840,8 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
                 "matricula": "Matrícula",
                 "unidade_origem": "Origem",
                 "status": "Status",
-                "resultado": "Resultado",
                 "vaga_obtida": "Vaga Obtida",
+                "resultado": "Resultado",
                 "designacao_origem": "Designação"
             })
 
