@@ -654,20 +654,28 @@ def calcular_resultado(df_inscricoes):
         else:
             # Nenhuma vaga disponível
             df.at[idx, "status"] = "NÃO OBTEVE VAGA"
-            df.at[idx, "resultado"] = "Sem vaga"
-            
-            # Determinar motivo
+
+            # Determinar motivo detalhado no resultado
             if escolha_a1 and escolha_a2:
+                resultado_a1 = "Anexo I esgotado" if (escolha_a1 in ANEXO_I) else "Código Anexo I inválido"
+                resultado_a2 = "Anexo II não liberado" if (escolha_a2 in ANEXO_II) else "Código Anexo II inválido"
+                df.at[idx, "resultado"] = f"Sem vaga — {resultado_a1}; {resultado_a2}"
                 df.at[idx, "observacao"] = "Vagas do Anexo I e II não disponíveis"
             elif escolha_a1:
-                df.at[idx, "observacao"] = "Vaga do Anexo I não foi liberada no Anexo II"
+                if escolha_a1 in ANEXO_I:
+                    df.at[idx, "resultado"] = "Sem vaga — Anexo I esgotado e não liberado no Anexo II"
+                else:
+                    df.at[idx, "resultado"] = "Sem vaga — Código Anexo I inválido"
+                df.at[idx, "observacao"] = df.at[idx, "resultado"]
             elif escolha_a2:
                 if escolha_a2 in ANEXO_II:
-                    df.at[idx, "observacao"] = "Vaga do Anexo II não foi liberada"
+                    df.at[idx, "resultado"] = "Sem vaga — Anexo II não liberado (nenhum servidor saiu da unidade)"
                 else:
-                    df.at[idx, "observacao"] = "Código Anexo II inválido"
+                    df.at[idx, "resultado"] = "Sem vaga — Código Anexo II inválido"
+                df.at[idx, "observacao"] = df.at[idx, "resultado"]
             else:
-                df.at[idx, "observacao"] = "Não escolheu nenhuma vaga"
+                df.at[idx, "resultado"] = "Sem vaga — não escolheu unidade no Anexo I nem no Anexo II"
+                df.at[idx, "observacao"] = df.at[idx, "resultado"]
             
             df.at[idx, "designacao_origem"] = "-"
     
@@ -1503,7 +1511,7 @@ Essas verificações são feitas manualmente pela Secretaria de Gestão de Pesso
 
             # Tabela resumida (sem Data Admissão e Observação para reduzir largura)
             df_exibir = df_filtrado[[
-                "posicao_antiguidade", "nome", "unidade_origem", "status",
+                "posicao_antiguidade", "nome", "matricula", "unidade_origem", "status",
                 "resultado", "vaga_obtida", "designacao_origem"
             ]].copy()
 
@@ -1511,6 +1519,7 @@ Essas verificações são feitas manualmente pela Secretaria de Gestão de Pesso
             df_exibir = df_exibir.rename(columns={
                 "posicao_antiguidade": "Pos.",
                 "nome": "Nome",
+                "matricula": "Matrícula",
                 "unidade_origem": "Origem",
                 "status": "Status",
                 "resultado": "Resultado",
@@ -1552,50 +1561,6 @@ Essas verificações são feitas manualmente pela Secretaria de Gestão de Pesso
             - ⚪ Não obteve vaga
             """)
 
-            # Expander com detalhes completos
-            with st.expander("📋 Ver Detalhes Completos (com Data Admissão, Matrícula e Observações)"):
-                df_completo = df_filtrado[[
-                    "posicao_antiguidade", "nome", "matricula", "data_admissao_fmt",
-                    "unidade_origem", "status", "resultado", "vaga_obtida",
-                    "designacao_origem", "observacao"
-                ]].copy()
-
-                # Renomear colunas
-                df_completo = df_completo.rename(columns={
-                    "posicao_antiguidade": "Pos.",
-                    "nome": "Nome",
-                    "matricula": "Matrícula",
-                    "data_admissao_fmt": "Data Admissão",
-                    "unidade_origem": "Unidade de Origem",
-                    "status": "Status",
-                    "resultado": "Resultado",
-                    "vaga_obtida": "Vaga Obtida",
-                    "designacao_origem": "Designação Origem",
-                    "observacao": "Observação"
-                })
-
-                # Função para styling
-                def highlight_row_completo(row):
-                    if row["Status"] == "APROVADO":
-                        if row["Designação Origem"] == "SIM":
-                            color = "#fff3cd"  # Amarelo
-                        else:
-                            color = "#d4edda"  # Verde
-                    elif row["Status"] == "DESCLASSIFICADO":
-                        color = "#f8d7da"  # Vermelho
-                    elif row["Status"] == "NÃO OBTEVE VAGA":
-                        color = "#e2e3e5"  # Cinza
-                    else:
-                        color = ""
-
-                    return [f"background-color: {color}" if color else ""] * len(row)
-
-                st.dataframe(
-                    df_completo.style.apply(highlight_row_completo, axis=1),
-                    width="stretch",
-                    hide_index=True,
-                    use_container_width=True
-                )
             
             st.divider()
             
