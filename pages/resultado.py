@@ -117,7 +117,11 @@ else:
         df_exibir.style.apply(highlight_row, axis=1),
         hide_index=True,
         height=500,
-        use_container_width=True
+        use_container_width=True,
+        column_config={
+            "Origem": st.column_config.TextColumn("Origem", width="small"),
+            "Vaga Obtida": st.column_config.TextColumn("Vaga Obtida", width="small"),
+        }
     )
 
     st.caption(f"Exibindo: {len(df_filtrado)} de {len(df_resultado)} servidores")
