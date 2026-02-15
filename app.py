@@ -118,6 +118,7 @@ TEMAS = {
         "chart_green2": "#43A047",
         "chart_yellow": "#ffc107",
         "chart_scale": "Blues",
+        "plotly_template": "plotly_white",
     },
     "dark": {
         "row_approved": "#1a3d2e",
@@ -136,6 +137,7 @@ TEMAS = {
         "chart_green2": "#86efac",
         "chart_yellow": "#fbbf24",
         "chart_scale": "Teal",
+        "plotly_template": "plotly_dark",
     },
 }
 
@@ -1939,42 +1941,112 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
             # =========== GRÁFICOS VISUAIS ===========
             st.subheader("📈 Visualização Gráfica")
 
-            from utils.charts import chartscss_column, chartscss_bar
-
-            tema_graf = get_tema()
-
             col_graf1, col_graf2 = st.columns(2)
 
             with col_graf1:
                 st.markdown("**📊 Distribuição de Resultados**")
-                chartscss_column(
-                    {"Aprovados": aprovados, "Desclassificados": desclass, "Sem Vaga": sem_vaga},
-                    show_labels=True, show_values=True, height="250px",
-                    colors=[tema_graf["chart_green"], tema_graf["chart_red"], tema_graf["chart_gray"]],
+                # Gráfico de pizza
+                tema_graf = get_tema()
+                import plotly.express as px
+                fig_dados = {
+                    'Status': ['Aprovados', 'Desclassificados', 'Sem Vaga'],
+                    'Quantidade': [aprovados, desclass, sem_vaga],
+                    'Cor': [tema_graf["chart_green"], tema_graf["chart_red"], tema_graf["chart_gray"]]
+                }
+                df_grafico = pd.DataFrame(fig_dados)
+
+                fig_pizza = px.pie(
+                    df_grafico,
+                    values='Quantidade',
+                    names='Status',
+                    color='Status',
+                    color_discrete_map={
+                        'Aprovados': tema_graf["chart_green"],
+                        'Desclassificados': tema_graf["chart_red"],
+                        'Sem Vaga': tema_graf["chart_gray"]
+                    },
+                    hole=0.4
                 )
+                fig_pizza.update_traces(textposition='inside', textinfo='percent+label+value')
+                fig_pizza.update_layout(
+                    showlegend=True,
+                    height=350,
+                    margin=dict(t=20, b=20, l=20, r=20),
+                    template=tema_graf["plotly_template"]
+                )
+                st.plotly_chart(fig_pizza, use_container_width=True)
 
             with col_graf2:
                 st.markdown("**📋 Aprovados por Anexo**")
-                chartscss_column(
-                    {"Anexo I": aprovados_a1, "Anexo II": aprovados_a2},
-                    show_labels=True, show_values=True, height="250px",
-                    colors=[tema_graf["chart_blue"], tema_graf["chart_green2"]],
-                )
+                # Gráfico de barras
+                fig_dados_anexo = {
+                    'Anexo': ['Anexo I', 'Anexo II'],
+                    'Quantidade': [aprovados_a1, aprovados_a2],
+                    'Cor': [tema_graf["chart_blue"], tema_graf["chart_green2"]]
+                }
+                df_anexo = pd.DataFrame(fig_dados_anexo)
 
+                fig_barras = px.bar(
+                    df_anexo,
+                    x='Anexo',
+                    y='Quantidade',
+                    color='Anexo',
+                    color_discrete_map={
+                        'Anexo I': tema_graf["chart_blue"],
+                        'Anexo II': tema_graf["chart_green2"]
+                    },
+                    text='Quantidade'
+                )
+                fig_barras.update_traces(textposition='outside')
+                fig_barras.update_layout(
+                    showlegend=False,
+                    height=350,
+                    yaxis_title="Servidores Aprovados",
+                    xaxis_title="",
+                    margin=dict(t=20, b=20, l=20, r=20),
+                    template=tema_graf["plotly_template"]
+                )
+                st.plotly_chart(fig_barras, use_container_width=True)
+
+            # Gráfico de designação
             col_graf3, col_graf4 = st.columns(2)
 
             with col_graf3:
                 st.markdown("**🏢 Designação na Origem**")
                 com_designacao = len(df_resultado[df_resultado["designacao_origem"] == "SIM"])
                 sem_designacao = len(df_resultado[df_resultado["designacao_origem"] == "NÃO"])
-                chartscss_column(
-                    {"Podem sair": sem_designacao, "Aguardam subst.": com_designacao},
-                    show_labels=True, show_values=True, height="250px",
-                    colors=[tema_graf["chart_green"], tema_graf["chart_yellow"]],
+
+                fig_dados_desig = {
+                    'Situação': ['Podem sair\nimediatamente', 'Aguardam\nsubstituição'],
+                    'Quantidade': [sem_designacao, com_designacao]
+                }
+                df_desig = pd.DataFrame(fig_dados_desig)
+
+                fig_desig = px.bar(
+                    df_desig,
+                    x='Situação',
+                    y='Quantidade',
+                    color='Situação',
+                    color_discrete_map={
+                        'Podem sair\nimediatamente': tema_graf["chart_green"],
+                        'Aguardam\nsubstituição': tema_graf["chart_yellow"]
+                    },
+                    text='Quantidade'
                 )
+                fig_desig.update_traces(textposition='outside')
+                fig_desig.update_layout(
+                    showlegend=False,
+                    height=350,
+                    yaxis_title="Servidores Aprovados",
+                    xaxis_title="",
+                    margin=dict(t=20, b=20, l=20, r=20),
+                    template=tema_graf["plotly_template"]
+                )
+                st.plotly_chart(fig_desig, use_container_width=True)
 
             with col_graf4:
                 st.markdown("**🗺️ Top 5 Comarcas Mais Procuradas**")
+                # Contar comarcas mais escolhidas
                 comarcas_count = {}
                 for _, row in df_resultado.iterrows():
                     if row['status'] == 'APROVADO' and row['vaga_obtida'] and row['vaga_obtida'] != '-':
@@ -1984,13 +2056,27 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
 
                 if comarcas_count:
                     top_comarcas = sorted(comarcas_count.items(), key=lambda x: x[1], reverse=True)[:5]
-                    top_data = {c: v for c, v in top_comarcas}
-                    blue = tema_graf["chart_blue"]
-                    chartscss_bar(
-                        top_data,
-                        show_labels=True, show_values=True,
-                        colors=[blue] * len(top_data),
+                    df_comarcas = pd.DataFrame(top_comarcas, columns=['Comarca', 'Servidores'])
+
+                    fig_comarcas = px.bar(
+                        df_comarcas,
+                        y='Comarca',
+                        x='Servidores',
+                        orientation='h',
+                        text='Servidores',
+                        color='Servidores',
+                        color_continuous_scale=tema_graf["chart_scale"]
                     )
+                    fig_comarcas.update_traces(textposition='outside')
+                    fig_comarcas.update_layout(
+                        showlegend=False,
+                        height=350,
+                        xaxis_title="Servidores Aprovados",
+                        yaxis_title="",
+                        margin=dict(t=20, b=20, l=20, r=20),
+                        template=tema_graf["plotly_template"]
+                    )
+                    st.plotly_chart(fig_comarcas, use_container_width=True)
                 else:
                     st.info("Nenhum servidor aprovado ainda.")
 
