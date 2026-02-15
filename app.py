@@ -121,13 +121,13 @@ TEMAS = {
         "plotly_template": "plotly_white",
     },
     "dark": {
-        "row_approved": "#1a3d2e",
-        "row_waiting": "#3d3419",
-        "row_rejected": "#3d1f1f",
-        "row_no_vacancy": "#2d2d2d",
-        "status_superavit": "#1a3d2e",
-        "status_equilibrada": "#3d3419",
-        "status_deficitaria": "#3d1f1f",
+        "row_approved": "#b8e0c8",
+        "row_waiting": "#f0e8a8",
+        "row_rejected": "#f0b8b8",
+        "row_no_vacancy": "#d8d8d8",
+        "status_superavit": "#b8e0c8",
+        "status_equilibrada": "#f0e8a8",
+        "status_deficitaria": "#f0b8b8",
         "text_positive": "#4ade80",
         "text_negative": "#f87171",
         "chart_green": "#4ade80",
@@ -235,8 +235,18 @@ input, textarea, select, [data-baseweb="select"],
 h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown {
     color: #e0e0e0 !important;
 }
+/* DataFrames no modo escuro: fundo claro para contraste e legibilidade
+   (Streamlit usa Glide Data Grid; texto padrão é escuro, então fundo claro garante leitura) */
 [data-testid="stDataFrame"] {
-    background-color: #1e1e2e !important;
+    background-color: #e8ecf0 !important;
+    border-radius: 8px;
+}
+/* Texto das células (se renderizado como DOM, não canvas) */
+[data-testid="stDataFrame"] table td,
+[data-testid="stDataFrame"] table th,
+[data-testid="stDataFrame"] [role="gridcell"],
+[data-testid="stDataFrame"] [role="columnheader"] {
+    color: #262730 !important;
 }
 .stTabs [data-baseweb="tab"] {
     color: #9ca3af !important;
