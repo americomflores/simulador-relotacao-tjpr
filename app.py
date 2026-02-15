@@ -1192,7 +1192,7 @@ def main():
                     "1ª Escolha - Anexo I (Vagas Prioritárias com Déficit):",
                     opcoes_a1,
                     index=escolha_a1_default,
-                    help="50 unidades judiciárias que estão com déficit de servidores. Opcional: você pode deixar em branco se preferir."
+                    help="213 unidades judiciárias com 435 vagas para servidores. Opcional: você pode deixar em branco se preferir."
                 )
                 
                 opcoes_a2 = construir_opcoes_selectbox(ANEXO_II, default_text=OPCAO_NAO_ESCOLHEU, incluir_vazio=True)
@@ -1435,7 +1435,7 @@ Este é um simulador **não oficial** criado para ajudar servidores do TJPR a se
 O processo segue **duas fases**, nesta ordem:
 
 **Fase 1 — Anexo I (vagas deficitárias):**
-- São analisadas primeiro as escolhas do Anexo I (50 unidades com falta de servidores)
+- São analisadas primeiro as escolhas do Anexo I (213 unidades com 435 vagas)
 - Os servidores são atendidos **na ordem da Lista Classificatória** (posição 1 = maior prioridade)
 - Quem consegue vaga no Anexo I libera sua lotação atual
 
@@ -1465,8 +1465,8 @@ O processo segue **duas fases**, nesta ordem:
 
         with st.expander("O que é o Anexo I e o Anexo II?"):
             st.markdown("""
-- **Anexo I** → São **50 unidades com déficit** de servidores (faltam funcionários). É sua **1ª opção** de escolha e é analisada primeiro.
-- **Anexo II** → São **todas as 300+ unidades** judiciárias do TJPR. É sua **2ª opção**, analisada somente se você não conseguir vaga no Anexo I.
+- **Anexo I** → São **213 unidades com 435 vagas** (unidades deficitárias). É sua **1ª opção** de escolha e é analisada primeiro.
+- **Anexo II** → São **todas as 606 unidades** judiciárias do TJPR. É sua **2ª opção**, analisada somente se você não conseguir vaga no Anexo I.
 
 Você deve escolher **uma unidade de cada anexo** ao se inscrever.
             """)
@@ -1568,8 +1568,8 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
             st.markdown("""
 | Termo | Significado |
 |-------|-------------|
-| **Anexo I** | Lista de 50 unidades com déficit de servidores — 1ª opção de escolha |
-| **Anexo II** | Lista de todas as 300+ unidades judiciárias — 2ª opção de escolha |
+| **Anexo I** | 213 unidades com 435 vagas (déficit de servidores) — 1ª opção de escolha |
+| **Anexo II** | Todas as 606 unidades judiciárias — 2ª opção de escolha |
 | **Lista Classificatória** | Ranking dos 1.291 servidores que define a ordem de prioridade |
 | **Lotação Paradigma** | Número mínimo de servidores que cada unidade deve ter (CNJ 219/2016) |
 | **Designação na Origem** | Obrigação de permanecer na unidade atual até chegar substituto |
@@ -1926,7 +1926,7 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
         
         if opcao_vagas == "📋 Anexo I (Vagas com Déficit)":
             st.subheader("Vagas com Déficit (Anexo I)")
-            st.info("💡 **Anexo I** = 50 unidades que precisam urgentemente de servidores. A coluna **Demanda** mostra quantos servidores querem ir para cada unidade.")
+            st.info("💡 **Anexo I** = 213 unidades com 435 vagas (unidades deficitárias). A coluna **Demanda** mostra quantos servidores querem ir para cada unidade.")
             
             dados_a1 = []
             for codigo, info in ANEXO_I.items():
@@ -1980,7 +1980,7 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
         
         else:  # Anexo II
             st.subheader("Todas as Unidades (Anexo II)")
-            st.info("💡 **Anexo II** = Todas as 300+ unidades judiciárias do TJPR. A coluna **Demanda** mostra quantos servidores querem ir para cada unidade (escolha 2ª opção).")
+            st.info("💡 **Anexo II** = Todas as 606 unidades judiciárias do TJPR. A coluna **Demanda** mostra quantos servidores querem ir para cada unidade (escolha 2ª opção).")
             
             dados_a2 = []
             for codigo, info in ANEXO_II.items():
