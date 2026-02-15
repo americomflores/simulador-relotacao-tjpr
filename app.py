@@ -1082,6 +1082,24 @@ def main():
                 else:
                     st.error(f"❌ **Servidor NÃO encontrado automaticamente!**\n\nInforme a posição manualmente no formulário abaixo.")
 
+            # Buscar inscrição existente por nome (evitar duplicidade)
+            if posicao_sugerida and nome_encontrado and inscricao_existente is None:
+                nome_lista_normalizado = nome_encontrado.strip().lower()
+                if not df_inscricoes.empty and "nome" in df_inscricoes.columns:
+                    df_match = df_inscricoes[df_inscricoes["nome"].astype(str).str.strip().str.lower() == nome_lista_normalizado]
+                    if not df_match.empty:
+                        row = df_match.iloc[0]
+                        inscricao_existente = {}
+                        for col in df_inscricoes.columns:
+                            val = row[col]
+                            if isinstance(val, date):
+                                inscricao_existente[col] = val.strftime("%d/%m/%Y")
+                            elif pd.notna(val):
+                                inscricao_existente[col] = str(val)
+                            else:
+                                inscricao_existente[col] = ""
+                        st.info(f"📋 **Inscrição existente encontrada pelo nome!** Matrícula: **{inscricao_existente.get('matricula', '')}** — dados carregados para edição.")
+
             st.divider()
 
             # Aviso sobre verificações manuais necessárias (Edital 01/2026)
@@ -1093,6 +1111,11 @@ Antes de confirmar a inscrição, verifique se o servidor:
 - **NÃO** foi relotado a pedido há menos de **2 anos** da data de publicação do edital - 10/02/2026 (Item 3.3)
 - Se relotou no Edital 04/2025 e permaneceu designado na origem, só pode participar se atender ao item 3.3 (Item 3.3.2)
 """)
+
+            # Determinar matrícula para o formulário (da busca direta ou encontrada por nome)
+            matricula_valor = matricula_busca
+            if not matricula_valor and inscricao_existente:
+                matricula_valor = str(inscricao_existente.get("matricula", ""))
 
             with st.form("form_inscricao"):
                 nome = st.text_input(
@@ -1120,16 +1143,24 @@ Antes de confirmar a inscrição, verifique se o servidor:
 
                 matricula = st.text_input(
                     "Matrícula:",
-                    value=matricula_busca,
-                    disabled=True if matricula_busca else False
+                    value=matricula_valor,
+                    disabled=True if matricula_valor else False
                 )
                 
                 data_default = None
                 if inscricao_existente and inscricao_existente.get("data_admissao"):
                     try:
                         data_default = datetime.strptime(inscricao_existente["data_admissao"], "%d/%m/%Y").date()
-                    except (ValueError, TypeError) as e:
-                        # Data em formato inválido, usar None como default
+                    except (ValueError, TypeError):
+                        pass
+
+                # Fallback: usar inicio_cargo da Lista Classificatória
+                if data_default is None and posicao_sugerida and posicao_sugerida in LISTA_CLASSIFICATORIA:
+                    try:
+                        inicio_cargo = LISTA_CLASSIFICATORIA[posicao_sugerida].get("inicio_cargo", "")
+                        if inicio_cargo:
+                            data_default = datetime.strptime(inicio_cargo, "%d/%m/%Y").date()
+                    except (ValueError, TypeError, KeyError):
                         pass
                 
                 data_admissao = st.date_input(
