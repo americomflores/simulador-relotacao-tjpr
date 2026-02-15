@@ -287,11 +287,12 @@ def calcular_resultado(df_inscricoes):
                         else:
                             df.at[idx, "designacao_origem"] = "NÃO"
                     
-                    # Liberar vaga no Anexo II
-                    if lotacao_origem in vagas_anexo2:
-                        vagas_anexo2[lotacao_origem] += 1
-                    else:
-                        vagas_anexo2[lotacao_origem] = 1
+                    # Liberar vaga no Anexo II APENAS se origem ficar DEFICITÁRIA (item 3.11)
+                    if dados_origem_final and dados_origem_final["status"] == "DEFICITÁRIA":
+                        if lotacao_origem in vagas_anexo2:
+                            vagas_anexo2[lotacao_origem] += 1
+                        else:
+                            vagas_anexo2[lotacao_origem] = 1
                 else:
                     df.at[idx, "designacao_origem"] = "-"
             else:
