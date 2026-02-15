@@ -96,60 +96,213 @@ st.set_page_config(
     layout="wide"
 )
 
-# CSS para melhorar responsividade em dispositivos móveis
-st.markdown("""
+# =============================================================================
+# TEMAS (Light / Dark)
+# =============================================================================
+
+TEMAS = {
+    "light": {
+        "row_approved": "#d4edda",
+        "row_waiting": "#fff3cd",
+        "row_rejected": "#f8d7da",
+        "row_no_vacancy": "#e2e3e5",
+        "status_superavit": "#d4edda",
+        "status_equilibrada": "#fff3cd",
+        "status_deficitaria": "#f8d7da",
+        "text_positive": "green",
+        "text_negative": "red",
+        "chart_green": "#28a745",
+        "chart_red": "#dc3545",
+        "chart_gray": "#6c757d",
+        "chart_blue": "#1E88E5",
+        "chart_green2": "#43A047",
+        "chart_yellow": "#ffc107",
+        "chart_scale": "Blues",
+        "plotly_template": "plotly_white",
+    },
+    "dark": {
+        "row_approved": "#1a3d2e",
+        "row_waiting": "#3d3419",
+        "row_rejected": "#3d1f1f",
+        "row_no_vacancy": "#2d2d2d",
+        "status_superavit": "#1a3d2e",
+        "status_equilibrada": "#3d3419",
+        "status_deficitaria": "#3d1f1f",
+        "text_positive": "#4ade80",
+        "text_negative": "#f87171",
+        "chart_green": "#4ade80",
+        "chart_red": "#f87171",
+        "chart_gray": "#9ca3af",
+        "chart_blue": "#60a5fa",
+        "chart_green2": "#86efac",
+        "chart_yellow": "#fbbf24",
+        "chart_scale": "Teal",
+        "plotly_template": "plotly_dark",
+    },
+}
+
+
+def get_tema():
+    return TEMAS["dark"] if st.session_state.get("dark_mode") else TEMAS["light"]
+
+
+if "dark_mode" not in st.session_state:
+    st.session_state.dark_mode = False
+
+st.sidebar.toggle("🌙 Modo Escuro", key="dark_mode")
+
+# CSS com custom properties para suporte a Light/Dark mode
+_dark = st.session_state.get("dark_mode", False)
+
+_css_vars_light = """
+:root {
+    --card-bg: white;
+    --card-shadow: rgba(0,0,0,0.1);
+    --card-blue-bg: #E3F2FD;
+    --card-green-bg: #E8F5E9;
+    --card-red-bg: #FFEBEE;
+    --card-yellow-bg: #FFF9C4;
+    --card-gray-bg: #F5F5F5;
+    --card-orange-bg: #FFF3E0;
+    --border-accent: #1976D2;
+    --text-primary: #424242;
+    --text-secondary: #757575;
+    --text-muted: #9E9E9E;
+    --text-accent: #1976D2;
+    --empty-bg: #FAFAFA;
+    --divider-line: #E0E0E0;
+    --progress-bg: #E0E0E0;
+    --alert-info-bg: #E3F2FD;
+    --alert-success-bg: #E8F5E9;
+    --alert-warning-bg: #FFF3E0;
+    --alert-error-bg: #FFEBEE;
+    --raj-border: #ddd;
+}
+"""
+
+_css_vars_dark = """
+:root {
+    --card-bg: #1e1e2e;
+    --card-shadow: rgba(0,0,0,0.3);
+    --card-blue-bg: #1a2744;
+    --card-green-bg: #1a3d2e;
+    --card-red-bg: #3d1f1f;
+    --card-yellow-bg: #3d3419;
+    --card-gray-bg: #2d2d2d;
+    --card-orange-bg: #3d2e1a;
+    --border-accent: #60a5fa;
+    --text-primary: #e0e0e0;
+    --text-secondary: #9ca3af;
+    --text-muted: #6b7280;
+    --text-accent: #60a5fa;
+    --empty-bg: #1a1a2e;
+    --divider-line: #444;
+    --progress-bg: #333;
+    --alert-info-bg: #1a2744;
+    --alert-success-bg: #1a3d2e;
+    --alert-warning-bg: #3d2e1a;
+    --alert-error-bg: #3d1f1f;
+    --raj-border: #444;
+}
+"""
+
+_css_dark_overrides = """
+.stApp {
+    background-color: #0e0e1a !important;
+    color: #e0e0e0 !important;
+}
+[data-testid="stSidebar"] {
+    background-color: #161625 !important;
+}
+[data-testid="stHeader"] {
+    background-color: #0e0e1a !important;
+}
+input, textarea, select, [data-baseweb="select"],
+[data-baseweb="input"], [data-baseweb="textarea"] {
+    background-color: #1e1e2e !important;
+    color: #e0e0e0 !important;
+}
+[data-testid="metric-container"] {
+    background-color: #1e1e2e !important;
+    color: #e0e0e0 !important;
+}
+[data-testid="metric-container"] label {
+    color: #9ca3af !important;
+}
+[data-testid="metric-container"] [data-testid="stMetricValue"] {
+    color: #e0e0e0 !important;
+}
+h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown {
+    color: #e0e0e0 !important;
+}
+[data-testid="stDataFrame"] {
+    background-color: #1e1e2e !important;
+}
+.stTabs [data-baseweb="tab"] {
+    color: #9ca3af !important;
+}
+.stTabs [aria-selected="true"] {
+    color: #60a5fa !important;
+}
+[data-baseweb="tab-highlight"] {
+    background-color: #60a5fa !important;
+}
+.stCaption, caption {
+    color: #6b7280 !important;
+}
+hr {
+    border-color: #333 !important;
+}
+"""
+
+st.markdown(f"""
 <style>
+{_css_vars_dark if _dark else _css_vars_light}
+
+{_css_dark_overrides if _dark else ''}
+
 /* Ajustes para telas menores */
-@media (max-width: 768px) {
-    /* Reduzir padding das colunas */
-    .stColumn {
+@media (max-width: 768px) {{
+    .stColumn {{
         padding: 0 5px !important;
-    }
-    
-    /* Reduzir tamanho das métricas */
-    [data-testid="metric-container"] {
+    }}
+    [data-testid="metric-container"] {{
         padding: 10px 5px !important;
-    }
-    
-    /* Ajustar tamanho da fonte dos títulos */
-    h1 {
+    }}
+    h1 {{
         font-size: 1.5rem !important;
-    }
-    h2 {
+    }}
+    h2 {{
         font-size: 1.2rem !important;
-    }
-    h3 {
+    }}
+    h3 {{
         font-size: 1rem !important;
-    }
-    
-    /* Ajustar tabelas para scroll horizontal */
-    .stDataFrame {
+    }}
+    .stDataFrame {{
         overflow-x: auto !important;
-    }
-    
-    /* Reduzir espaçamento das tabs */
-    .stTabs [data-baseweb="tab-list"] {
+    }}
+    .stTabs [data-baseweb="tab-list"] {{
         gap: 2px;
-    }
-    .stTabs [data-baseweb="tab"] {
+    }}
+    .stTabs [data-baseweb="tab"] {{
         padding: 5px 8px;
         font-size: 12px;
-    }
-}
+    }}
+}}
 
 /* Melhorar visualização das tabs em geral */
-.stTabs [data-baseweb="tab-list"] {
+.stTabs [data-baseweb="tab-list"] {{
     flex-wrap: wrap;
-}
+}}
 
 /* Cards de RAJ */
-.raj-box {
-    border: 1px solid #ddd;
+.raj-box {{
+    border: 1px solid var(--raj-border);
     border-radius: 8px;
     padding: 10px;
     margin: 5px 0;
     text-align: center;
-}
+}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -1679,16 +1832,17 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
             })
 
             # Função otimizada para styling de linha inteira
+            tema = get_tema()
             def highlight_row(row):
                 if row["Status"] == "APROVADO":
                     if row["Designação"] == "SIM":
-                        color = "#fff3cd"  # Amarelo
+                        color = tema["row_waiting"]
                     else:
-                        color = "#d4edda"  # Verde
+                        color = tema["row_approved"]
                 elif row["Status"] == "DESCLASSIFICADO":
-                    color = "#f8d7da"  # Vermelho
+                    color = tema["row_rejected"]
                 elif row["Status"] == "NÃO OBTEVE VAGA":
-                    color = "#e2e3e5"  # Cinza
+                    color = tema["row_no_vacancy"]
                 else:
                     color = ""
 
@@ -1778,23 +1932,24 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
             with col_graf1:
                 st.markdown("**📊 Distribuição de Resultados**")
                 # Gráfico de pizza
+                tema_graf = get_tema()
+                import plotly.express as px
                 fig_dados = {
                     'Status': ['Aprovados', 'Desclassificados', 'Sem Vaga'],
                     'Quantidade': [aprovados, desclass, sem_vaga],
-                    'Cor': ['#28a745', '#dc3545', '#6c757d']
+                    'Cor': [tema_graf["chart_green"], tema_graf["chart_red"], tema_graf["chart_gray"]]
                 }
                 df_grafico = pd.DataFrame(fig_dados)
 
-                import plotly.express as px
                 fig_pizza = px.pie(
                     df_grafico,
                     values='Quantidade',
                     names='Status',
                     color='Status',
                     color_discrete_map={
-                        'Aprovados': '#28a745',
-                        'Desclassificados': '#dc3545',
-                        'Sem Vaga': '#6c757d'
+                        'Aprovados': tema_graf["chart_green"],
+                        'Desclassificados': tema_graf["chart_red"],
+                        'Sem Vaga': tema_graf["chart_gray"]
                     },
                     hole=0.4
                 )
@@ -1802,7 +1957,8 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
                 fig_pizza.update_layout(
                     showlegend=True,
                     height=350,
-                    margin=dict(t=20, b=20, l=20, r=20)
+                    margin=dict(t=20, b=20, l=20, r=20),
+                    template=tema_graf["plotly_template"]
                 )
                 st.plotly_chart(fig_pizza, use_container_width=True)
 
@@ -1812,7 +1968,7 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
                 fig_dados_anexo = {
                     'Anexo': ['Anexo I', 'Anexo II'],
                     'Quantidade': [aprovados_a1, aprovados_a2],
-                    'Cor': ['#1E88E5', '#43A047']
+                    'Cor': [tema_graf["chart_blue"], tema_graf["chart_green2"]]
                 }
                 df_anexo = pd.DataFrame(fig_dados_anexo)
 
@@ -1822,8 +1978,8 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
                     y='Quantidade',
                     color='Anexo',
                     color_discrete_map={
-                        'Anexo I': '#1E88E5',
-                        'Anexo II': '#43A047'
+                        'Anexo I': tema_graf["chart_blue"],
+                        'Anexo II': tema_graf["chart_green2"]
                     },
                     text='Quantidade'
                 )
@@ -1833,7 +1989,8 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
                     height=350,
                     yaxis_title="Servidores Aprovados",
                     xaxis_title="",
-                    margin=dict(t=20, b=20, l=20, r=20)
+                    margin=dict(t=20, b=20, l=20, r=20),
+                    template=tema_graf["plotly_template"]
                 )
                 st.plotly_chart(fig_barras, use_container_width=True)
 
@@ -1857,8 +2014,8 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
                     y='Quantidade',
                     color='Situação',
                     color_discrete_map={
-                        'Podem sair\nimediatamente': '#28a745',
-                        'Aguardam\nsubstituição': '#ffc107'
+                        'Podem sair\nimediatamente': tema_graf["chart_green"],
+                        'Aguardam\nsubstituição': tema_graf["chart_yellow"]
                     },
                     text='Quantidade'
                 )
@@ -1868,7 +2025,8 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
                     height=350,
                     yaxis_title="Servidores Aprovados",
                     xaxis_title="",
-                    margin=dict(t=20, b=20, l=20, r=20)
+                    margin=dict(t=20, b=20, l=20, r=20),
+                    template=tema_graf["plotly_template"]
                 )
                 st.plotly_chart(fig_desig, use_container_width=True)
 
@@ -1893,7 +2051,7 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
                         orientation='h',
                         text='Servidores',
                         color='Servidores',
-                        color_continuous_scale='Blues'
+                        color_continuous_scale=tema_graf["chart_scale"]
                     )
                     fig_comarcas.update_traces(textposition='outside')
                     fig_comarcas.update_layout(
@@ -1901,7 +2059,8 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
                         height=350,
                         xaxis_title="Servidores Aprovados",
                         yaxis_title="",
-                        margin=dict(t=20, b=20, l=20, r=20)
+                        margin=dict(t=20, b=20, l=20, r=20),
+                        template=tema_graf["plotly_template"]
                     )
                     st.plotly_chart(fig_comarcas, use_container_width=True)
                 else:
@@ -2024,13 +2183,14 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
                 df_a2 = df_a2[mask]
             
             # Colorir por status
+            tema_vagas = get_tema()
             def color_status(val):
                 if val == "SUPERAVITÁRIA":
-                    return "background-color: #d4edda"
+                    return f"background-color: {tema_vagas['status_superavit']}"
                 elif val == "EQUILIBRADA":
-                    return "background-color: #fff3cd"
+                    return f"background-color: {tema_vagas['status_equilibrada']}"
                 elif val == "DEFICITÁRIA":
-                    return "background-color: #f8d7da"
+                    return f"background-color: {tema_vagas['status_deficitaria']}"
                 return ""
             
             st.dataframe(
@@ -2222,23 +2382,23 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
             df_lotacao = df_lotacao[mask]
         
         # Colorir por status
+        tema_lot = get_tema()
         def color_status_lot(val):
             if val == "SUPERAVITÁRIA":
-                return "background-color: #d4edda"
+                return f"background-color: {tema_lot['status_superavit']}"
             elif val == "EQUILIBRADA":
-                return "background-color: #fff3cd"
+                return f"background-color: {tema_lot['status_equilibrada']}"
             elif val == "DEFICITÁRIA":
-                return "background-color: #f8d7da"
+                return f"background-color: {tema_lot['status_deficitaria']}"
             return ""
-        
+
         def color_diferenca(val):
             try:
                 if int(val) > 0:
-                    return "color: green; font-weight: bold"
+                    return f"color: {tema_lot['text_positive']}; font-weight: bold"
                 elif int(val) < 0:
-                    return "color: red; font-weight: bold"
+                    return f"color: {tema_lot['text_negative']}; font-weight: bold"
             except (ValueError, TypeError):
-                # Valor não numérico, sem coloração
                 pass
             return ""
         

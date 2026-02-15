@@ -22,29 +22,29 @@ def card(title: str, content: str, icon: str = "📄", color: str = "blue"):
     Example:
         >>> card("Total de Inscritos", "156 servidores", icon="👥", color="blue")
     """
-    color_map = {
-        "blue": "#E3F2FD",
-        "green": "#E8F5E9",
-        "red": "#FFEBEE",
-        "yellow": "#FFF9C4",
-        "gray": "#F5F5F5",
-        "orange": "#FFF3E0"
+    color_var_map = {
+        "blue": "var(--card-blue-bg)",
+        "green": "var(--card-green-bg)",
+        "red": "var(--card-red-bg)",
+        "yellow": "var(--card-yellow-bg)",
+        "gray": "var(--card-gray-bg)",
+        "orange": "var(--card-orange-bg)"
     }
 
-    bg_color = color_map.get(color, color_map["blue"])
+    bg_color = color_var_map.get(color, color_var_map["blue"])
 
     st.markdown(f"""
     <div style="
         background-color: {bg_color};
         padding: 20px;
         border-radius: 10px;
-        border-left: 5px solid #1976D2;
+        border-left: 5px solid var(--border-accent);
         margin: 10px 0;
     ">
-        <h3 style="margin: 0 0 10px 0; color: #1976D2;">
+        <h3 style="margin: 0 0 10px 0; color: var(--text-accent);">
             {icon} {title}
         </h3>
-        <p style="margin: 0; color: #424242; font-size: 16px;">
+        <p style="margin: 0; color: var(--text-primary); font-size: 16px;">
             {content}
         </p>
     </div>
@@ -71,7 +71,7 @@ def info_card(title: str, value: str, subtitle: str = "", icon: str = "ℹ️"):
         border-radius: 10px;
         color: white;
         text-align: center;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 6px var(--card-shadow);
     ">
         <div style="font-size: 24px; margin-bottom: 5px;">{icon}</div>
         <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">{title}</div>
@@ -132,17 +132,17 @@ def alert_box(message: str, alert_type: str = "info", dismissible: bool = False)
         >>> alert_box("Dados salvos com sucesso!", "success")
     """
     type_config = {
-        "success": {"icon": "✅", "color": "#4CAF50", "bg": "#E8F5E9"},
-        "warning": {"icon": "⚠️", "color": "#FF9800", "bg": "#FFF3E0"},
-        "error": {"icon": "❌", "color": "#F44336", "bg": "#FFEBEE"},
-        "info": {"icon": "ℹ️", "color": "#2196F3", "bg": "#E3F2FD"},
+        "success": {"icon": "✅", "color": "#4CAF50", "bg_var": "var(--alert-success-bg)"},
+        "warning": {"icon": "⚠️", "color": "#FF9800", "bg_var": "var(--alert-warning-bg)"},
+        "error": {"icon": "❌", "color": "#F44336", "bg_var": "var(--alert-error-bg)"},
+        "info": {"icon": "ℹ️", "color": "#2196F3", "bg_var": "var(--alert-info-bg)"},
     }
 
     config = type_config.get(alert_type, type_config["info"])
 
     st.markdown(f"""
     <div style="
-        background-color: {config['bg']};
+        background-color: {config['bg_var']};
         border-left: 4px solid {config['color']};
         padding: 15px;
         border-radius: 4px;
@@ -151,7 +151,7 @@ def alert_box(message: str, alert_type: str = "info", dismissible: bool = False)
         align-items: center;
     ">
         <span style="font-size: 24px; margin-right: 15px;">{config['icon']}</span>
-        <span style="color: #424242; font-size: 14px;">{message}</span>
+        <span style="color: var(--text-primary); font-size: 14px;">{message}</span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -172,9 +172,9 @@ def progress_bar(current: int, total: int, label: str = ""):
 
     st.markdown(f"""
     <div style="margin: 15px 0;">
-        {f'<div style="font-size: 14px; margin-bottom: 5px; color: #424242;">{label}</div>' if label else ''}
+        {f'<div style="font-size: 14px; margin-bottom: 5px; color: var(--text-primary);">{label}</div>' if label else ''}
         <div style="
-            background-color: #E0E0E0;
+            background-color: var(--progress-bg);
             border-radius: 10px;
             overflow: hidden;
             height: 25px;
@@ -192,7 +192,7 @@ def progress_bar(current: int, total: int, label: str = ""):
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                color: {'white' if percentage > 50 else '#424242'};
+                color: {'white' if percentage > 50 else 'var(--text-primary)'};
                 font-weight: bold;
                 font-size: 12px;
             ">{current}/{total} ({percentage:.1f}%)</div>
@@ -251,29 +251,30 @@ def metric_card(label: str, value: str, delta: Optional[str] = None,
 
     st.markdown(f"""
     <div style="
-        background-color: white;
+        background-color: var(--card-bg);
         padding: 20px;
         border-radius: 10px;
         border-top: 4px solid {main_color};
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px var(--card-shadow);
         margin: 10px 0;
     ">
         <div style="display: flex; align-items: center; margin-bottom: 10px;">
             <span style="font-size: 24px; margin-right: 10px;">{icon}</span>
-            <span style="color: #757575; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+            <span style="color: var(--text-secondary); font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
                 {label}
             </span>
         </div>
         <div style="font-size: 32px; font-weight: bold; color: {main_color}; margin-bottom: 5px;">
             {value}
         </div>
-        {f'<div style="font-size: 13px; color: #9E9E9E;">{delta}</div>' if delta else ''}
+        {f'<div style="font-size: 13px; color: var(--text-muted);">{delta}</div>' if delta else ''}
     </div>
     """, unsafe_allow_html=True)
 
 
 def styled_dataframe(df: pd.DataFrame, height: int = 400,
-                     highlight_col: Optional[str] = None):
+                     highlight_col: Optional[str] = None,
+                     tema: Optional[Dict[str, str]] = None):
     """
     DataFrame com estilo melhorado.
 
@@ -281,18 +282,23 @@ def styled_dataframe(df: pd.DataFrame, height: int = 400,
         df: DataFrame a exibir
         height: Altura da tabela
         highlight_col: Coluna para destacar
+        tema: Dicionário de cores do tema (opcional, usa cores light como fallback)
 
     Example:
         >>> styled_dataframe(df_resultado, height=500, highlight_col="status")
     """
     if highlight_col and highlight_col in df.columns:
+        approved_bg = tema["row_approved"] if tema else "#E8F5E9"
+        rejected_bg = tema["row_rejected"] if tema else "#FFEBEE"
+        no_vacancy_bg = tema.get("row_no_vacancy", "#FFF3E0") if tema else "#FFF3E0"
+
         def highlight_status(row):
             if row[highlight_col] == "APROVADO":
-                return ['background-color: #E8F5E9'] * len(row)
+                return [f'background-color: {approved_bg}'] * len(row)
             elif row[highlight_col] == "DESCLASSIFICADO":
-                return ['background-color: #FFEBEE'] * len(row)
+                return [f'background-color: {rejected_bg}'] * len(row)
             elif row[highlight_col] == "NÃO OBTEVE VAGA":
-                return ['background-color: #FFF3E0'] * len(row)
+                return [f'background-color: {no_vacancy_bg}'] * len(row)
             return [''] * len(row)
 
         styled_df = df.style.apply(highlight_status, axis=1)
@@ -317,13 +323,13 @@ def section_header(title: str, icon: str = "📌", subtitle: str = ""):
     <div style="
         margin: 30px 0 20px 0;
         padding-bottom: 10px;
-        border-bottom: 3px solid #1976D2;
+        border-bottom: 3px solid var(--border-accent);
     ">
-        <h2 style="margin: 0; color: #1976D2; display: flex; align-items: center;">
+        <h2 style="margin: 0; color: var(--text-accent); display: flex; align-items: center;">
             <span style="margin-right: 10px; font-size: 32px;">{icon}</span>
             {title}
         </h2>
-        {f'<p style="margin: 5px 0 0 42px; color: #757575; font-size: 14px;">{subtitle}</p>' if subtitle else ''}
+        {f'<p style="margin: 5px 0 0 42px; color: var(--text-secondary); font-size: 14px;">{subtitle}</p>' if subtitle else ''}
     </div>
     """, unsafe_allow_html=True)
 
@@ -359,13 +365,13 @@ def empty_state(message: str, icon: str = "📭", suggestion: str = ""):
     <div style="
         text-align: center;
         padding: 60px 20px;
-        background-color: #FAFAFA;
+        background-color: var(--empty-bg);
         border-radius: 10px;
         margin: 20px 0;
     ">
         <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.5;">{icon}</div>
-        <h3 style="color: #757575; margin-bottom: 10px;">{message}</h3>
-        {f'<p style="color: #9E9E9E; font-size: 14px;">{suggestion}</p>' if suggestion else ''}
+        <h3 style="color: var(--text-secondary); margin-bottom: 10px;">{message}</h3>
+        {f'<p style="color: var(--text-muted); font-size: 14px;">{suggestion}</p>' if suggestion else ''}
     </div>
     """, unsafe_allow_html=True)
 
@@ -386,15 +392,15 @@ def divider_with_text(text: str):
         align-items: center;
         margin: 25px 0;
     ">
-        <div style="flex: 1; height: 1px; background-color: #E0E0E0;"></div>
+        <div style="flex: 1; height: 1px; background-color: var(--divider-line);"></div>
         <span style="
             padding: 0 15px;
-            color: #757575;
+            color: var(--text-secondary);
             font-weight: 500;
             font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 1px;
         ">{text}</span>
-        <div style="flex: 1; height: 1px; background-color: #E0E0E0;"></div>
+        <div style="flex: 1; height: 1px; background-color: var(--divider-line);"></div>
     </div>
     """, unsafe_allow_html=True)
