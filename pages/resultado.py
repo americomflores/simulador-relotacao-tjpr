@@ -119,8 +119,8 @@ else:
         height=500,
         use_container_width=True,
         column_config={
-            "Origem": st.column_config.TextColumn("Origem", width="small"),
-            "Vaga Obtida": st.column_config.TextColumn("Vaga Obtida", width="small"),
+            "Origem": st.column_config.TextColumn("Origem", width="medium"),
+            "Vaga Obtida": st.column_config.TextColumn("Vaga Obtida", width="medium"),
         }
     )
 
