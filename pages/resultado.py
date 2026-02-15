@@ -29,8 +29,9 @@ else:
         df_resultado, vagas_restantes_a1, vagas_disponiveis_a2, ajustes_lotacao = get_resultado(df_inscricoes)
 
     total = len(df_resultado)
-    aprovados_a1 = len(df_resultado[df_resultado["resultado"].str.startswith("Anexo I", na=False)])
-    aprovados_a2 = len(df_resultado[df_resultado["resultado"].str.startswith("Anexo II", na=False)])
+    df_aprovados = df_resultado[df_resultado["status"] == "APROVADO"]
+    aprovados_a1 = len(df_aprovados[df_aprovados["resultado"].str.startswith("Anexo I", na=False)])
+    aprovados_a2 = len(df_aprovados[df_aprovados["resultado"].str.startswith("Anexo II", na=False)])
     desclass = len(df_resultado[df_resultado["status"] == "DESCLASSIFICADO"])
     com_designacao = len(df_resultado[df_resultado["designacao_origem"] == "SIM"])
 
