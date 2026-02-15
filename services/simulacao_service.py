@@ -184,7 +184,7 @@ def calcular_resultado(df_inscricoes):
                 if vagas_anexo1[escolha_a1] > 0:
                     vagas_anexo1[escolha_a1] -= 1
                     df.at[idx, "status"] = "APROVADO"
-                    df.at[idx, "resultado"] = "ANEXO I"
+                    df.at[idx, "resultado"] = "Anexo I (vaga deficitária disponibilizada - item 2.1)"
                     df.at[idx, "vaga_obtida"] = f"{ANEXO_I[escolha_a1]['comarca']} - {ANEXO_I[escolha_a1]['unidade']}"
 
                     # Atualizar ajustes de lotação
@@ -204,11 +204,12 @@ def calcular_resultado(df_inscricoes):
                             else:
                                 df.at[idx, "designacao_origem"] = "NÃO"
 
-                        # Liberar vaga no Anexo II
-                        if lotacao_origem in vagas_anexo2:
-                            vagas_anexo2[lotacao_origem] += 1
-                        else:
-                            vagas_anexo2[lotacao_origem] = 1
+                        # REGRA: Liberar vaga no Anexo II APENAS se a origem ficar DEFICITÁRIA
+                        if dados_origem_final["status"] == "DEFICITÁRIA":
+                            if lotacao_origem in vagas_anexo2:
+                                vagas_anexo2[lotacao_origem] += 1
+                            else:
+                                vagas_anexo2[lotacao_origem] = 1
                 else:
                     servidores_para_anexo2.append(idx)
             elif escolha_a1:
@@ -258,8 +259,15 @@ def calcular_resultado(df_inscricoes):
             
             if vaga_escolhida:
                 vagas_anexo2[vaga_escolhida] -= 1
+
+                # Atribuir resultado baseado no tipo de vaga
+                if origem_vaga == "ANEXO I (via A2)":
+                    resultado_final = "Anexo I (vaga primária incluída na análise do Anexo II - item 3.13)"
+                else:
+                    resultado_final = "Anexo II (vaga de servidor a relotar - item 3.11)"
+
                 df.at[idx, "status"] = "APROVADO"
-                df.at[idx, "resultado"] = origem_vaga
+                df.at[idx, "resultado"] = resultado_final
                 df.at[idx, "vaga_obtida"] = f"{ANEXO_II[vaga_escolhida]['comarca']} - {ANEXO_II[vaga_escolhida]['unidade']}"
                 
                 # Atualizar ajustes de lotação
@@ -289,20 +297,24 @@ def calcular_resultado(df_inscricoes):
             else:
                 # Nenhuma vaga disponível
                 df.at[idx, "status"] = "NÃO OBTEVE VAGA"
-                df.at[idx, "resultado"] = "Sem vaga"
-                
-                # Determinar motivo
+
+                # Determinar motivo detalhado no resultado
                 if escolha_a1 and escolha_a2:
+                    motivo_a1 = "todas as vagas já foram preenchidas" if (escolha_a1 in ANEXO_I) else f"código inválido ({escolha_a1})"
+                    motivo_a2 = "nenhum servidor saiu da unidade escolhida" if (escolha_a2 in ANEXO_II) else f"código inválido ({escolha_a2})"
+                    df.at[idx, "resultado"] = f"Anexo I: {motivo_a1} · Anexo II: {motivo_a2}"
                     df.at[idx, "observacao"] = "Vagas do Anexo I e II não disponíveis"
                 elif escolha_a1:
-                    df.at[idx, "observacao"] = "Vaga do Anexo I não foi liberada no Anexo II"
+                    motivo_a1 = "todas as vagas já foram preenchidas" if (escolha_a1 in ANEXO_I) else f"código inválido ({escolha_a1})"
+                    df.at[idx, "resultado"] = f"Anexo I: {motivo_a1} · Anexo II: não escolheu unidade"
+                    df.at[idx, "observacao"] = df.at[idx, "resultado"]
                 elif escolha_a2:
-                    if escolha_a2 in ANEXO_II:
-                        df.at[idx, "observacao"] = "Vaga do Anexo II não foi liberada"
-                    else:
-                        df.at[idx, "observacao"] = "Código Anexo II inválido"
+                    motivo_a2 = "nenhum servidor saiu da unidade escolhida" if (escolha_a2 in ANEXO_II) else f"código inválido ({escolha_a2})"
+                    df.at[idx, "resultado"] = f"Anexo I: não escolheu unidade · Anexo II: {motivo_a2}"
+                    df.at[idx, "observacao"] = df.at[idx, "resultado"]
                 else:
-                    df.at[idx, "observacao"] = "Não escolheu nenhuma vaga"
+                    df.at[idx, "resultado"] = "Não escolheu unidade no Anexo I nem no Anexo II"
+                    df.at[idx, "observacao"] = df.at[idx, "resultado"]
                 
                 df.at[idx, "designacao_origem"] = "-"
         

@@ -131,7 +131,7 @@ def get_auth_codes():
     try:
         if "auth_codes" in st.secrets:
             return st.secrets["auth_codes"]
-    except (AttributeError, KeyError):
+    except Exception:
         pass
     return DEFAULT_AUTH_CODES
 
@@ -149,7 +149,7 @@ def get_admin_telefones():
             elif isinstance(telefones, str):
                 # Se for string, separar por vírgula
                 return [t.strip() for t in telefones.split(",")]
-    except (AttributeError, KeyError):
+    except Exception:
         pass
     return DEFAULT_ADMIN_TELEFONES
 
@@ -158,14 +158,14 @@ def get_admin_senha():
     """
     Retorna a senha de administrador.
     Tenta carregar de secrets.toml, caso contrário usa valores padrão.
-    
+
     NOTA: Em produção, a senha deve ser armazenada como hash (bcrypt).
     Por enquanto, mantém texto plano para compatibilidade.
     """
     try:
         if "admin_senha" in st.secrets:
             return st.secrets["admin_senha"]
-    except (AttributeError, KeyError):
+    except Exception:
         pass
     return DEFAULT_ADMIN_SENHA
 

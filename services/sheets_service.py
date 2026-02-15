@@ -138,7 +138,7 @@ def carregar_inscricoes(sheet):
         raise SheetsError(f"Erro ao carregar dados: {e}")
 
 
-def salvar_inscricao(sheet, dados, telefone_usuario):
+def salvar_inscricao(sheet, dados, telefone_usuario="Público"):
     """
     Salva ou atualiza uma inscrição, registrando quem fez a operação.
     
@@ -210,7 +210,7 @@ def salvar_inscricao(sheet, dados, telefone_usuario):
         raise SheetsError(f"Erro ao salvar: {e}")
 
 
-def excluir_inscricao(sheet, matricula, telefone_usuario):
+def excluir_inscricao(sheet, matricula, telefone_usuario="Público"):
     """
     Exclui uma inscrição pela matrícula.
     

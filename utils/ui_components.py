@@ -38,8 +38,9 @@ def card(title: str, content: str, icon: str = "📄", color: str = "blue"):
         background-color: {bg_color};
         padding: 20px;
         border-radius: 10px;
-        border-left: 5px solid var(--border-accent);
+        border-left: 3px solid var(--border-accent);
         margin: 10px 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     ">
         <h3 style="margin: 0 0 10px 0; color: var(--text-accent);">
             {icon} {title}
@@ -66,12 +67,12 @@ def info_card(title: str, value: str, subtitle: str = "", icon: str = "ℹ️"):
     """
     st.markdown(f"""
     <div style="
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-color: var(--border-accent);
         padding: 20px;
-        border-radius: 10px;
+        border-radius: 8px;
         color: white;
         text-align: center;
-        box-shadow: 0 4px 6px var(--card-shadow);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     ">
         <div style="font-size: 24px; margin-bottom: 5px;">{icon}</div>
         <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">{title}</div>
@@ -109,9 +110,9 @@ def badge(text: str, status: str = "info"):
     <span style="
         background-color: {colors['bg']};
         color: {colors['text']};
-        padding: 4px 12px;
+        padding: 3px 10px;
         border-radius: 12px;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: bold;
         display: inline-block;
         margin: 2px;
@@ -181,7 +182,7 @@ def progress_bar(current: int, total: int, label: str = ""):
             position: relative;
         ">
             <div style="
-                background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+                background-color: var(--border-accent);
                 height: 100%;
                 width: {percentage}%;
                 border-radius: 10px;
@@ -252,10 +253,10 @@ def metric_card(label: str, value: str, delta: Optional[str] = None,
     st.markdown(f"""
     <div style="
         background-color: var(--card-bg);
-        padding: 20px;
-        border-radius: 10px;
-        border-top: 4px solid {main_color};
-        box-shadow: 0 2px 4px var(--card-shadow);
+        padding: 24px;
+        border-radius: 8px;
+        border-top: 3px solid {main_color};
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         margin: 10px 0;
     ">
         <div style="display: flex; align-items: center; margin-bottom: 10px;">
@@ -364,12 +365,12 @@ def empty_state(message: str, icon: str = "📭", suggestion: str = ""):
     st.markdown(f"""
     <div style="
         text-align: center;
-        padding: 60px 20px;
+        padding: 48px 20px;
         background-color: var(--empty-bg);
-        border-radius: 10px;
+        border-radius: 8px;
         margin: 20px 0;
     ">
-        <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.5;">{icon}</div>
+        <div style="font-size: 48px; margin-bottom: 20px; opacity: 0.5;">{icon}</div>
         <h3 style="color: var(--text-secondary); margin-bottom: 10px;">{message}</h3>
         {f'<p style="color: var(--text-muted); font-size: 14px;">{suggestion}</p>' if suggestion else ''}
     </div>
