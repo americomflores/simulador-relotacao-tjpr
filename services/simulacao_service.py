@@ -302,18 +302,18 @@ def calcular_resultado(df_inscricoes):
                 if escolha_a1 and escolha_a2:
                     motivo_a1 = "todas as vagas já foram preenchidas" if (escolha_a1 in ANEXO_I) else f"código inválido ({escolha_a1})"
                     motivo_a2 = "nenhum servidor saiu da unidade escolhida" if (escolha_a2 in ANEXO_II) else f"código inválido ({escolha_a2})"
-                    df.at[idx, "resultado"] = f"Anexo I: {motivo_a1} · Anexo II: {motivo_a2}"
+                    df.at[idx, "resultado"] = f"Anexo I ({motivo_a1}) · Anexo II ({motivo_a2})"
                     df.at[idx, "observacao"] = "Vagas do Anexo I e II não disponíveis"
                 elif escolha_a1:
                     motivo_a1 = "todas as vagas já foram preenchidas" if (escolha_a1 in ANEXO_I) else f"código inválido ({escolha_a1})"
-                    df.at[idx, "resultado"] = f"Anexo I: {motivo_a1} · Anexo II: não escolheu unidade"
+                    df.at[idx, "resultado"] = f"Anexo I ({motivo_a1}) · Anexo II (não escolheu unidade)"
                     df.at[idx, "observacao"] = df.at[idx, "resultado"]
                 elif escolha_a2:
                     motivo_a2 = "nenhum servidor saiu da unidade escolhida" if (escolha_a2 in ANEXO_II) else f"código inválido ({escolha_a2})"
-                    df.at[idx, "resultado"] = f"Anexo I: não escolheu unidade · Anexo II: {motivo_a2}"
+                    df.at[idx, "resultado"] = f"Anexo I (não escolheu unidade) · Anexo II ({motivo_a2})"
                     df.at[idx, "observacao"] = df.at[idx, "resultado"]
                 else:
-                    df.at[idx, "resultado"] = "Não escolheu unidade no Anexo I nem no Anexo II"
+                    df.at[idx, "resultado"] = "Anexo I (não escolheu unidade) · Anexo II (não escolheu unidade)"
                     df.at[idx, "observacao"] = df.at[idx, "resultado"]
                 
                 df.at[idx, "designacao_origem"] = "-"
