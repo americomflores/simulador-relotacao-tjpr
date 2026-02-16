@@ -43,8 +43,8 @@ CARD_CSS = """
 """
 
 passos = [
-    ("1", "Busque seu nome", "Na página Inscrição, busque por nome para encontrar sua posição na Lista Classificatória"),
-    ("2", "Escolha as unidades", "Escolha 1 unidade do Anexo I e 1 do Anexo II"),
+    ("1", "Busque seus dados", "Na página Inscrição, busque por matrícula ou nome para encontrar sua posição na Lista Classificatória"),
+    ("2", "Escolha as unidades", "Escolha 1 unidade do Anexo I (opcional) e 1 do Anexo II"),
     ("3", "Salve a inscrição", "Confira os dados e clique em Salvar"),
     ("4", "Veja o resultado", "Vá para a página Resultado e veja se conseguiu vaga"),
 ]
@@ -69,6 +69,8 @@ busca_lower = busca.strip().lower()
 # --- FAQ ---
 FAQ_ITEMS = [
     # (categoria, titulo, conteudo)
+
+    # === Sobre o Simulador (3) ===
     (
         "Sobre o Simulador",
         "O que é este simulador?",
@@ -82,7 +84,23 @@ FAQ_ITEMS = [
 **O que ele NÃO faz:**
 - Não substitui o resultado oficial do TJPR
 - Não garante que o resultado será igual ao oficial
-- O resultado real depende da análise da Secretaria de Gestão de Pessoas""",
+- O resultado real depende da análise da Secretaria de Gestão de Pessoas
+
+O resultado depende de quantas e quais inscrições são feitas — ele muda conforme novas pessoas se inscrevem.""",
+    ),
+    (
+        "Sobre o Simulador",
+        "O que cada página do simulador mostra?",
+        """| Página | O que você encontra |
+|--------|---------------------|
+| **Como Usar** | Esta página de ajuda com guia rápido, busca e perguntas frequentes |
+| **Resultado** | Resultado da simulação com filtros, gráficos e vagas restantes |
+| **Inscrição** | Formulário para se inscrever ou alterar sua inscrição |
+| **Inscritos** | Lista de todos os inscritos, ordenada por posição na lista |
+| **Vagas do Edital** | Catálogo de vagas dos Anexos I e II com demanda e concorrência |
+| **Vagas após Simulação** | Vagas que sobraram ou abriram depois de rodar a simulação |
+| **Lotação** | Tabela de lotação real vs. paradigma de cada unidade |
+| **Regiões (RAJs)** | Mapa das 10 regiões administrativas com servidores aprovados por região |""",
     ),
     (
         "Sobre o Simulador",
@@ -95,26 +113,46 @@ FAQ_ITEMS = [
 
 Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pessoas** no resultado oficial.""",
     ),
+
+    # === Inscrição (6) ===
     (
         "Inscrição",
         "Como preencher minha inscrição?",
         """1. Vá para a página **Inscrição**
-2. **Busque seu nome** no campo de busca — o sistema vai localizar seus dados na Lista Classificatória
-3. Confira sua **posição na lista** (ela define sua prioridade)
-4. Preencha sua **matrícula** e **data de admissão**
-5. Escolha a **unidade do Anexo I** (1ª opção — vagas deficitárias)
-6. Escolha a **unidade do Anexo II** (2ª opção — todas as unidades)
-7. Clique em **Salvar Inscrição**
+2. Busque por **matrícula** (mais rápido — o sistema já identifica sua posição automaticamente) ou por **nome** (busca aproximada)
+3. Se encontrar, clique em **Preencher formulário com os dados encontrados**
+4. Confira sua **posição na lista** (preenchida automaticamente) e a **data de admissão**
+5. Escolha sua **lotação atual**
+6. Escolha a unidade do **Anexo I** (ou "Não Escolheu" se não quiser)
+7. Escolha a unidade do **Anexo II**
+8. Clique em **Salvar Inscrição**
 
-**Dica:** Você pode usar a página **Vagas do Edital** para ver todas as unidades disponíveis e quantas pessoas já escolheram cada uma.""",
+**Dica:** Você pode usar a página **Vagas do Edital** para ver todas as unidades disponíveis e quantas pessoas já escolheram cada uma.
+
+**Nota:** Se não encontrar por nome nem matrícula, você pode digitar a posição manualmente no campo "Posição na Lista Classificatória" (consulte a lista oficial do TJPR).""",
+    ),
+    (
+        "Inscrição",
+        "Não encontrei meu nome na busca. O que fazer?",
+        """A busca por nome usa correspondência aproximada e aceita pequenas variações de grafia.
+
+- Se o resultado aparecer com **aviso amarelo** (85–94% de correspondência), confira se é você mesmo antes de preencher
+- Se não encontrar pelo nome: tente buscar pela **matrícula** (é mais preciso)
+- **Último recurso:** digite sua posição manualmente no campo "Posição na Lista Classificatória" — consulte a lista oficial publicada pelo TJPR para saber sua posição""",
+    ),
+    (
+        "Inscrição",
+        "Preciso escolher o Anexo I obrigatoriamente?",
+        """**Não.** O Anexo I é **opcional** — você pode selecionar "Não Escolheu" nesse campo.
+
+- Se não escolher Anexo I, você será avaliado apenas na **Fase 2** (Anexo II)
+- **Recomendação:** escolha o Anexo I se houver alguma unidade deficitária do seu interesse — é uma chance extra de conseguir vaga, já que a Fase 1 é analisada primeiro""",
     ),
     (
         "Inscrição",
         "O que é o Anexo I e o Anexo II?",
-        """- **Anexo I** = São **213 unidades com 435 vagas** (unidades deficitárias). É sua **1ª opção** de escolha e é analisada primeiro.
-- **Anexo II** = São **todas as 606 unidades** judiciárias do TJPR. É sua **2ª opção**, analisada somente se você não conseguir vaga no Anexo I.
-
-Você deve escolher **uma unidade de cada anexo** ao se inscrever.""",
+        """- **Anexo I** = São **213 unidades com 435 vagas** (unidades deficitárias). É sua **1ª opção** de escolha e é analisada primeiro. A escolha do Anexo I é **opcional** — você pode selecionar "Não Escolheu".
+- **Anexo II** = São **todas as 606 unidades** judiciárias do TJPR. É sua **2ª opção**, analisada somente se você não conseguir vaga no Anexo I. A escolha do Anexo II é **obrigatória**.""",
     ),
     (
         "Inscrição",
@@ -125,7 +163,11 @@ Você deve escolher **uma unidade de cada anexo** ao se inscrever.""",
 3. Os dados da inscrição existente serão carregados automaticamente
 4. Faça as alterações desejadas e clique em **Salvar Inscrição**
 
-Para excluir, use o formulário **Excluir Inscrição** no final da página.""",
+**Nota:** A **matrícula** fica travada após salvar — não é possível alterá-la. Se precisar corrigir a matrícula, exclua a inscrição e faça uma nova.
+
+Para excluir, use o formulário **Excluir Inscrição** no final da página.
+
+O histórico de alterações (quem alterou e quando) fica visível na página **Inscritos**.""",
     ),
     (
         "Inscrição",
@@ -135,6 +177,8 @@ Para excluir, use o formulário **Excluir Inscrição** no final da página.""",
 - Servidores relotados a pedido há **menos de 2 anos** da publicação do edital (10/02/2026) são **desclassificados** (Item 3.3)
 - Exceção: se todos os servidores de uma unidade estiverem nessa situação, há preferência ao relotado há mais tempo (Item 3.3.1)""",
     ),
+
+    # === Regras e Resultado (6) ===
     (
         "Regras e Resultado",
         "Como funciona o processo de relotação?",
@@ -148,9 +192,18 @@ Para excluir, use o formulário **Excluir Inscrição** no final da página.""",
 **Fase 2 — Anexo II (todas as unidades):**
 - Quem **não** conseguiu vaga no Anexo I é analisado aqui
 - As vagas liberadas na Fase 1 ficam disponíveis
-- Se a escolha original do Anexo I estiver disponível no Anexo II, ela tem preferência (Item 3.13)
+- Se a unidade que você escolheu no Anexo I ficou disponível na Fase 2 (porque alguém saiu de lá), você recebe essa vaga com **preferência** sobre a sua escolha do Anexo II (Item 3.13)
 
 **Critério de prioridade:** Somente a posição na Lista Classificatória do Edital 01/2026.""",
+    ),
+    (
+        "Regras e Resultado",
+        "O que significa 'Aprovado via Item 3.13'?",
+        """Na **Fase 2**, se a unidade que você escolheu no Anexo I ficou disponível (porque alguém de lá foi transferido na Fase 1), você recebe essa vaga **em vez de** sua escolha do Anexo II.
+
+É uma regra de preferência: o simulador tenta te dar sua **1ª opção** (Anexo I) mesmo na 2ª fase.
+
+No resultado, isso aparece como **"Aprovado Anexo I (via item 3.13)"**.""",
     ),
     (
         "Regras e Resultado",
@@ -185,8 +238,24 @@ Para excluir, use o formulário **Excluir Inscrição** no final da página.""",
 2. **Unidade sem vaga:** A unidade que você escolheu no Anexo II não ficou deficitária (não abriu vaga)
 3. **Ambas as escolhas indisponíveis:** Nem a vaga do Anexo I nem a do Anexo II estavam disponíveis quando chegou sua vez
 
-**Dica:** Experimente trocar suas escolhas para unidades com menor demanda na página **Vagas do Edital**.""",
+**Dica:** Experimente trocar suas escolhas para unidades com menor demanda na página **Vagas do Edital**.
+
+Lembre-se: o resultado muda conforme novas inscrições são feitas. Se alguém desistir ou trocar de escolha, pode abrir vaga para você.""",
     ),
+    (
+        "Regras e Resultado",
+        "O que são 'Vagas após a Simulação'?",
+        """Nessa página existem dois tipos de vagas:
+
+- **Vagas não preenchidas (Anexo I):** vagas deficitárias que ninguém escolheu — sobraram após a simulação
+- **Vagas abertas (Anexo II):** vagas novas criadas quando servidores aprovados saem de suas unidades de origem
+
+As vagas são agrupadas por **RAJ** (região administrativa) para facilitar a visualização geográfica.
+
+**Nota:** essa página só mostra resultados depois que há inscritos no simulador.""",
+    ),
+
+    # === Termos e Referências (2) ===
     (
         "Termos e Referências",
         "O que é Lotação Paradigma?",
@@ -207,13 +276,17 @@ Para excluir, use o formulário **Excluir Inscrição** no final da página.""",
 |-------|-------------|
 | **Anexo I** | 213 unidades com 435 vagas (déficit de servidores) — 1ª opção de escolha |
 | **Anexo II** | Todas as 606 unidades judiciárias — 2ª opção de escolha |
+| **Concorrência** | Relação entre demanda e vagas: Sem demanda (ninguém escolheu), Baixa (menos candidatos que vagas), Equilibrada (igual), Alta (mais candidatos que vagas) |
+| **Deficitária** | Unidade com **menos** servidores que o mínimo necessário |
+| **Demanda** | Quantidade de inscritos que escolheram determinada unidade |
+| **Designação na Origem** | Obrigação de permanecer na unidade atual até chegar substituto |
+| **Equilibrada** | Unidade com **exatamente** o mínimo necessário |
+| **Item 3.13** | Regra que dá preferência à escolha do Anexo I na Fase 2, se disponível |
 | **Lista Classificatória** | Ranking dos 1.291 servidores que define a ordem de prioridade |
 | **Lotação Paradigma** | Número mínimo de servidores que cada unidade deve ter (CNJ 219/2016) |
-| **Designação na Origem** | Obrigação de permanecer na unidade atual até chegar substituto |
 | **RAJ** | Região Administrativa Judiciária — agrupamento geográfico de comarcas |
-| **Superavitária** | Unidade com **mais** servidores que o mínimo necessário |
-| **Equilibrada** | Unidade com **exatamente** o mínimo necessário |
-| **Deficitária** | Unidade com **menos** servidores que o mínimo necessário |""",
+| **Status Origem** | Situação de lotação da unidade atual do servidor (superavitária, equilibrada ou deficitária) |
+| **Superavitária** | Unidade com **mais** servidores que o mínimo necessário |""",
     ),
 ]
 
