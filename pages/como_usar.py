@@ -44,7 +44,7 @@ CARD_CSS = """
 
 passos = [
     ("1", "Busque seus dados", "Na página Inscrição, busque por matrícula ou nome para encontrar sua posição na Lista Classificatória"),
-    ("2", "Escolha as unidades", "Escolha 1 unidade do Anexo I (opcional) e 1 do Anexo II"),
+    ("2", "Escolha as unidades", "Escolha pelo menos 1 unidade: Anexo I, Anexo II ou ambos"),
     ("3", "Salve a inscrição", "Confira os dados e clique em Salvar"),
     ("4", "Veja o resultado", "Vá para a página Resultado e veja se conseguiu vaga"),
 ]
@@ -124,7 +124,7 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
 4. Confira sua **posição na lista** (preenchida automaticamente) e a **data de admissão**
 5. Escolha sua **lotação atual**
 6. Escolha a unidade do **Anexo I** (ou "Não Escolheu" se não quiser)
-7. Escolha a unidade do **Anexo II**
+7. Escolha a unidade do **Anexo II** (ou "Não Escolheu" — só é necessário se você não escolheu o Anexo I)
 8. Clique em **Salvar Inscrição**
 
 **Dica:** Você pode usar a página **Vagas do Edital** para ver todas as unidades disponíveis e quantas pessoas já escolheram cada uma.
@@ -145,14 +145,17 @@ Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pes
         "Preciso escolher o Anexo I obrigatoriamente?",
         """**Não.** O Anexo I é **opcional** — você pode selecionar "Não Escolheu" nesse campo.
 
-- Se não escolher Anexo I, você será avaliado apenas na **Fase 2** (Anexo II)
+- Se não escolher Anexo I, você precisa escolher o **Anexo II** (pelo menos uma das duas opções é necessária)
+- Se escolher Anexo I, o Anexo II é **opcional** — você pode selecionar "Não Escolheu" também
 - **Recomendação:** escolha o Anexo I se houver alguma unidade deficitária do seu interesse — é uma chance extra de conseguir vaga, já que a Fase 1 é analisada primeiro""",
     ),
     (
         "Inscrição",
         "O que é o Anexo I e o Anexo II?",
-        """- **Anexo I** = São **213 unidades com 435 vagas** (unidades deficitárias). É sua **1ª opção** de escolha e é analisada primeiro. A escolha do Anexo I é **opcional** — você pode selecionar "Não Escolheu".
-- **Anexo II** = São **todas as 606 unidades** judiciárias do TJPR. É sua **2ª opção**, analisada somente se você não conseguir vaga no Anexo I. A escolha do Anexo II é **obrigatória**.""",
+        """- **Anexo I** = São **213 unidades com 435 vagas** (unidades deficitárias). É sua **1ª opção** de escolha e é analisada primeiro. A escolha é **opcional** — você pode selecionar "Não Escolheu".
+- **Anexo II** = São **todas as 606 unidades** judiciárias do TJPR. É sua **2ª opção**, analisada somente se você não conseguir vaga no Anexo I. A escolha também é **opcional**, desde que você tenha escolhido o Anexo I.
+
+Você precisa escolher **pelo menos um dos dois anexos**.""",
     ),
     (
         "Inscrição",
