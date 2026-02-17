@@ -31,7 +31,6 @@ simulador-relotacao-tjpr/
 │   ├── auth_service.py             # Autenticação e autorização (verificar_login, verificar_admin)
 │   ├── sheets_service.py           # Operações com Google Sheets (implementação alternativa)
 │   ├── simulacao_service.py        # Lógica de cálculo (obter_status_lotacao, calcular_lotacao_dinamica)
-│   ├── export_service.py          # Exportação Excel (inscrições, resultados, logs)
 │   ├── search_service.py          # Busca na lista classificatória (por nome, matrícula, posição)
 │   └── rajs_service.py            # Funções de RAJs (obter_raj_da_comarca, obter_comarcas_da_raj, etc.)
 ├── config/                          # Configurações do sistema
@@ -39,11 +38,9 @@ simulador-relotacao-tjpr/
 │   ├── settings.py                 # Configurações do sistema (estágio probatório removido em 01/2026)
 │   ├── constants.py                # Constantes (fuzzy match, lista, status)
 │   ├── rajs_config.py             # Dados das 10 RAJs
-│   ├── matricula_posicao_map.py    # Mapeamento matrícula → posição na lista
-│   └── telefone_posicao_map.py     # Mapeamento telefone → posição (19 telefones)
+│   └── matricula_posicao_map.py    # Mapeamento matrícula → posição na lista
 ├── utils/                           # Utilitários
 │   ├── logger.py                   # Sistema de logging
-│   ├── formatters.py               # Formatação de dados
 │   ├── normalizers.py              # Normalização de strings
 │   ├── validators.py               # Validações
 │   ├── error_handlers.py           # Tratamento de erros (handle_error, safe_execute, etc.)
@@ -215,9 +212,6 @@ else:
 ### Busca na lista classificatória (services/search_service.py)
 - `buscar_servidor_por_nome(nome)`, `buscar_servidor_por_matricula(matricula)`, `buscar_servidor_por_posicao(posicao)`, `determinar_qualidade_match`
 
-### Exportação (services/export_service.py)
-- `gerar_excel_resultado`, `gerar_excel_inscricoes`, `gerar_excel_logs`, `gerar_excel_comparacao`, `gerar_excel_vagas_disponiveis`
-
 ### Utilitários
 - **app.py**: `normalizar_comarca(nome)` → Normaliza nomes de comarcas (40+ variações)
 - **utils**: formatters, normalizers, validators; **utils/error_handlers**: `handle_error`, `safe_execute`, etc.; **utils/ui_components**: `card`, `badge`, `styled_dataframe`, etc.
@@ -316,8 +310,7 @@ secondaryBackgroundColor = "#F0F2F6"
 ### ✅ Seguro para modificar:
 - CSS e estilos visuais
 - Mensagens de interface
-- Funções de formatação/exibição (utils/formatters, normalizers)
-- Exportação de dados (services/export_service)
+- Funções de formatação/exibição (utils/normalizers)
 - Normalização de nomes/comarcas
 - Componentes e helpers de UI (utils/ui_components, utils/ui_helpers, utils/error_handlers)
 
