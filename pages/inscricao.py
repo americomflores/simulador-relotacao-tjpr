@@ -45,6 +45,17 @@ def busca_servidor():
             posicao_por_matricula = MATRICULA_POSICAO_MAP[matricula_busca]
             st.success(f"Matrícula mapeada! Posição na lista: **{posicao_por_matricula}**")
 
+        # Fallback: usar dados da inscrição existente se disponíveis
+        if inscricao_existente and not posicao_por_matricula:
+            pos_existente = inscricao_existente.get("posicao_lista_classificatoria")
+            if pos_existente:
+                try:
+                    posicao_sugerida = int(pos_existente)
+                    if posicao_sugerida in LISTA_CLASSIFICATORIA:
+                        nome_encontrado = LISTA_CLASSIFICATORIA[posicao_sugerida]['nome_display']
+                except (ValueError, TypeError):
+                    pass
+
     st.subheader("Buscar Servidor na Lista Classificatória")
 
     # Preencher nome quando inscricao_existente vem da busca por matrícula
@@ -103,6 +114,10 @@ def busca_servidor():
 
     if posicao_sugerida and nome_encontrado:
         if st.button("✅ Preencher formulário com os dados encontrados", type="primary"):
+            st.rerun()
+    elif inscricao_existente and not posicao_sugerida:
+        # Inscrição existe mas sem posição mapeada — permitir carregar dados mesmo assim
+        if st.button("✅ Carregar dados da inscrição existente", type="primary"):
             st.rerun()
 
 
