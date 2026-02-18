@@ -36,7 +36,11 @@ def get_inscricoes(sheet):
 def invalidar_cache():
     """Limpa caches após salvar/excluir."""
     _carregar_inscricoes_cached.clear()
-    st.cache_resource.clear()
+
+
+def _calcular_checksum(df):
+    """Calcula checksum eficiente de um DataFrame."""
+    return pd.util.hash_pandas_object(df).sum()
 
 
 def get_resultado(df_inscricoes):
@@ -47,7 +51,7 @@ def get_resultado(df_inscricoes):
     if df_inscricoes.empty:
         return pd.DataFrame(), {}, {}, {}
 
-    checksum = hash(df_inscricoes.to_json())
+    checksum = _calcular_checksum(df_inscricoes)
     if st.session_state.get("_resultado_checksum") != checksum:
         st.session_state["_resultado_cache"] = calcular_resultado(df_inscricoes)
         st.session_state["_resultado_checksum"] = checksum
@@ -61,7 +65,7 @@ def get_demanda(df_inscricoes):
     if df_inscricoes.empty:
         return {}, {}
 
-    checksum = hash(df_inscricoes.to_json())
+    checksum = _calcular_checksum(df_inscricoes)
     if st.session_state.get("_demanda_checksum") != checksum:
         st.session_state["_demanda_cache"] = calcular_demanda(df_inscricoes)
         st.session_state["_demanda_checksum"] = checksum

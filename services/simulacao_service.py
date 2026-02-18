@@ -328,25 +328,25 @@ def calcular_resultado(df_inscricoes):
 def calcular_demanda(df_inscricoes):
     """
     Calcula a demanda por vaga (quantos servidores escolheram cada vaga).
-    
+
     Args:
         df_inscricoes: DataFrame com inscrições
-        
+
     Returns:
-        Dicionário com demanda por código de vaga
+        Tupla (demanda_a1, demanda_a2) com dicionários de contagem por código
     """
-    demanda_a1 = {}
-    demanda_a2 = {}
-    
-    for _, row in df_inscricoes.iterrows():
-        escolha_a1 = row.get("escolha_anexo1", "")
-        escolha_a2 = row.get("escolha_anexo2", "")
-        
-        if escolha_a1:
-            demanda_a1[escolha_a1] = demanda_a1.get(escolha_a1, 0) + 1
-        
-        if escolha_a2:
-            demanda_a2[escolha_a2] = demanda_a2.get(escolha_a2, 0) + 1
-    
+    if df_inscricoes.empty:
+        return {}, {}
+
+    demanda_a1 = (
+        df_inscricoes["escolha_anexo1"]
+        .replace("", pd.NA).dropna()
+        .value_counts().to_dict()
+    )
+    demanda_a2 = (
+        df_inscricoes["escolha_anexo2"]
+        .replace("", pd.NA).dropna()
+        .value_counts().to_dict()
+    )
     return demanda_a1, demanda_a2
 

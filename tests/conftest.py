@@ -24,7 +24,8 @@ def sample_inscricoes():
         "data_inscricao": ["01/01/2025 10:00", "01/01/2025 11:00", "01/01/2025 12:00"],
         "registrado_por": ["(41) 99999-9999", "(41) 99999-9999", "(41) 99999-9999"],
         "alterado_por": ["", "", ""],
-        "data_alteracao": ["", "", ""]
+        "data_alteracao": ["", "", ""],
+        "posicao_lista_classificatoria": [1, 2, 3]
     })
 
 

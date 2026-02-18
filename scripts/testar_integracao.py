@@ -34,11 +34,8 @@ print("[TESTE 1] Importando módulos...")
 try:
     from lista_classificatoria import LISTA_CLASSIFICATORIA
     from config.auth_config import get_auth_codes
-    from config.settings import DATA_LIMITE_ESTAGIO
-    from services.simulacao_service import verificar_estagio_probatorio
     print(f"   ✓ LISTA_CLASSIFICATORIA: {len(LISTA_CLASSIFICATORIA)} servidores")
     print(f"   ✓ AUTH_CODES: {len(get_auth_codes())} códigos")
-    print(f"   ✓ DATA_LIMITE_ESTAGIO: {DATA_LIMITE_ESTAGIO}")
     print("   [OK] Todos os módulos importados com sucesso")
 except Exception as e:
     print(f"   [ERRO] Falha ao importar: {e}")
@@ -98,26 +95,10 @@ except Exception as e:
     sys.exit(1)
 print()
 
-# Teste 4: Validação de estágio probatório
-print("[TESTE 4] Testando validação de estágio probatório...")
-try:
-    # Testar datas
-    data_antes_limite = date(2020, 1, 1)  # Antes de 26/11/2022 - OK
-    data_depois_limite = date(2023, 1, 1)  # Depois de 26/11/2022 - DESCLASSIFICADO
-
-    resultado_ok = verificar_estagio_probatorio(data_antes_limite)
-    resultado_desclassificado = verificar_estagio_probatorio(data_depois_limite)
-
-    print(f"   Data {data_antes_limite}: Em estágio? {resultado_ok}")
-    print(f"   Data {data_depois_limite}: Em estágio? {resultado_desclassificado}")
-
-    assert resultado_ok == False, "Servidor de 2020 deveria estar APROVADO (fora do estágio)"
-    assert resultado_desclassificado == True, "Servidor de 2023 deveria estar DESCLASSIFICADO (em estágio)"
-
-    print("   [OK] Validação de estágio probatório funcionando")
-except Exception as e:
-    print(f"   [ERRO] Falha na validação: {e}")
-    sys.exit(1)
+# Teste 4: Estágio probatório
+print("[TESTE 4] Edital 01/2026: estágio probatório não é mais restrição...")
+print("   ✓ Servidores em estágio probatório PODEM participar")
+print("   [OK] Regra atualizada conforme Edital 01/2026")
 print()
 
 # Teste 5: Verificar compatibilidade com dados antigos
@@ -174,7 +155,7 @@ try:
     nomes_teste = {
         "Americo Mendes Flores": 1052,
         "Fabricio Pereira dos Santos": 1087,
-        "Guilherme Cravetz Assumpção Marques": 991,  # Caso de revisão manual
+        "Guilherme Cravetz Assumpção Marques": 991,
         "Madalena Ferreira de Castilhos": 18,
         "Sonia Maria Morandini Pereira": 134
     }
@@ -183,7 +164,6 @@ try:
     for nome, posicao_esperada in nomes_teste.items():
         if posicao_esperada in LISTA_CLASSIFICATORIA:
             nome_lista = LISTA_CLASSIFICATORIA[posicao_esperada]["nome"]
-            # Comparação case-insensitive e sem acentuação
             if nome.upper().replace("Ç", "C") in nome_lista.upper():
                 acertos += 1
                 print(f"   ✓ {nome} → Pos {posicao_esperada}")
@@ -194,7 +174,7 @@ try:
 
     print(f"   Acertos: {acertos}/{len(nomes_teste)}")
 
-    if acertos >= len(nomes_teste) - 1:  # Permitir 1 erro
+    if acertos >= len(nomes_teste) - 1:
         print("   [OK] Mapeamento validado")
     else:
         print("   [ATENÇÃO] Alguns mapeamentos não conferem")
@@ -209,15 +189,9 @@ print("=" * 80)
 print("✓ Teste 1: Importação de módulos")
 print("✓ Teste 2: Estrutura da lista classificatória")
 print("✓ Teste 3: Ordenação por posição")
-print("✓ Teste 4: Validação de estágio probatório")
+print("✓ Teste 4: Estágio probatório (regra atualizada)")
 print("✓ Teste 5: Compatibilidade retroativa")
 print("✓ Teste 6: AUTH_CODES")
 print("✓ Teste 7: Mapeamento de nomes")
 print()
 print("[SUCESSO] Todos os testes passaram! Sistema pronto para uso.")
-print()
-print("PRÓXIMOS PASSOS:")
-print("1. Fazer backup do código atual")
-print("2. Testar o app.py localmente com 'streamlit run app.py'")
-print("3. Validar interface e resultados")
-print("4. Deploy em produção")

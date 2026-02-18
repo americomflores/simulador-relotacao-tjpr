@@ -116,31 +116,3 @@ def get_raj_nome_curto(raj_nome_completo):
     if " - " in raj_nome_completo:
         return raj_nome_completo.split(" - ", 1)[1]
     return raj_nome_completo
-
-
-def get_raj_numero(raj_nome_completo):
-    """
-    Extrai número da RAJ.
-
-    Args:
-        raj_nome_completo: Nome completo da RAJ
-
-    Returns:
-        Número da RAJ (1-10) ou None
-    """
-    if raj_nome_completo in RAJS:
-        return RAJS[raj_nome_completo]["numero"]
-    return None
-
-
-def listar_todas_comarcas():
-    """
-    Retorna lista de todas as comarcas do Paraná.
-
-    Returns:
-        Lista de strings com nomes das comarcas
-    """
-    comarcas = set()
-    for raj_info in RAJS.values():
-        comarcas.update(raj_info["comarcas"])
-    return sorted(list(comarcas))

@@ -8,6 +8,33 @@ from config.theme import get_tema
 from services.simulacao_service import obter_status_lotacao
 from pages._shared import get_sheet, get_inscricoes, get_demanda, footer
 
+
+@st.cache_data
+def _build_df_a1_base():
+    """Constrói DataFrame base do Anexo I (dados constantes)."""
+    dados = []
+    for codigo, info in ANEXO_I.items():
+        dados.append({
+            "Código": codigo, "Comarca": info["comarca"],
+            "Unidade Judiciária": info["unidade"],
+            "Vagas": info["quantidade"]
+        })
+    return pd.DataFrame(dados)
+
+
+@st.cache_data
+def _build_df_a2_base():
+    """Constrói DataFrame base do Anexo II (dados constantes)."""
+    dados = []
+    for codigo, info in ANEXO_II.items():
+        dados.append({
+            "Código": codigo, "Comarca": info["comarca"],
+            "Unidade Judiciária": info["unidade"],
+            "Status Lotação": obter_status_lotacao(codigo)
+        })
+    return pd.DataFrame(dados)
+
+
 sheet = get_sheet()
 df_inscricoes = get_inscricoes(sheet)
 demanda_a1, demanda_a2 = get_demanda(df_inscricoes)
@@ -27,26 +54,14 @@ if opcao_vagas == "Anexo I (Vagas com Déficit)":
     st.subheader("Vagas com Déficit (Anexo I)")
     st.info("**Anexo I** = 213 unidades com 435 vagas (unidades deficitárias). A coluna **Demanda** mostra quantos servidores querem ir para cada unidade.")
 
-    dados_a1 = []
-    for codigo, info in ANEXO_I.items():
-        demanda = demanda_a1.get(codigo, 0)
-        vagas = info["quantidade"]
-        if demanda == 0:
-            concorrencia = "🟢 Sem demanda"
-        elif demanda < vagas:
-            concorrencia = "🟡 Baixa"
-        elif demanda == vagas:
-            concorrencia = "🟠 Equilibrada"
-        else:
-            concorrencia = "🔴 Alta"
-
-        dados_a1.append({
-            "Código": codigo, "Comarca": info["comarca"],
-            "Unidade Judiciária": info["unidade"],
-            "Vagas": vagas, "Demanda": demanda, "Concorrência": concorrencia
-        })
-
-    df_a1 = pd.DataFrame(dados_a1)
+    df_a1 = _build_df_a1_base().copy()
+    df_a1["Demanda"] = df_a1["Código"].map(demanda_a1).fillna(0).astype(int)
+    df_a1["Concorrência"] = df_a1.apply(
+        lambda r: "🟢 Sem demanda" if r["Demanda"] == 0
+        else "🟡 Baixa" if r["Demanda"] < r["Vagas"]
+        else "🟠 Equilibrada" if r["Demanda"] == r["Vagas"]
+        else "🔴 Alta", axis=1
+    )
 
     col1, col2 = st.columns(2)
     with col1:
@@ -73,16 +88,8 @@ else:
     st.subheader("Todas as Unidades (Anexo II)")
     st.info("**Anexo II** = Todas as 606 unidades judiciárias do TJPR. A coluna **Demanda** mostra quantos servidores querem ir para cada unidade (2ª opção).")
 
-    dados_a2 = []
-    for codigo, info in ANEXO_II.items():
-        dados_a2.append({
-            "Código": codigo, "Comarca": info["comarca"],
-            "Unidade Judiciária": info["unidade"],
-            "Status Lotação": obter_status_lotacao(codigo),
-            "Demanda": demanda_a2.get(codigo, 0)
-        })
-
-    df_a2 = pd.DataFrame(dados_a2)
+    df_a2 = _build_df_a2_base().copy()
+    df_a2["Demanda"] = df_a2["Código"].map(demanda_a2).fillna(0).astype(int)
 
     col1, col2 = st.columns(2)
     with col1:

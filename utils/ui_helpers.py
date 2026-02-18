@@ -64,28 +64,6 @@ def extrair_codigo_da_opcao(opcao, default_vazio="(Não escolheu)"):
     return ""
 
 
-def formatar_codigo_para_exibicao(codigo, dados_dict):
-    """
-    Formata código para exibição legível.
-
-    Args:
-        codigo: Código da unidade (ex: "A2-001")
-        dados_dict: ANEXO_I ou ANEXO_II
-
-    Returns:
-        String formatada "Comarca - Unidade" ou "-" se código inválido
-
-    Example:
-        >>> formatar_codigo_para_exibicao("A2-123", ANEXO_II)
-        'Curitiba - 1ª Vara Cível'
-    """
-    if not codigo or codigo not in dados_dict:
-        return "-"
-
-    info = dados_dict[codigo]
-    return f"{info['comarca']} - {info['unidade']}"
-
-
 def encontrar_indice_opcao(opcoes, codigo_buscado):
     """
     Encontra o índice de uma opção na lista baseado no código.

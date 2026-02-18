@@ -7,6 +7,16 @@ from lotacao_data import LOTACAO_POR_CODIGO, LOTACAO_COMPLETA
 from config.theme import get_tema
 from pages._shared import footer
 
+
+@st.cache_data
+def _build_mapa_codigo():
+    """Constrói mapa reverso (comarca, unidade) -> código."""
+    mapa = {}
+    for codigo, dados in LOTACAO_POR_CODIGO.items():
+        chave = (dados["comarca"].lower().strip(), dados["unidade"].lower().strip())
+        mapa[chave] = codigo
+    return mapa
+
 st.header("Lotação das Unidades Judiciárias")
 st.info("Dados oficiais do TJPR mostrando quantos servidores tem cada unidade (Lotação Real) e quantos deveriam ter pelo mínimo legal (Lotação Paradigma CNJ 219/2016).")
 
@@ -40,11 +50,7 @@ with col2:
 with col3:
     busca_lot = st.text_input("Buscar:", key="busca_lot", placeholder="Nome da unidade...")
 
-# Mapeamento reverso
-mapa_codigo = {}
-for codigo, dados in LOTACAO_POR_CODIGO.items():
-    chave = (dados["comarca"].lower().strip(), dados["unidade"].lower().strip())
-    mapa_codigo[chave] = codigo
+mapa_codigo = _build_mapa_codigo()
 
 dados_lotacao = []
 for u in LOTACAO_COMPLETA:
