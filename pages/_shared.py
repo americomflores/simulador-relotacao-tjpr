@@ -52,7 +52,7 @@ def get_resultado(df_inscricoes):
         return pd.DataFrame(), {}, {}, {}
 
     checksum = _calcular_checksum(df_inscricoes)
-    if st.session_state.get("_resultado_checksum") != checksum:
+    if st.session_state.get("_resultado_checksum") != checksum or "_resultado_cache" not in st.session_state:
         st.session_state["_resultado_cache"] = calcular_resultado(df_inscricoes)
         st.session_state["_resultado_checksum"] = checksum
     return st.session_state["_resultado_cache"]
@@ -66,7 +66,7 @@ def get_demanda(df_inscricoes):
         return {}, {}
 
     checksum = _calcular_checksum(df_inscricoes)
-    if st.session_state.get("_demanda_checksum") != checksum:
+    if st.session_state.get("_demanda_checksum") != checksum or "_demanda_cache" not in st.session_state:
         st.session_state["_demanda_cache"] = calcular_demanda(df_inscricoes)
         st.session_state["_demanda_checksum"] = checksum
     return st.session_state["_demanda_cache"]

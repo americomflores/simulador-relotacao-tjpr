@@ -2,7 +2,7 @@
 Validações centralizadas de dados.
 """
 import re
-from datetime import date
+from datetime import date, datetime
 from data import ANEXO_I, ANEXO_II
 from exceptions import ValidationError
 # DATA_LIMITE_ESTAGIO removido - Edital 01/2026 permite servidores em estágio probatório
@@ -38,10 +38,12 @@ def validar_matricula(matricula):
     """
     if not matricula:
         return False
-    
-    # Matrícula deve ser numérica e ter pelo menos 4 dígitos
+
+    # Matrícula deve ser numérica, ter entre 4 e 10 dígitos, e não ser todos zeros
     matricula_str = str(matricula).strip()
-    return matricula_str.isdigit() and len(matricula_str) >= 4
+    return (matricula_str.isdigit()
+            and 4 <= len(matricula_str) <= 10
+            and int(matricula_str) > 0)
 
 
 def validar_data_admissao(data_admissao):
@@ -59,7 +61,6 @@ def validar_data_admissao(data_admissao):
     
     if isinstance(data_admissao, str):
         try:
-            from datetime import datetime
             data_admissao = datetime.strptime(data_admissao, "%d/%m/%Y").date()
         except ValueError:
             return False, "Formato de data inválido (use DD/MM/YYYY)"

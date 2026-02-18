@@ -185,7 +185,11 @@ def calcular_resultado(df_inscricoes):
                     vagas_anexo1[escolha_a1] -= 1
                     df.at[idx, "status"] = "APROVADO"
                     df.at[idx, "resultado"] = "Anexo I (vaga deficitária disponibilizada - item 2.1)"
-                    df.at[idx, "vaga_obtida"] = f"{ANEXO_I[escolha_a1]['comarca']} - {ANEXO_I[escolha_a1]['unidade']}"
+                    info_a1 = ANEXO_I.get(escolha_a1)
+                    if info_a1:
+                        df.at[idx, "vaga_obtida"] = f"{info_a1['comarca']} - {info_a1['unidade']}"
+                    else:
+                        df.at[idx, "vaga_obtida"] = f"Código {escolha_a1} (dados não encontrados)"
 
                     # Atualizar ajustes de lotação
                     if lotacao_origem:
@@ -205,7 +209,7 @@ def calcular_resultado(df_inscricoes):
                                 df.at[idx, "designacao_origem"] = "NÃO"
 
                         # REGRA: Liberar vaga no Anexo II APENAS se a origem ficar DEFICITÁRIA
-                        if dados_origem_final["status"] == "DEFICITÁRIA":
+                        if dados_origem_final and dados_origem_final["status"] == "DEFICITÁRIA":
                             if lotacao_origem in vagas_anexo2:
                                 vagas_anexo2[lotacao_origem] += 1
                             else:
@@ -268,7 +272,11 @@ def calcular_resultado(df_inscricoes):
 
                 df.at[idx, "status"] = "APROVADO"
                 df.at[idx, "resultado"] = resultado_final
-                df.at[idx, "vaga_obtida"] = f"{ANEXO_II[vaga_escolhida]['comarca']} - {ANEXO_II[vaga_escolhida]['unidade']}"
+                info_a2 = ANEXO_II.get(vaga_escolhida)
+                if info_a2:
+                    df.at[idx, "vaga_obtida"] = f"{info_a2['comarca']} - {info_a2['unidade']}"
+                else:
+                    df.at[idx, "vaga_obtida"] = f"Código {vaga_escolhida} (dados não encontrados)"
                 
                 # Atualizar ajustes de lotação
                 if lotacao_origem and lotacao_origem != vaga_escolhida:

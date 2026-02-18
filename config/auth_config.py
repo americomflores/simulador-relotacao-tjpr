@@ -4,6 +4,7 @@ Carrega credenciais de secrets.toml ou usa valores padrão (fallback).
 """
 import streamlit as st
 from exceptions import ConfigurationError
+from utils.logger import log_error
 
 # Valores padrão (fallback) - manter para compatibilidade
 DEFAULT_AUTH_CODES = {
@@ -131,8 +132,8 @@ def get_auth_codes():
     try:
         if "auth_codes" in st.secrets:
             return st.secrets["auth_codes"]
-    except Exception:
-        pass
+    except (FileNotFoundError, KeyError, AttributeError) as e:
+        log_error(e, "get_auth_codes: fallback para valores padrão")
     return DEFAULT_AUTH_CODES
 
 
@@ -149,8 +150,8 @@ def get_admin_telefones():
             elif isinstance(telefones, str):
                 # Se for string, separar por vírgula
                 return [t.strip() for t in telefones.split(",")]
-    except Exception:
-        pass
+    except (FileNotFoundError, KeyError, AttributeError) as e:
+        log_error(e, "get_admin_telefones: fallback para valores padrão")
     return DEFAULT_ADMIN_TELEFONES
 
 
@@ -165,8 +166,8 @@ def get_admin_senha():
     try:
         if "admin_senha" in st.secrets:
             return st.secrets["admin_senha"]
-    except Exception:
-        pass
+    except (FileNotFoundError, KeyError, AttributeError) as e:
+        log_error(e, "get_admin_senha: fallback para valores padrão")
     return DEFAULT_ADMIN_SENHA
 
 

@@ -1,15 +1,33 @@
 """
 Serviço de busca e matching de nomes na lista classificatória.
 """
+from functools import lru_cache
 from fuzzywuzzy import fuzz
 from lista_classificatoria import LISTA_CLASSIFICATORIA
 from config.matricula_posicao_map import MATRICULA_POSICAO_MAP
 from config.constants import FUZZY_MATCH_MEDIUM
 
 
-# Cache de buscas recentes (LRU simples)
-_search_cache = {}
-_MAX_CACHE_SIZE = 100
+@lru_cache(maxsize=128)
+def _buscar_nome_cached(nome_upper, threshold):
+    """Busca cacheada por nome (LRU real)."""
+    melhor_match = None
+    melhor_score = 0
+    melhor_nome = ""
+
+    for posicao, dados in LISTA_CLASSIFICATORIA.items():
+        score_original = fuzz.ratio(nome_upper, dados["nome_original"].upper())
+        score_display = fuzz.ratio(nome_upper, dados["nome_display"].upper())
+        score = max(score_original, score_display)
+
+        if score > melhor_score:
+            melhor_score = score
+            melhor_match = posicao
+            melhor_nome = dados["nome_display"]
+
+    if melhor_score >= threshold:
+        return (melhor_match, melhor_score, melhor_nome)
+    return None
 
 
 def buscar_servidor_por_nome(nome_inscricao, threshold=FUZZY_MATCH_MEDIUM):
@@ -26,45 +44,7 @@ def buscar_servidor_por_nome(nome_inscricao, threshold=FUZZY_MATCH_MEDIUM):
     if not nome_inscricao or len(nome_inscricao.strip()) < 3:
         return None
 
-    # Verificar cache
-    cache_key = f"{nome_inscricao.upper().strip()}:{threshold}"
-    if cache_key in _search_cache:
-        return _search_cache[cache_key]
-
-    melhor_match = None
-    melhor_score = 0
-    melhor_nome = ""
-
-    nome_busca = nome_inscricao.upper().strip()
-
-    for posicao, dados in LISTA_CLASSIFICATORIA.items():
-        # Tenta match com nome original (sem numeração)
-        score_original = fuzz.ratio(nome_busca, dados["nome_original"].upper())
-
-        # Tenta match com nome display (com numeração se houver)
-        score_display = fuzz.ratio(nome_busca, dados["nome_display"].upper())
-
-        # Usa o melhor score
-        score = max(score_original, score_display)
-
-        if score > melhor_score:
-            melhor_score = score
-            melhor_match = posicao
-            melhor_nome = dados["nome_display"]
-
-    resultado = None
-    if melhor_score >= threshold:
-        resultado = (melhor_match, melhor_score, melhor_nome)
-
-    # Cachear resultado (limpar cache se ficar muito grande)
-    if len(_search_cache) >= _MAX_CACHE_SIZE:
-        # Remove 20% dos itens mais antigos
-        items_to_remove = list(_search_cache.keys())[:(_MAX_CACHE_SIZE // 5)]
-        for key in items_to_remove:
-            del _search_cache[key]
-
-    _search_cache[cache_key] = resultado
-    return resultado
+    return _buscar_nome_cached(nome_inscricao.upper().strip(), threshold)
 
 
 def buscar_servidor_por_matricula(matricula):

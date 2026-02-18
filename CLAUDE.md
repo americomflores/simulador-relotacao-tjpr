@@ -31,8 +31,8 @@ simulador-relotacao-tjpr/
 │   ├── auth_service.py             # Autenticação e autorização (verificar_login, verificar_admin)
 │   ├── sheets_service.py           # Operações com Google Sheets (implementação alternativa)
 │   ├── simulacao_service.py        # Lógica de cálculo (obter_status_lotacao, calcular_lotacao_dinamica)
-│   ├── search_service.py          # Busca na lista classificatória (por nome, matrícula, posição)
-│   └── rajs_service.py            # Funções de RAJs (obter_raj_da_comarca, obter_comarcas_da_raj, etc.)
+│   ├── search_service.py          # Busca na lista classificatória (por nome, matrícula)
+│   └── rajs_service.py            # Funções de RAJs (obter_raj_da_comarca)
 ├── config/                          # Configurações do sistema
 │   ├── auth_config.py              # AUTH_CODES, ADMIN_TELEFONES, ADMIN_SENHA (get_auth_codes, etc.)
 │   ├── settings.py                 # Configurações do sistema (estágio probatório removido em 01/2026)
@@ -43,8 +43,8 @@ simulador-relotacao-tjpr/
 │   ├── logger.py                   # Sistema de logging
 │   ├── normalizers.py              # Normalização de strings
 │   ├── validators.py               # Validações
-│   ├── error_handlers.py           # Tratamento de erros (handle_error, safe_execute, etc.)
-│   ├── ui_components.py            # Componentes de UI (card, badge, styled_dataframe, etc.)
+│   ├── error_handlers.py           # Tratamento de erros (handle_error, handle_success)
+│   ├── ui_components.py            # Componentes de UI (alert_box, metric_card, loading_spinner, empty_state)
 │   └── ui_helpers.py              # Helpers de UI (construir_opcoes_selectbox, extrair_codigo_da_opcao, etc.)
 ├── tests/                           # Testes
 │   ├── conftest.py                 # Fixtures pytest
@@ -85,7 +85,7 @@ A conexão e o CRUD de inscrições usados pela interface estão no **app.py** (
 ### config/rajs_config.py e services/rajs_service.py (RAJs)
 
 - **rajs_config.py**: Dicionário **RAJS** com as 10 Regiões Administrativas Judiciárias.
-- **rajs_service.py**: `obter_raj_da_comarca`, `obter_numero_raj`, `obter_comarcas_da_raj`, `obter_sede_da_raj`, `listar_todas_rajs`, `contar_servidores_por_raj`.
+- **rajs_service.py**: `obter_raj_da_comarca(comarca, normalizar_func=None)` — identifica a RAJ de uma comarca com lookup pré-indexado.
 
 ### data.py
 
@@ -207,14 +207,14 @@ else:
   (Edital 01/2026: `verificar_estagio_probatorio` foi removido — estágio probatório pode participar.)
 
 ### RAJs (services/rajs_service.py)
-- `obter_raj_da_comarca(comarca)`, `obter_numero_raj`, `obter_comarcas_da_raj`, `obter_sede_da_raj`, `listar_todas_rajs`, `contar_servidores_por_raj`
+- `obter_raj_da_comarca(comarca, normalizar_func=None)`
 
 ### Busca na lista classificatória (services/search_service.py)
-- `buscar_servidor_por_nome(nome)`, `buscar_servidor_por_matricula(matricula)`, `buscar_servidor_por_posicao(posicao)`, `determinar_qualidade_match`
+- `buscar_servidor_por_nome(nome_inscricao, threshold)`, `buscar_servidor_por_matricula(matricula)`
 
 ### Utilitários
 - **app.py**: `normalizar_comarca(nome)` → Normaliza nomes de comarcas (40+ variações)
-- **utils**: formatters, normalizers, validators; **utils/error_handlers**: `handle_error`, `safe_execute`, etc.; **utils/ui_components**: `card`, `badge`, `styled_dataframe`, etc.
+- **utils**: normalizers, validators; **utils/error_handlers**: `handle_error`, `handle_success`; **utils/ui_components**: `alert_box`, `metric_card`, `loading_spinner`, `empty_state`
 
 ## 🖥️ Interface do Usuário
 

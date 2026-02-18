@@ -47,10 +47,10 @@ else:
 
     df_filtrado = df_display.copy()
     if busca_servidor:
-        mask = df_filtrado.apply(
-            lambda x: busca_servidor.lower() in str(x["nome"]).lower() or
-                      busca_servidor.lower() in str(x["matricula"]).lower(),
-            axis=1
+        termo = busca_servidor.lower()
+        mask = (
+            df_filtrado["nome"].astype(str).str.lower().str.contains(termo, na=False) |
+            df_filtrado["matricula"].astype(str).str.lower().str.contains(termo, na=False)
         )
         df_filtrado = df_filtrado[mask]
 

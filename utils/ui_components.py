@@ -6,14 +6,13 @@ import pandas as pd
 from typing import Optional
 
 
-def alert_box(message: str, alert_type: str = "info", dismissible: bool = False):
+def alert_box(message: str, alert_type: str = "info"):
     """
     Caixa de alerta customizada com melhor visual.
 
     Args:
         message: Mensagem do alerta
         alert_type: Tipo (success, warning, error, info)
-        dismissible: Se pode ser fechado (não implementado no Streamlit)
     """
     type_config = {
         "success": {"icon": "✅", "color": "#4CAF50", "bg_var": "var(--alert-success-bg)"},

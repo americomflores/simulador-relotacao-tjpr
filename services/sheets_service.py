@@ -80,8 +80,7 @@ def verificar_cabecalhos_log(sheet):
                 # Adicionar cabeçalho na posição correta
                 col_letra = chr(ord('H') + i)  # H, I, J
                 sheet.update(f'{col_letra}1', [[cab]])
-    except Exception as e:
-        # Não falhar silenciosamente, mas também não travar o app
+    except gspread.exceptions.GSpreadException as e:
         log_error(e, "verificar_cabecalhos_log")
 
 
@@ -242,17 +241,20 @@ def excluir_inscricao(sheet, matricula, telefone_usuario="Público"):
 def buscar_inscricao(sheet, matricula):
     """
     Busca inscrição por matrícula.
-    
+
     Args:
         sheet: Sheet object do gspread
         matricula: Matrícula a buscar
-        
+
     Returns:
-        Dicionário com dados da inscrição ou None
+        Dicionário com dados da inscrição ou None se não encontrada
+
+    Raises:
+        SheetsError: Se ocorrer erro de comunicação com Google Sheets
     """
     if sheet is None:
         return None
-    
+
     try:
         registros = sheet.get_all_records()
         for reg in registros:
@@ -261,5 +263,5 @@ def buscar_inscricao(sheet, matricula):
         return None
     except Exception as e:
         log_error(e, "buscar_inscricao")
-        return None
+        raise SheetsError(f"Erro ao buscar inscrição: {e}")
 

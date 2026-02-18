@@ -75,10 +75,10 @@ else:
     df_filtrado = df_resultado.copy()
 
     if busca_resultado:
-        mask = df_filtrado.apply(
-            lambda x: busca_resultado.lower() in str(x["nome"]).lower() or
-                      busca_resultado.lower() in str(x["matricula"]).lower(),
-            axis=1
+        termo = busca_resultado.lower()
+        mask = (
+            df_filtrado["nome"].astype(str).str.lower().str.contains(termo, na=False) |
+            df_filtrado["matricula"].astype(str).str.lower().str.contains(termo, na=False)
         )
         df_filtrado = df_filtrado[mask]
 
@@ -255,12 +255,13 @@ else:
 
     with col_graf4:
         st.markdown("**Top 5 Comarcas Mais Procuradas**")
-        comarcas_count = {}
-        for _, row in df_resultado.iterrows():
-            if row['status'] == 'APROVADO' and row['vaga_obtida'] and row['vaga_obtida'] != '-':
-                comarca = extrair_comarca_da_string(row['vaga_obtida'])
-                if comarca:
-                    comarcas_count[comarca] = comarcas_count.get(comarca, 0) + 1
+        df_aprov = df_resultado[
+            (df_resultado['status'] == 'APROVADO') &
+            (df_resultado['vaga_obtida'].fillna('').ne('')) &
+            (df_resultado['vaga_obtida'].ne('-'))
+        ]
+        comarcas_series = df_aprov['vaga_obtida'].apply(extrair_comarca_da_string)
+        comarcas_count = comarcas_series.dropna().value_counts().to_dict()
 
         if comarcas_count:
             top_comarcas = sorted(comarcas_count.items(), key=lambda x: x[1], reverse=True)[:5]
