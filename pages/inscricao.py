@@ -231,24 +231,23 @@ with st.form("form_inscricao"):
         )
     )
 
-    data_rel = None
-    if relotado_opcao == "Sim":
-        data_rel_existente = None
-        if inscricao_existente and inscricao_existente.get("data_ultima_relotacao"):
-            try:
-                data_rel_existente = datetime.strptime(
-                    inscricao_existente["data_ultima_relotacao"], "%d/%m/%Y"
-                ).date()
-            except (ValueError, TypeError):
-                pass
-        data_rel = st.date_input(
-            "Data da última relotação a pedido:",
-            value=data_rel_existente if data_rel_existente else date(2024, 2, 10),
-            min_value=date(2024, 2, 10),
-            max_value=date(2026, 2, 10),
-            format="DD/MM/YYYY",
-            help="Deve estar entre 10/02/2024 e 10/02/2026."
-        )
+    data_rel_existente = None
+    if inscricao_existente and inscricao_existente.get("data_ultima_relotacao"):
+        try:
+            data_rel_existente = datetime.strptime(
+                inscricao_existente["data_ultima_relotacao"], "%d/%m/%Y"
+            ).date()
+        except (ValueError, TypeError):
+            pass
+
+    data_rel = st.date_input(
+        "Data da última relotação a pedido (preencha apenas se respondeu Sim acima):",
+        value=data_rel_existente if data_rel_existente else date(2024, 2, 10),
+        min_value=date(2024, 2, 10),
+        max_value=date(2026, 2, 10),
+        format="DD/MM/YYYY",
+        help="Deve estar entre 10/02/2024 e 10/02/2026. Ignorado se você respondeu Não acima.",
+    )
 
     codigo_lotacao_temp = extrair_codigo_da_opcao(lotacao_atual, default_vazio="")
     codigo_escolha_a2_temp = extrair_codigo_da_opcao(escolha_a2, default_vazio=OPCAO_NAO_ESCOLHEU)
@@ -284,8 +283,6 @@ with st.form("form_inscricao"):
             st.error("**Posição inválida!** Informe uma posição entre 1 e 1291.")
         elif posicao_lista not in LISTA_CLASSIFICATORIA:
             st.error(f"**Posição {posicao_lista} não encontrada na Lista Classificatória!** Verifique a posição correta.")
-        elif relotado_opcao == "Sim" and not data_rel:
-            st.error("Informe a data da última relotação a pedido.")
         else:
             codigo_lotacao = extrair_codigo_da_opcao(lotacao_atual, default_vazio="")
             codigo_escolha_a1 = extrair_codigo_da_opcao(escolha_a1, default_vazio=OPCAO_NAO_ESCOLHEU)
