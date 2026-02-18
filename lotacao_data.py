@@ -1117,7 +1117,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-139": {
-        "comarca": "Cornélia Procópio",
+        "comarca": "Cornélio Procópio",
         "unidade": "2ª VARA CÍVEL E DA FAZENDA PÚBLICA",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1125,7 +1125,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-140": {
-        "comarca": "Cornélia Procópio",
+        "comarca": "Cornélio Procópio",
         "unidade": "JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1133,7 +1133,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-141": {
-        "comarca": "Cornélia Procópio",
+        "comarca": "Cornélio Procópio",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1141,7 +1141,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-142": {
-        "comarca": "Cornélia Procópio",
+        "comarca": "Cornélio Procópio",
         "unidade": "VARA CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1149,7 +1149,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-143": {
-        "comarca": "Cornélia Procópio",
+        "comarca": "Cornélio Procópio",
         "unidade": "VARA DE FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE, ACIDENTES DO TRABALHO, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1733,7 +1733,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-216": {
-        "comarca": "Faxinai",
+        "comarca": "Faxinal",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -1741,7 +1741,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-217": {
-        "comarca": "Faxinai",
+        "comarca": "Faxinal",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2261,7 +2261,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-282": {
-        "comarca": "Jaca Rezinho",
+        "comarca": "Jacarezinho",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2301,7 +2301,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-287": {
-        "comarca": "Jagua Riaíva",
+        "comarca": "Jaguariaíva",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2413,7 +2413,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-301": {
-        "comarca": "Lbaiti",
+        "comarca": "Ibaiti",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2421,7 +2421,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-302": {
-        "comarca": "Lbiporã",
+        "comarca": "Ibiporã",
         "unidade": "JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2429,7 +2429,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-303": {
-        "comarca": "Lbiporã",
+        "comarca": "Ibiporã",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2437,7 +2437,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-304": {
-        "comarca": "Lbiporã",
+        "comarca": "Ibiporã",
         "unidade": "VARA CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2445,7 +2445,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-305": {
-        "comarca": "Lbiporã",
+        "comarca": "Ibiporã",
         "unidade": "VARA DE FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE, ACIDENTES DO TRABALHO, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2453,7 +2453,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-306": {
-        "comarca": "Lcaraíma",
+        "comarca": "Icaraíma",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2461,7 +2461,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-307": {
-        "comarca": "Lcaraíma",
+        "comarca": "Icaraíma",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2469,7 +2469,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-308": {
-        "comarca": "Lmbituva",
+        "comarca": "Imbituva",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2477,7 +2477,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-309": {
-        "comarca": "Lmbituva",
+        "comarca": "Imbituva",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2693,7 +2693,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-336": {
-        "comarca": "Lpiranga",
+        "comarca": "Ipiranga",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2701,7 +2701,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-337": {
-        "comarca": "Lpiranga",
+        "comarca": "Ipiranga",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2709,7 +2709,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-338": {
-        "comarca": "Lporã",
+        "comarca": "Iporã",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2717,7 +2717,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-339": {
-        "comarca": "Lporã",
+        "comarca": "Iporã",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2725,7 +2725,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-340": {
-        "comarca": "Lrati",
+        "comarca": "Irati",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2733,7 +2733,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-341": {
-        "comarca": "Lretama",
+        "comarca": "Iretama",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2741,7 +2741,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-342": {
-        "comarca": "Lretama",
+        "comarca": "Iretama",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2749,7 +2749,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-343": {
-        "comarca": "Lvaiporã",
+        "comarca": "Ivaiporã",
         "unidade": "JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2757,7 +2757,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-344": {
-        "comarca": "Lvaiporã",
+        "comarca": "Ivaiporã",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2765,7 +2765,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-345": {
-        "comarca": "Lvaiporã",
+        "comarca": "Ivaiporã",
         "unidade": "VARA CRIMINAL, INFÂNCIA E JUVENTUDE E FAMÍLIA E SUCESSÕES",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -2789,7 +2789,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-348": {
-        "comarca": "Mambo Rê",
+        "comarca": "Mamborê",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3117,7 +3117,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-389": {
-        "comarca": "Marretes",
+        "comarca": "Morretes",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3125,7 +3125,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-390": {
-        "comarca": "Marretes",
+        "comarca": "Morretes",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3309,7 +3309,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-413": {
-        "comarca": "Palatina",
+        "comarca": "Palotina",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -3317,7 +3317,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-414": {
-        "comarca": "Palatina",
+        "comarca": "Palotina",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4165,7 +4165,7 @@ LOTACAO_POR_CODIGO = {
         "status": "DEFICITÁRIA",
     },
     "A2-520": {
-        "comarca": "Santa Isabel do Lvaí",
+        "comarca": "Santa Isabel do Ivaí",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -4445,7 +4445,7 @@ LOTACAO_POR_CODIGO = {
         "status": "EQUILIBRADA",
     },
     "A2-555": {
-        "comarca": "São João do Lvaí",
+        "comarca": "São João do Ivaí",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6108,7 +6108,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-139",
-        "comarca": "Cornélia Procópio",
+        "comarca": "Cornélio Procópio",
         "unidade": "2ª VARA CÍVEL E DA FAZENDA PÚBLICA",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6117,7 +6117,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-140",
-        "comarca": "Cornélia Procópio",
+        "comarca": "Cornélio Procópio",
         "unidade": "JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6126,7 +6126,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-141",
-        "comarca": "Cornélia Procópio",
+        "comarca": "Cornélio Procópio",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6135,7 +6135,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-142",
-        "comarca": "Cornélia Procópio",
+        "comarca": "Cornélio Procópio",
         "unidade": "VARA CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6144,7 +6144,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-143",
-        "comarca": "Cornélia Procópio",
+        "comarca": "Cornélio Procópio",
         "unidade": "VARA DE FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE, ACIDENTES DO TRABALHO, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6801,7 +6801,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-216",
-        "comarca": "Faxinai",
+        "comarca": "Faxinal",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -6810,7 +6810,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-217",
-        "comarca": "Faxinai",
+        "comarca": "Faxinal",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7395,7 +7395,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-282",
-        "comarca": "Jaca Rezinho",
+        "comarca": "Jacarezinho",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7440,7 +7440,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-287",
-        "comarca": "Jagua Riaíva",
+        "comarca": "Jaguariaíva",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7566,7 +7566,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-301",
-        "comarca": "Lbaiti",
+        "comarca": "Ibaiti",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7575,7 +7575,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-302",
-        "comarca": "Lbiporã",
+        "comarca": "Ibiporã",
         "unidade": "JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7584,7 +7584,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-303",
-        "comarca": "Lbiporã",
+        "comarca": "Ibiporã",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7593,7 +7593,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-304",
-        "comarca": "Lbiporã",
+        "comarca": "Ibiporã",
         "unidade": "VARA CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7602,7 +7602,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-305",
-        "comarca": "Lbiporã",
+        "comarca": "Ibiporã",
         "unidade": "VARA DE FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE, ACIDENTES DO TRABALHO, REGISTROS PÚBLICOS E CORREGEDORIA DO FORO EXTRAJUDICIAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7611,7 +7611,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-306",
-        "comarca": "Lcaraíma",
+        "comarca": "Icaraíma",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7620,7 +7620,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-307",
-        "comarca": "Lcaraíma",
+        "comarca": "Icaraíma",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7629,7 +7629,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-308",
-        "comarca": "Lmbituva",
+        "comarca": "Imbituva",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7638,7 +7638,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-309",
-        "comarca": "Lmbituva",
+        "comarca": "Imbituva",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7881,7 +7881,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-336",
-        "comarca": "Lpiranga",
+        "comarca": "Ipiranga",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7890,7 +7890,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-337",
-        "comarca": "Lpiranga",
+        "comarca": "Ipiranga",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7899,7 +7899,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-338",
-        "comarca": "Lporã",
+        "comarca": "Iporã",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7908,7 +7908,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-339",
-        "comarca": "Lporã",
+        "comarca": "Iporã",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7917,7 +7917,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-340",
-        "comarca": "Lrati",
+        "comarca": "Irati",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7926,7 +7926,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-341",
-        "comarca": "Lretama",
+        "comarca": "Iretama",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7935,7 +7935,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-342",
-        "comarca": "Lretama",
+        "comarca": "Iretama",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7944,7 +7944,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-343",
-        "comarca": "Lvaiporã",
+        "comarca": "Ivaiporã",
         "unidade": "JUIZADO ESPECIAL CÍVEL, CRIMINAL E DA FAZENDA PÚBLICA",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7953,7 +7953,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-344",
-        "comarca": "Lvaiporã",
+        "comarca": "Ivaiporã",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7962,7 +7962,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-345",
-        "comarca": "Lvaiporã",
+        "comarca": "Ivaiporã",
         "unidade": "VARA CRIMINAL, INFÂNCIA E JUVENTUDE E FAMÍLIA E SUCESSÕES",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -7989,7 +7989,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-348",
-        "comarca": "Mambo Rê",
+        "comarca": "Mamborê",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -8358,7 +8358,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-389",
-        "comarca": "Marretes",
+        "comarca": "Morretes",
         "unidade": "JUÍZO ÚNICO",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -8367,7 +8367,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-390",
-        "comarca": "Marretes",
+        "comarca": "Morretes",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -8574,7 +8574,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-413",
-        "comarca": "Palatina",
+        "comarca": "Palotina",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -8583,7 +8583,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-414",
-        "comarca": "Palatina",
+        "comarca": "Palotina",
         "unidade": "VARA CRIMINAL, FAMÍLIA E SUCESSÕES, INFÂNCIA E JUVENTUDE E JUIZADO ESPECIAL CRIMINAL",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -9537,7 +9537,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-520",
-        "comarca": "Santa Isabel do Lvaí",
+        "comarca": "Santa Isabel do Ivaí",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
@@ -9852,7 +9852,7 @@ LOTACAO_COMPLETA = [
     },
     {
         "codigo": "A2-555",
-        "comarca": "São João do Lvaí",
+        "comarca": "São João do Ivaí",
         "unidade": "SECRETARIA DA DIREÇÃO DO FÓRUM",
         "lotacao_real": 5,
         "lotacao_paradigma": 5,
