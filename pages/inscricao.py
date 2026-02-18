@@ -298,7 +298,7 @@ with st.form("form_inscricao"):
                 "data_inscricao": datetime.now().strftime("%d/%m/%Y %H:%M"),
                 "posicao_lista_classificatoria": posicao_lista,
                 "relotado_menos_2_anos": "S" if relotado_opcao == "Sim" else "N",
-                "data_ultima_relotacao": data_rel.strftime("%d/%m/%Y") if data_rel else "",
+                "data_ultima_relotacao": data_rel.strftime("%d/%m/%Y") if (relotado_opcao == "Sim" and data_rel) else "",
             }
 
             if salvar_inscricao(sheet, dados):
