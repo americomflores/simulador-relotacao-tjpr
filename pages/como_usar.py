@@ -107,9 +107,10 @@ O resultado depende de quantas e quais inscrições são feitas — ele muda con
         "O que o simulador NÃO verifica automaticamente?",
         """Este simulador **NÃO verifica automaticamente**:
 - Se o servidor está lotado em 1º grau (Item 3.2)
-- Se houve relotação nos últimos 2 anos (Item 3.3)
 - Regras especiais para unidades em estatização (Item 3.4)
 - Servidores de unidades superavitárias ou já designados de ofício (Item 3.18)
+
+✅ **Relotação nos últimos 2 anos (Item 3.3 e 3.3.1):** agora verificada automaticamente, desde que o servidor informe corretamente no formulário de inscrição.
 
 Essas verificações são feitas manualmente pela **Secretaria de Gestão de Pessoas** no resultado oficial.""",
     ),

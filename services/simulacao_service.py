@@ -2,8 +2,10 @@
 Serviço de lógica de simulação de relotação.
 """
 import pandas as pd
+from datetime import datetime as _dt
 from data import ANEXO_I, ANEXO_II
 from lotacao_data import LOTACAO_POR_CODIGO
+from config.constants import DATA_PUBLICACAO_EDITAL
 # DATA_LIMITE_ESTAGIO removido - Edital 01/2026 permite servidores em estágio probatório
 from exceptions import SimulationError
 from utils.logger import log_error
@@ -111,20 +113,24 @@ def calcular_resultado(df_inscricoes):
     """
     Calcula o resultado da simulação com lotação dinâmica.
     Inclui cálculo de "Designação na Origem" baseado no status da unidade.
-    
+
     Implementa item 3.11 do Edital:
     "Se, durante a análise do Anexo II, for possível o deferimento em ambas as unidades,
     será concedido o deferimento para a unidade originalmente indicada no Anexo I."
-    
+
+    Implementa itens 3.3 e 3.3.1 do Edital:
+    Servidores relotados a pedido há menos de 2 anos são desclassificados, salvo se
+    todos os concorrentes da unidade estiverem na mesma situação (exceção 3.3.1).
+
     Args:
         df_inscricoes: DataFrame com inscrições
-        
+
     Returns:
         Tupla (df_resultado, vagas_anexo1, vagas_anexo2, ajustes_lotacao)
     """
     if df_inscricoes.empty:
         return pd.DataFrame(), {}, {}, {}
-    
+
     try:
         df = df_inscricoes.copy()
 
@@ -134,8 +140,63 @@ def calcular_resultado(df_inscricoes):
             errors="coerce"
         ).astype("Int64")
 
-        # Ordenar por posição na lista classificatória (posição 1 = maior prioridade)
-        df = df.sort_values("posicao_lista_classificatoria", ascending=True, na_position='last').reset_index(drop=True)
+        # Retrocompatibilidade: garantir colunas de relotação existem
+        if "relotado_menos_2_anos" not in df.columns:
+            df["relotado_menos_2_anos"] = "N"
+        if "data_ultima_relotacao" not in df.columns:
+            df["data_ultima_relotacao"] = ""
+
+        # Pré-computar mapas de exceção (item 3.3)
+        # excecao_a1[codigo] = True se TODOS os competidores deste Anexo I são relotados < 2 anos
+        excecao_a1 = {}
+        for codigo in ANEXO_I:
+            competidores = df[df["escolha_anexo1"] == codigo]
+            if not competidores.empty:
+                excecao_a1[codigo] = (
+                    competidores["relotado_menos_2_anos"].fillna("N").str.upper().eq("S").all()
+                )
+            else:
+                excecao_a1[codigo] = False
+
+        # excecao_a2[codigo] = True se TODOS os competidores diretos (A2 choice) são relotados
+        excecao_a2 = {}
+        for codigo in ANEXO_II:
+            competidores = df[df["escolha_anexo2"] == codigo]
+            if not competidores.empty:
+                excecao_a2[codigo] = (
+                    competidores["relotado_menos_2_anos"].fillna("N").str.upper().eq("S").all()
+                )
+            else:
+                excecao_a2[codigo] = False
+
+        # Ordenação composta (item 3.3.1):
+        # Grupo 0: não relotados → por posição na lista (ASC)
+        # Grupo 1: relotados COM exceção A1 → por dias desde relotação DESC (mais antigo = maior prioridade)
+        # Grupo 2: relotados SEM exceção → ao final (serão desclassificados)
+        _sk0, _sk1, _sk2 = [], [], []
+        for i in df.index:
+            row = df.loc[i]
+            is_rel = str(row.get("relotado_menos_2_anos", "N")).upper() == "S"
+            pos_val = row["posicao_lista_classificatoria"]
+            pos = int(pos_val) if pd.notna(pos_val) else 9999
+            if not is_rel:
+                _sk0.append(0); _sk1.append(pos); _sk2.append(0)
+            else:
+                a1 = str(row.get("escolha_anexo1", ""))
+                if excecao_a1.get(a1, False):
+                    try:
+                        data = _dt.strptime(str(row.get("data_ultima_relotacao", "")), "%d/%m/%Y").date()
+                        dias = (DATA_PUBLICACAO_EDITAL - data).days
+                    except (ValueError, TypeError):
+                        dias = 0
+                    _sk0.append(1); _sk1.append(-dias); _sk2.append(pos)
+                else:
+                    _sk0.append(2); _sk1.append(pos); _sk2.append(0)
+
+        df["_sk0"] = _sk0
+        df["_sk1"] = _sk1
+        df["_sk2"] = _sk2
+        df = df.sort_values(["_sk0", "_sk1", "_sk2"]).drop(columns=["_sk0", "_sk1", "_sk2"]).reset_index(drop=True)
 
         # Manter coluna posicao_antiguidade para compatibilidade (agora reflete posição da lista)
         df["posicao_antiguidade"] = df["posicao_lista_classificatoria"]
@@ -146,10 +207,31 @@ def calcular_resultado(df_inscricoes):
         df["designacao_origem"] = ""
         df["status_origem_inicial"] = ""
         df["status_origem_final"] = ""
-        
+
+        # Helper: verifica se servidor é relotado a pedido há menos de 2 anos (item 3.3)
+        def _eh_relotado(idx):
+            return str(df.at[idx, "relotado_menos_2_anos"]).upper() == "S"
+
+        # Pré-marcar servidores globalmente desclassificados (item 3.3)
+        # Desclassificado global = relotado E sem exceção para nenhuma das escolhas
+        for idx in df.index:
+            if not _eh_relotado(idx):
+                continue
+            a1 = df.at[idx, "escolha_anexo1"]
+            a2 = df.at[idx, "escolha_anexo2"]
+            tem_excecao_a1 = bool(a1 and excecao_a1.get(a1, False))
+            tem_excecao_a2 = bool(a2 and excecao_a2.get(a2, False))
+            if not tem_excecao_a1 and not tem_excecao_a2:
+                df.at[idx, "status"] = "DESCLASSIFICADO"
+                df.at[idx, "resultado"] = (
+                    "Relotado(a) a pedido há menos de 2 anos (item 3.3) — "
+                    "não há unidade elegível com exceção aplicável"
+                )
+                df.at[idx, "designacao_origem"] = "-"
+
         # Usar mapeamento cacheado
         mapeamento_a1_para_a2 = _obter_mapeamento_a1_para_a2()
-        
+
         # Edital 01/2026: Servidores em estágio probatório PODEM participar
         # (Validação de estágio probatório removida)
 
@@ -157,14 +239,14 @@ def calcular_resultado(df_inscricoes):
         vagas_anexo1 = {}
         for codigo, info in ANEXO_I.items():
             vagas_anexo1[codigo] = info["quantidade"]
-        
+
         # Controle dinâmico de lotação das unidades
         # Começar com os valores originais e ajustar conforme movimentações
         ajustes_lotacao = {}  # codigo_unidade -> ajuste acumulado
-        
+
         vagas_anexo2 = {}
         servidores_para_anexo2 = []
-        
+
         # FASE 1: Processar Anexo I
         for row in df.itertuples():
             idx = row.Index
@@ -179,6 +261,14 @@ def calcular_resultado(df_inscricoes):
                 dados_origem = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao.get(lotacao_origem, 0))
                 if dados_origem:
                     df.at[idx, "status_origem_inicial"] = dados_origem["status"]
+
+            # Item 3.3: relotado desclassificado do Anexo I (mas pode ter exceção no A2)
+            if _eh_relotado(idx) and escolha_a1 and not excecao_a1.get(escolha_a1, False):
+                df.at[idx, "observacao"] = (
+                    "Relotado(a) a pedido há menos de 2 anos — desclassificado(a) do Anexo I (item 3.3)"
+                )
+                servidores_para_anexo2.append(idx)
+                continue
 
             if escolha_a1 and escolha_a1 in vagas_anexo1:
                 if vagas_anexo1[escolha_a1] > 0:
@@ -221,7 +311,7 @@ def calcular_resultado(df_inscricoes):
                 servidores_para_anexo2.append(idx)
             else:
                 servidores_para_anexo2.append(idx)
-        
+
         # FASE 2: Processar Anexo II
         # Conforme item 3.11: se possível deferimento em ambas as unidades (A1 e A2),
         # será concedido deferimento para a unidade originalmente indicada no Anexo I
@@ -230,24 +320,33 @@ def calcular_resultado(df_inscricoes):
             escolha_a1 = row["escolha_anexo1"]  # Escolha original do Anexo I
             escolha_a2 = row["escolha_anexo2"]  # Escolha do Anexo II
             lotacao_origem = row["lotacao_atual"]
-            
+
             # Registrar status inicial da origem (se ainda não registrado)
             if lotacao_origem and not df.at[idx, "status_origem_inicial"]:
                 dados_origem = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao.get(lotacao_origem, 0))
                 if dados_origem:
                     df.at[idx, "status_origem_inicial"] = dados_origem["status"]
-            
+
             # Mapear escolha A1 para código A2 (mesma unidade) - usar cache
             codigo_a1_no_a2 = mapeamento_a1_para_a2.get(escolha_a1) if escolha_a1 else None
-            
+
             # Verificar disponibilidade das vagas
             vaga_a1_disponivel = codigo_a1_no_a2 and codigo_a1_no_a2 in vagas_anexo2 and vagas_anexo2[codigo_a1_no_a2] > 0
             vaga_a2_disponivel = escolha_a2 and escolha_a2 in vagas_anexo2 and vagas_anexo2[escolha_a2] > 0
-            
+
+            eh_relotado = _eh_relotado(idx)
+
+            # Item 3.3: relotado só pode receber vaga onde a exceção se aplica
+            if eh_relotado:
+                if vaga_a1_disponivel and not excecao_a2.get(codigo_a1_no_a2, False):
+                    vaga_a1_disponivel = False
+                if vaga_a2_disponivel and not excecao_a2.get(escolha_a2, False):
+                    vaga_a2_disponivel = False
+
             # Determinar qual vaga conceder (prioridade para A1 conforme item 3.11)
             vaga_escolhida = None
             origem_vaga = None  # "A1" ou "A2"
-            
+
             if vaga_a1_disponivel and vaga_a2_disponivel:
                 # Ambas disponíveis: prioridade para A1 (item 3.11)
                 vaga_escolhida = codigo_a1_no_a2
@@ -260,7 +359,7 @@ def calcular_resultado(df_inscricoes):
                 # Apenas A2 disponível
                 vaga_escolhida = escolha_a2
                 origem_vaga = "ANEXO II"
-            
+
             if vaga_escolhida:
                 vagas_anexo2[vaga_escolhida] -= 1
 
@@ -277,24 +376,24 @@ def calcular_resultado(df_inscricoes):
                     df.at[idx, "vaga_obtida"] = f"{info_a2['comarca']} - {info_a2['unidade']}"
                 else:
                     df.at[idx, "vaga_obtida"] = f"Código {vaga_escolhida} (dados não encontrados)"
-                
+
                 # Atualizar ajustes de lotação
                 if lotacao_origem and lotacao_origem != vaga_escolhida:
                     # Servidor sai da origem (-1)
                     ajustes_lotacao[lotacao_origem] = ajustes_lotacao.get(lotacao_origem, 0) - 1
-                    
+
                     # Calcular status final da origem após saída
                     dados_origem_final = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao[lotacao_origem])
                     if dados_origem_final:
                         df.at[idx, "status_origem_final"] = dados_origem_final["status"]
-                        
+
                         # Determinar se precisa designação na origem
                         # Conforme item 3.14 do Edital: designação apenas se a saída OCASIONAR DÉFICIT
                         if dados_origem_final["status"] == "DEFICITÁRIA":
                             df.at[idx, "designacao_origem"] = "SIM"
                         else:
                             df.at[idx, "designacao_origem"] = "NÃO"
-                    
+
                     # Liberar vaga no Anexo II APENAS se origem ficar DEFICITÁRIA (item 3.11)
                     if dados_origem_final and dados_origem_final["status"] == "DEFICITÁRIA":
                         if lotacao_origem in vagas_anexo2:
@@ -305,6 +404,20 @@ def calcular_resultado(df_inscricoes):
                     df.at[idx, "designacao_origem"] = "-"
             else:
                 # Nenhuma vaga disponível
+
+                # Verificar se é desclassificação por item 3.3 (relotado sem vagas elegíveis)
+                if eh_relotado:
+                    podia_a1 = bool(codigo_a1_no_a2 and excecao_a2.get(codigo_a1_no_a2, False))
+                    podia_a2 = bool(escolha_a2 and excecao_a2.get(escolha_a2, False))
+                    if not podia_a1 and not podia_a2:
+                        df.at[idx, "status"] = "DESCLASSIFICADO"
+                        df.at[idx, "resultado"] = (
+                            "Relotado(a) a pedido há menos de 2 anos (item 3.3) — "
+                            "desclassificado(a) de todas as unidades escolhidas"
+                        )
+                        df.at[idx, "designacao_origem"] = "-"
+                        continue
+
                 df.at[idx, "status"] = "NÃO OBTEVE VAGA"
 
                 # Determinar motivo detalhado no resultado
@@ -324,9 +437,9 @@ def calcular_resultado(df_inscricoes):
                 else:
                     df.at[idx, "resultado"] = "Anexo I (não escolheu unidade) · Anexo II (não escolheu unidade)"
                     df.at[idx, "observacao"] = df.at[idx, "resultado"]
-                
+
                 df.at[idx, "designacao_origem"] = "-"
-        
+
         return df, vagas_anexo1, vagas_anexo2, ajustes_lotacao
     except Exception as e:
         log_error(e, "calcular_resultado")

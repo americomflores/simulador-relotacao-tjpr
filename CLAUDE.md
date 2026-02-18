@@ -334,10 +334,12 @@ secondaryBackgroundColor = "#F0F2F6"
 - **Item 3.16**: Designação na origem se a saída causar déficit
 - **Item 3.17**: Vaga condicionada à substituição (ato tornado sem efeito se não houver)
 
+### Itens implementados automaticamente (continuação):
+- **Item 3.3**: Relotado a pedido há menos de 2 anos — desclassificado (dados informados no formulário; colunas L e M do Sheets)
+- **Item 3.3.1**: Exceção: se todos os concorrentes da unidade são relotados, preferência ao relotado há mais tempo
+
 ### Itens que requerem verificação MANUAL (não implementados no código):
 - **Item 3.2**: Servidor não lotado em 1º grau (DESCLASSIFICADO)
-- **Item 3.3**: Relotado há menos de 2 anos (DESCLASSIFICADO, exceto se todos assim)
-- **Item 3.3.1**: Exceção: preferência ao relotado há mais tempo
 - **Item 3.3.2**: Servidores do Edital 04/2025 designados na origem
 - **Item 3.4**: Unidades em estatização: designação na origem até data específica
 - **Item 3.18**: Servidores de unidades superavitárias ou já designados de ofício não precisam de designação

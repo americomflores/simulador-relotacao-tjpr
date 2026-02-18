@@ -64,21 +64,31 @@ def verificar_cabecalhos_log(sheet):
         cabecalhos_necessarios = ["nome", "matricula", "data_admissao", "lotacao_atual",
                                    "escolha_anexo1", "escolha_anexo2", "data_inscricao",
                                    "registrado_por", "alterado_por", "data_alteracao",
-                                   "posicao_lista_classificatoria"]
+                                   "posicao_lista_classificatoria",
+                                   "relotado_menos_2_anos", "data_ultima_relotacao"]
 
         # Se planilha vazia, criar todos os cabeçalhos
         if not cabecalhos:
-            sheet.update('A1:K1', [cabecalhos_necessarios])
+            sheet.update('A1:M1', [cabecalhos_necessarios])
             return
-        
+
         # Verificar se cabeçalhos de log existem (colunas H, I, J)
         cabecalhos_log = ["registrado_por", "alterado_por", "data_alteracao"]
-        
+
         for i, cab in enumerate(cabecalhos_log):
             col_idx = 7 + i  # H=7, I=8, J=9 (0-indexed)
             if len(cabecalhos) <= col_idx or cabecalhos[col_idx] != cab:
                 # Adicionar cabeçalho na posição correta
                 col_letra = chr(ord('H') + i)  # H, I, J
+                sheet.update(f'{col_letra}1', [[cab]])
+
+        # Verificar se cabeçalhos de relotação existem (colunas L, M)
+        cabecalhos_relotacao = ["relotado_menos_2_anos", "data_ultima_relotacao"]
+
+        for i, cab in enumerate(cabecalhos_relotacao):
+            col_idx = 11 + i  # L=11, M=12 (0-indexed)
+            if len(cabecalhos) <= col_idx or cabecalhos[col_idx] != cab:
+                col_letra = chr(ord('L') + i)  # L, M
                 sheet.update(f'{col_letra}1', [[cab]])
     except gspread.exceptions.GSpreadException as e:
         log_error(e, "verificar_cabecalhos_log")
@@ -98,7 +108,8 @@ def carregar_inscricoes(sheet):
                     "escolha_anexo1", "escolha_anexo2", "data_inscricao"]
     colunas_log = ["registrado_por", "alterado_por", "data_alteracao"]
     colunas_classificacao = ["posicao_lista_classificatoria"]
-    todas_colunas = colunas_base + colunas_log + colunas_classificacao
+    colunas_relotacao = ["relotado_menos_2_anos", "data_ultima_relotacao"]
+    todas_colunas = colunas_base + colunas_log + colunas_classificacao + colunas_relotacao
     
     if sheet is None:
         return pd.DataFrame(columns=todas_colunas)
@@ -129,7 +140,12 @@ def carregar_inscricoes(sheet):
             df["posicao_lista_classificatoria"],
             errors="coerce"
         ).astype("Int64")
-        
+
+        # Garantir que colunas de relotação existam (retrocompatibilidade)
+        for col, default in [("relotado_menos_2_anos", "N"), ("data_ultima_relotacao", "")]:
+            if col not in df.columns:
+                df[col] = default
+
         log_operation("carregar_inscricoes", "system", f"{len(df)} registros")
         return df
     except Exception as e:
@@ -178,12 +194,14 @@ def salvar_inscricao(sheet, dados, telefone_usuario="Público"):
                 dados["escolha_anexo1"],
                 dados["escolha_anexo2"],
                 dados["data_inscricao"],
-                registrado_por,                              # H: manter original
-                telefone_formatado,                          # I: quem alterou
-                data_hora_atual,                             # J: quando alterou
-                dados.get("posicao_lista_classificatoria", "")  # K: posição
+                registrado_por,                                   # H: manter original
+                telefone_formatado,                               # I: quem alterou
+                data_hora_atual,                                  # J: quando alterou
+                dados.get("posicao_lista_classificatoria", ""),   # K: posição
+                dados.get("relotado_menos_2_anos", "N"),          # L: relotado < 2 anos
+                dados.get("data_ultima_relotacao", ""),           # M: data da relotação
             ]
-            sheet.update(f"A{linha_existente}:K{linha_existente}", [valores])
+            sheet.update(f"A{linha_existente}:M{linha_existente}", [valores])
             log_operation("atualizar_inscricao", telefone_usuario, f"matrícula {dados['matricula']}")
         else:
             # Nova inscrição
@@ -195,10 +213,12 @@ def salvar_inscricao(sheet, dados, telefone_usuario="Público"):
                 dados["escolha_anexo1"],
                 dados["escolha_anexo2"],
                 dados["data_inscricao"],
-                telefone_formatado,                          # H: quem registrou
-                telefone_formatado,                          # I: quem alterou (mesmo, pois é novo)
-                data_hora_atual,                             # J: quando
-                dados.get("posicao_lista_classificatoria", "")  # K: posição
+                telefone_formatado,                               # H: quem registrou
+                telefone_formatado,                               # I: quem alterou (mesmo, pois é novo)
+                data_hora_atual,                                  # J: quando
+                dados.get("posicao_lista_classificatoria", ""),   # K: posição
+                dados.get("relotado_menos_2_anos", "N"),          # L: relotado < 2 anos
+                dados.get("data_ultima_relotacao", ""),           # M: data da relotação
             ]
             sheet.append_row(valores)
             log_operation("criar_inscricao", telefone_usuario, f"matrícula {dados['matricula']}")

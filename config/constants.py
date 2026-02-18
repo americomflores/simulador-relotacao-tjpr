@@ -19,3 +19,15 @@ FUZZY_MATCH_MEDIUM = 85
 
 # Texto padrão para opção vazia em selectbox
 OPCAO_NAO_ESCOLHEU = "(Não escolheu)"
+
+
+# =============================================================================
+# DATAS DO EDITAL 01/2026
+# =============================================================================
+
+from datetime import date
+
+# Data de publicação do Edital 01/2026 (base para cálculo dos 2 anos do item 3.3)
+DATA_PUBLICACAO_EDITAL = date(2026, 2, 10)
+# Limite para relotação voluntária: 2 anos antes da publicação
+DATA_LIMITE_RELOTACAO = date(2024, 2, 10)

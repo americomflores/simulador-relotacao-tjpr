@@ -214,6 +214,42 @@ with st.form("form_inscricao"):
                                index=escolha_a2_default,
                                help="Mais de 300 unidades judiciárias.")
 
+    st.divider()
+    st.markdown("**Relotação nos últimos 2 anos (Item 3.3):**")
+
+    relotado_existente = (inscricao_existente or {}).get("relotado_menos_2_anos", "N")
+    relotado_idx = 1 if str(relotado_existente).upper() == "S" else 0
+
+    relotado_opcao = st.radio(
+        "Você foi relotado(a) **a pedido** nos últimos 2 anos (após 10/02/2024)?",
+        ["Não", "Sim"],
+        index=relotado_idx,
+        help=(
+            "Item 3.3 do Edital: servidores relotados a pedido após 10/02/2024 "
+            "podem ser desclassificados, exceto se todos os concorrentes da unidade "
+            "estiverem na mesma situação (item 3.3.1)."
+        )
+    )
+
+    data_rel = None
+    if relotado_opcao == "Sim":
+        data_rel_existente = None
+        if inscricao_existente and inscricao_existente.get("data_ultima_relotacao"):
+            try:
+                data_rel_existente = datetime.strptime(
+                    inscricao_existente["data_ultima_relotacao"], "%d/%m/%Y"
+                ).date()
+            except (ValueError, TypeError):
+                pass
+        data_rel = st.date_input(
+            "Data da última relotação a pedido:",
+            value=data_rel_existente if data_rel_existente else date(2024, 2, 10),
+            min_value=date(2024, 2, 10),
+            max_value=date(2026, 2, 10),
+            format="DD/MM/YYYY",
+            help="Deve estar entre 10/02/2024 e 10/02/2026."
+        )
+
     codigo_lotacao_temp = extrair_codigo_da_opcao(lotacao_atual, default_vazio="")
     codigo_escolha_a2_temp = extrair_codigo_da_opcao(escolha_a2, default_vazio=OPCAO_NAO_ESCOLHEU)
 
@@ -228,6 +264,7 @@ with st.form("form_inscricao"):
         st.markdown(f"**Nome:** {nome if nome else '-'}")
         st.markdown(f"**Matrícula:** {matricula if matricula else '-'}")
         st.markdown(f"**Data Admissão:** {data_admissao.strftime('%d/%m/%Y') if data_admissao else '-'}")
+        st.markdown(f"**Relotado < 2 anos:** {'Sim' if relotado_opcao == 'Sim' else 'Não'}")
     with col_r2:
         lotacao_resumo = lotacao_atual.split(" - ", 1)[1] if lotacao_atual and " - " in lotacao_atual else "-"
         escolha_a1_resumo = escolha_a1.split(" - ", 1)[1] if escolha_a1 != OPCAO_NAO_ESCOLHEU and " - " in escolha_a1 else "-"
@@ -247,6 +284,8 @@ with st.form("form_inscricao"):
             st.error("**Posição inválida!** Informe uma posição entre 1 e 1291.")
         elif posicao_lista not in LISTA_CLASSIFICATORIA:
             st.error(f"**Posição {posicao_lista} não encontrada na Lista Classificatória!** Verifique a posição correta.")
+        elif relotado_opcao == "Sim" and not data_rel:
+            st.error("Informe a data da última relotação a pedido.")
         else:
             codigo_lotacao = extrair_codigo_da_opcao(lotacao_atual, default_vazio="")
             codigo_escolha_a1 = extrair_codigo_da_opcao(escolha_a1, default_vazio=OPCAO_NAO_ESCOLHEU)
@@ -260,7 +299,9 @@ with st.form("form_inscricao"):
                 "escolha_anexo1": codigo_escolha_a1,
                 "escolha_anexo2": codigo_escolha_a2,
                 "data_inscricao": datetime.now().strftime("%d/%m/%Y %H:%M"),
-                "posicao_lista_classificatoria": posicao_lista
+                "posicao_lista_classificatoria": posicao_lista,
+                "relotado_menos_2_anos": "S" if relotado_opcao == "Sim" else "N",
+                "data_ultima_relotacao": data_rel.strftime("%d/%m/%Y") if data_rel else "",
             }
 
             if salvar_inscricao(sheet, dados):
