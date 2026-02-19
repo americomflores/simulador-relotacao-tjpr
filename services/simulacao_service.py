@@ -150,15 +150,18 @@ def calcular_resultado(df_inscricoes):
         # Grupo 0: não relotados → por posição na lista (ASC)
         # Grupo 1: relotados → por dias desde relotação DESC (mais antigo = maior prioridade)
         #
-        # Regra item 3.3: relotado a pedido há menos de 2 anos é DESCLASSIFICADO se houver
-        # qualquer concorrente não-relotado na mesma unidade (exceto item 3.3.1).
-        # Item 3.3.1 (exceção): se TODOS os concorrentes de uma unidade são relotados,
-        # o mais antigo (maior dias) vence. Isso é garantido pela ordenação + bloqueio
-        # explícito via had_nao_relotado_a1/a2 nas fases 1 e 2.
+        # A exceção do item 3.3.1 emerge NATURALMENTE desta ordenação:
+        # não-relotados são processados primeiro e consomem suas vagas;
+        # vagas remanescentes quando chega a vez dos relotados só têm
+        # relotados competindo → exceção se aplica automaticamente.
+        # DESCLASSIFICADO (item 3.3) só ocorre no bloco else quando
+        # nenhuma vaga foi encontrada e todas as escolhas tinham
+        # concorrentes não-relotados.
         #
         # Exemplo: unidade X tem 2 vagas; Ana (não relotada), Bruno e Carla (relotados).
-        # Ana pega 1 vaga. Bruno e Carla são bloqueados (had_nao_relotado_a1[X]=True)
-        # mesmo com vaga sobrando → DESCLASSIFICADOS (item 3.3).
+        # Ana pega 1 vaga. Bruno pega a 2ª vaga (exceção 3.3.1: neste momento,
+        # apenas relotados competem). Carla → NÃO OBTEVE VAGA.
+        # Se X tivesse 1 vaga: Ana pega; Bruno e Carla → DESCLASSIFICADO (3.3).
         _sk0, _sk1, _sk2 = [], [], []
         for i in df.index:
             row = df.loc[i]
@@ -243,43 +246,38 @@ def calcular_resultado(df_inscricoes):
 
             if escolha_a1 and escolha_a1 in vagas_anexo1:
                 if vagas_anexo1[escolha_a1] > 0:
-                    # Item 3.3: relotado só obtém vaga se a exceção 3.3.1 se aplica
-                    # (nenhum concorrente não-relotado escolheu esta unidade)
-                    if _eh_relotado(idx) and had_nao_relotado_a1.get(escolha_a1, False):
-                        servidores_para_anexo2.append(idx)
+                    vagas_anexo1[escolha_a1] -= 1
+                    df.at[idx, "status"] = "APROVADO"
+                    df.at[idx, "resultado"] = "Anexo I (vaga deficitária disponibilizada - item 2.1)"
+                    info_a1 = ANEXO_I.get(escolha_a1)
+                    if info_a1:
+                        df.at[idx, "vaga_obtida"] = f"{info_a1['comarca']} - {info_a1['unidade']}"
                     else:
-                        vagas_anexo1[escolha_a1] -= 1
-                        df.at[idx, "status"] = "APROVADO"
-                        df.at[idx, "resultado"] = "Anexo I (vaga deficitária disponibilizada - item 2.1)"
-                        info_a1 = ANEXO_I.get(escolha_a1)
-                        if info_a1:
-                            df.at[idx, "vaga_obtida"] = f"{info_a1['comarca']} - {info_a1['unidade']}"
-                        else:
-                            df.at[idx, "vaga_obtida"] = f"Código {escolha_a1} (dados não encontrados)"
+                        df.at[idx, "vaga_obtida"] = f"Código {escolha_a1} (dados não encontrados)"
 
-                        # Atualizar ajustes de lotação
-                        if lotacao_origem:
-                            # Servidor sai da origem (-1)
-                            ajustes_lotacao[lotacao_origem] = ajustes_lotacao.get(lotacao_origem, 0) - 1
+                    # Atualizar ajustes de lotação
+                    if lotacao_origem:
+                        # Servidor sai da origem (-1)
+                        ajustes_lotacao[lotacao_origem] = ajustes_lotacao.get(lotacao_origem, 0) - 1
 
-                            # Calcular status final da origem após saída
-                            dados_origem_final = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao[lotacao_origem])
-                            if dados_origem_final:
-                                df.at[idx, "status_origem_final"] = dados_origem_final["status"]
+                        # Calcular status final da origem após saída
+                        dados_origem_final = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao[lotacao_origem])
+                        if dados_origem_final:
+                            df.at[idx, "status_origem_final"] = dados_origem_final["status"]
 
-                                # Determinar se precisa designação na origem
-                                # Conforme item 3.14 do Edital: designação apenas se a saída OCASIONAR DÉFICIT
-                                if dados_origem_final["status"] == "DEFICITÁRIA":
-                                    df.at[idx, "designacao_origem"] = "SIM"
-                                else:
-                                    df.at[idx, "designacao_origem"] = "NÃO"
+                            # Determinar se precisa designação na origem
+                            # Conforme item 3.14 do Edital: designação apenas se a saída OCASIONAR DÉFICIT
+                            if dados_origem_final["status"] == "DEFICITÁRIA":
+                                df.at[idx, "designacao_origem"] = "SIM"
+                            else:
+                                df.at[idx, "designacao_origem"] = "NÃO"
 
-                            # REGRA: Liberar vaga no Anexo II APENAS se a origem ficar DEFICITÁRIA
-                            if dados_origem_final and dados_origem_final["status"] == "DEFICITÁRIA":
-                                if lotacao_origem in vagas_anexo2:
-                                    vagas_anexo2[lotacao_origem] += 1
-                                else:
-                                    vagas_anexo2[lotacao_origem] = 1
+                        # REGRA: Liberar vaga no Anexo II APENAS se a origem ficar DEFICITÁRIA
+                        if dados_origem_final and dados_origem_final["status"] == "DEFICITÁRIA":
+                            if lotacao_origem in vagas_anexo2:
+                                vagas_anexo2[lotacao_origem] += 1
+                            else:
+                                vagas_anexo2[lotacao_origem] = 1
                 else:
                     servidores_para_anexo2.append(idx)
             elif escolha_a1:
@@ -311,14 +309,6 @@ def calcular_resultado(df_inscricoes):
             vaga_a2_disponivel = escolha_a2 and escolha_a2 in vagas_anexo2 and vagas_anexo2[escolha_a2] > 0
 
             eh_relotado = _eh_relotado(idx)
-
-            # Item 3.3: relotados só podem obter vaga onde a exceção 3.3.1 se aplica
-            # (nenhum concorrente não-relotado escolheu a mesma unidade)
-            if eh_relotado:
-                if vaga_a1_disponivel and had_nao_relotado_a1.get(escolha_a1, False):
-                    vaga_a1_disponivel = False
-                if vaga_a2_disponivel and had_nao_relotado_a2.get(escolha_a2, False):
-                    vaga_a2_disponivel = False
 
             # Determinar qual vaga conceder (prioridade para A1 conforme item 3.11)
             vaga_escolhida = None
