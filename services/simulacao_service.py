@@ -197,19 +197,17 @@ def calcular_resultado(df_inscricoes):
         def _eh_relotado(idx):
             return str(df.at[idx, "relotado_menos_2_anos"]).upper() == "S"
 
-        # Pré-computar: unidades que têm ao menos um competidor NÃO relotado.
-        # Usado apenas no final para distinguir DESCLASSIFICADO (3.3) de NÃO OBTEVE VAGA.
+        # Pré-computar: unidades Anexo I que têm ao menos um competidor NÃO relotado.
+        # Usado para distinguir DESCLASSIFICADO (3.3) de NÃO OBTEVE VAGA.
+        # Nota: had_nao_relotado_a2 é calculado APÓS a Fase 1 (ver abaixo), pois precisamos
+        # excluir não-relotados aprovados na Fase 1 que nunca chegaram a competir no Anexo II.
         had_nao_relotado_a1 = {}
-        had_nao_relotado_a2 = {}
         for idx in df.index:
             if _eh_relotado(idx):
                 continue
             a1 = df.at[idx, "escolha_anexo1"]
-            a2 = df.at[idx, "escolha_anexo2"]
             if a1:
                 had_nao_relotado_a1[a1] = True
-            if a2:
-                had_nao_relotado_a2[a2] = True
 
         # Usar mapeamento cacheado
         mapeamento_a1_para_a2 = _obter_mapeamento_a1_para_a2()
@@ -290,6 +288,18 @@ def calcular_resultado(df_inscricoes):
                 servidores_para_anexo2.append(idx)
             else:
                 servidores_para_anexo2.append(idx)
+
+        # Calcular had_nao_relotado_a2 APÓS a Fase 1:
+        # inclui apenas não-relotados que vão à Fase 2 (servidores_para_anexo2).
+        # Isso exclui não-relotados aprovados na Fase 1, como Ibraim que escolheu A2-196
+        # como backup mas foi aprovado via A1-079 e nunca competiu por A2-196 de fato.
+        had_nao_relotado_a2 = {}
+        for idx in servidores_para_anexo2:
+            if _eh_relotado(idx):
+                continue
+            a2 = df.at[idx, "escolha_anexo2"]
+            if a2:
+                had_nao_relotado_a2[a2] = True
 
         # FASE 2: Processar Anexo II
         # Conforme item 3.11: se possível deferimento em ambas as unidades (A1 e A2),
