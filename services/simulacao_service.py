@@ -146,33 +146,20 @@ def calcular_resultado(df_inscricoes):
         if "data_ultima_relotacao" not in df.columns:
             df["data_ultima_relotacao"] = ""
 
-        # Pré-computar mapas de exceção (item 3.3)
-        # excecao_a1[codigo] = True se TODOS os competidores deste Anexo I são relotados < 2 anos
-        excecao_a1 = {}
-        for codigo in ANEXO_I:
-            competidores = df[df["escolha_anexo1"] == codigo]
-            if not competidores.empty:
-                excecao_a1[codigo] = (
-                    competidores["relotado_menos_2_anos"].fillna("N").str.upper().eq("S").all()
-                )
-            else:
-                excecao_a1[codigo] = False
-
-        # excecao_a2[codigo] = True se TODOS os competidores diretos (A2 choice) são relotados
-        excecao_a2 = {}
-        for codigo in ANEXO_II:
-            competidores = df[df["escolha_anexo2"] == codigo]
-            if not competidores.empty:
-                excecao_a2[codigo] = (
-                    competidores["relotado_menos_2_anos"].fillna("N").str.upper().eq("S").all()
-                )
-            else:
-                excecao_a2[codigo] = False
-
-        # Ordenação composta (item 3.3.1):
+        # Ordenação (itens 3.3 e 3.3.1):
         # Grupo 0: não relotados → por posição na lista (ASC)
-        # Grupo 1: relotados COM exceção A1 → por dias desde relotação DESC (mais antigo = maior prioridade)
-        # Grupo 2: relotados SEM exceção → ao final (serão desclassificados)
+        # Grupo 1: relotados → por dias desde relotação DESC (mais antigo = maior prioridade)
+        #
+        # A exceção do item 3.3.1 emerge NATURALMENTE desta ordenação:
+        # não-relotados são processados primeiro e consomem suas vagas;
+        # vagas remanescentes quando chega a vez dos relotados só têm
+        # relotados competindo → exceção se aplica automaticamente, sem
+        # precisar pré-computar nada.
+        #
+        # Exemplo: unidade X tem 2 vagas; Ana (não relotada), Bruno e Carla (relotados).
+        # Ana é processada primeiro e pega 1 vaga. Quando Bruno e Carla são
+        # processados, sobra 1 vaga → apenas eles competem → exceção 3.3.1 ativa,
+        # vence quem foi relotado há mais tempo.
         _sk0, _sk1, _sk2 = [], [], []
         for i in df.index:
             row = df.loc[i]
@@ -182,16 +169,12 @@ def calcular_resultado(df_inscricoes):
             if not is_rel:
                 _sk0.append(0); _sk1.append(pos); _sk2.append(0)
             else:
-                a1 = str(row.get("escolha_anexo1", ""))
-                if excecao_a1.get(a1, False):
-                    try:
-                        data = _dt.strptime(str(row.get("data_ultima_relotacao", "")), "%d/%m/%Y").date()
-                        dias = (DATA_PUBLICACAO_EDITAL - data).days
-                    except (ValueError, TypeError):
-                        dias = 0
-                    _sk0.append(1); _sk1.append(-dias); _sk2.append(pos)
-                else:
-                    _sk0.append(2); _sk1.append(pos); _sk2.append(0)
+                try:
+                    data = _dt.strptime(str(row.get("data_ultima_relotacao", "")), "%d/%m/%Y").date()
+                    dias = (DATA_PUBLICACAO_EDITAL - data).days
+                except (ValueError, TypeError):
+                    dias = 0
+                _sk0.append(1); _sk1.append(-dias); _sk2.append(pos)
 
         df["_sk0"] = _sk0
         df["_sk1"] = _sk1
@@ -212,22 +195,19 @@ def calcular_resultado(df_inscricoes):
         def _eh_relotado(idx):
             return str(df.at[idx, "relotado_menos_2_anos"]).upper() == "S"
 
-        # Pré-marcar servidores globalmente desclassificados (item 3.3)
-        # Desclassificado global = relotado E sem exceção para nenhuma das escolhas
+        # Pré-computar: unidades que têm ao menos um competidor NÃO relotado.
+        # Usado apenas no final para distinguir DESCLASSIFICADO (3.3) de NÃO OBTEVE VAGA.
+        had_nao_relotado_a1 = {}
+        had_nao_relotado_a2 = {}
         for idx in df.index:
-            if not _eh_relotado(idx):
+            if _eh_relotado(idx):
                 continue
             a1 = df.at[idx, "escolha_anexo1"]
             a2 = df.at[idx, "escolha_anexo2"]
-            tem_excecao_a1 = bool(a1 and excecao_a1.get(a1, False))
-            tem_excecao_a2 = bool(a2 and excecao_a2.get(a2, False))
-            if not tem_excecao_a1 and not tem_excecao_a2:
-                df.at[idx, "status"] = "DESCLASSIFICADO"
-                df.at[idx, "resultado"] = (
-                    "Relotado(a) a pedido há menos de 2 anos (item 3.3) — "
-                    "não há unidade elegível com exceção aplicável"
-                )
-                df.at[idx, "designacao_origem"] = "-"
+            if a1:
+                had_nao_relotado_a1[a1] = True
+            if a2:
+                had_nao_relotado_a2[a2] = True
 
         # Usar mapeamento cacheado
         mapeamento_a1_para_a2 = _obter_mapeamento_a1_para_a2()
@@ -261,14 +241,6 @@ def calcular_resultado(df_inscricoes):
                 dados_origem = calcular_lotacao_dinamica(lotacao_origem, ajustes_lotacao.get(lotacao_origem, 0))
                 if dados_origem:
                     df.at[idx, "status_origem_inicial"] = dados_origem["status"]
-
-            # Item 3.3: relotado desclassificado do Anexo I (mas pode ter exceção no A2)
-            if _eh_relotado(idx) and escolha_a1 and not excecao_a1.get(escolha_a1, False):
-                df.at[idx, "observacao"] = (
-                    "Relotado(a) a pedido há menos de 2 anos — desclassificado(a) do Anexo I (item 3.3)"
-                )
-                servidores_para_anexo2.append(idx)
-                continue
 
             if escolha_a1 and escolha_a1 in vagas_anexo1:
                 if vagas_anexo1[escolha_a1] > 0:
@@ -336,13 +308,6 @@ def calcular_resultado(df_inscricoes):
 
             eh_relotado = _eh_relotado(idx)
 
-            # Item 3.3: relotado só pode receber vaga onde a exceção se aplica
-            if eh_relotado:
-                if vaga_a1_disponivel and not excecao_a2.get(codigo_a1_no_a2, False):
-                    vaga_a1_disponivel = False
-                if vaga_a2_disponivel and not excecao_a2.get(escolha_a2, False):
-                    vaga_a2_disponivel = False
-
             # Determinar qual vaga conceder (prioridade para A1 conforme item 3.11)
             vaga_escolhida = None
             origem_vaga = None  # "A1" ou "A2"
@@ -403,20 +368,33 @@ def calcular_resultado(df_inscricoes):
                 else:
                     df.at[idx, "designacao_origem"] = "-"
             else:
-                # Nenhuma vaga disponível
-
-                # Verificar se é desclassificação por item 3.3 (relotado sem vagas elegíveis)
+                # Nenhuma vaga disponível.
+                # Para relotados: DESCLASSIFICADO (item 3.3) se TODAS as escolhas tinham
+                # competidores não-relotados (que foram processados primeiro e consumiram
+                # as vagas). Caso contrário, NÃO OBTEVE VAGA (competiu com exceção 3.3.1
+                # mas as vagas se esgotaram entre os próprios relotados).
                 if eh_relotado:
-                    podia_a1 = bool(codigo_a1_no_a2 and excecao_a2.get(codigo_a1_no_a2, False))
-                    podia_a2 = bool(escolha_a2 and excecao_a2.get(escolha_a2, False))
-                    if not podia_a1 and not podia_a2:
+                    bloq_a1 = had_nao_relotado_a1.get(escolha_a1, False) if escolha_a1 else True
+                    bloq_a2 = had_nao_relotado_a2.get(escolha_a2, False) if escolha_a2 else True
+                    bloq_a1_via_a2 = had_nao_relotado_a2.get(codigo_a1_no_a2, False) if codigo_a1_no_a2 else True
+
+                    # Tinha ao menos uma oportunidade com exceção (sem competidor não-relotado)?
+                    teve_excecao = (
+                        (bool(escolha_a1) and not bloq_a1) or
+                        (bool(escolha_a2) and not bloq_a2) or
+                        (bool(codigo_a1_no_a2) and not bloq_a1_via_a2)
+                    )
+
+                    if not teve_excecao:
+                        # Todas as escolhas tinham não-relotados → DESCLASSIFICADO (item 3.3)
                         df.at[idx, "status"] = "DESCLASSIFICADO"
                         df.at[idx, "resultado"] = (
                             "Relotado(a) a pedido há menos de 2 anos (item 3.3) — "
-                            "desclassificado(a) de todas as unidades escolhidas"
+                            "todas as unidades escolhidas tinham concorrentes não-relotados"
                         )
                         df.at[idx, "designacao_origem"] = "-"
                         continue
+                    # else: teve exceção mas vagas esgotaram → NÃO OBTEVE VAGA (cai abaixo)
 
                 df.at[idx, "status"] = "NÃO OBTEVE VAGA"
 
