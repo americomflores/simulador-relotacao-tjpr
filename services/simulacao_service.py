@@ -217,6 +217,9 @@ def calcular_resultado(df_inscricoes):
         # Edital 01/2026: Servidores em estágio probatório PODEM participar
         # (Validação de estágio probatório removida)
 
+        # Rastrear unidades onde ao menos 1 relotado foi aprovado (exceção 3.3.1 emergiu)
+        relotado_got_a1 = {}  # unidades A1 onde ao menos 1 relotado foi aprovado na Fase 1
+
         # Controle de vagas Anexo I
         vagas_anexo1 = {}
         for codigo, info in ANEXO_I.items():
@@ -248,6 +251,8 @@ def calcular_resultado(df_inscricoes):
                 if vagas_anexo1[escolha_a1] > 0:
                     vagas_anexo1[escolha_a1] -= 1
                     df.at[idx, "status"] = "APROVADO"
+                    if _eh_relotado(idx):
+                        relotado_got_a1[escolha_a1] = True
                     df.at[idx, "resultado"] = "Anexo I (vaga deficitária disponibilizada - item 2.1)"
                     info_a1 = ANEXO_I.get(escolha_a1)
                     if info_a1:
@@ -289,6 +294,7 @@ def calcular_resultado(df_inscricoes):
         # FASE 2: Processar Anexo II
         # Conforme item 3.11: se possível deferimento em ambas as unidades (A1 e A2),
         # será concedido deferimento para a unidade originalmente indicada no Anexo I
+        relotado_got_a2 = {}  # unidades A2 onde ao menos 1 relotado foi aprovado na Fase 2
         for idx in servidores_para_anexo2:
             row = df.loc[idx]
             escolha_a1 = row["escolha_anexo1"]  # Escolha original do Anexo I
@@ -337,6 +343,8 @@ def calcular_resultado(df_inscricoes):
                     resultado_final = "Anexo II (vaga de servidor a relotar - item 3.11)"
 
                 df.at[idx, "status"] = "APROVADO"
+                if eh_relotado:
+                    relotado_got_a2[vaga_escolhida] = True
                 df.at[idx, "resultado"] = resultado_final
                 info_a2 = ANEXO_II.get(vaga_escolhida)
                 if info_a2:
@@ -380,11 +388,16 @@ def calcular_resultado(df_inscricoes):
                     bloq_a2 = had_nao_relotado_a2.get(escolha_a2, False) if escolha_a2 else True
                     bloq_a1_via_a2 = had_nao_relotado_a2.get(codigo_a1_no_a2, False) if codigo_a1_no_a2 else True
 
-                    # Tinha ao menos uma oportunidade com exceção (sem competidor não-relotado)?
+                    # Tinha ao menos uma oportunidade com exceção (sem competidor não-relotado),
+                    # OU a exceção 3.3.1 emergiu naturalmente para a unidade (outro relotado foi aprovado)?
                     teve_excecao = (
                         (bool(escolha_a1) and not bloq_a1) or
                         (bool(escolha_a2) and not bloq_a2) or
-                        (bool(codigo_a1_no_a2) and not bloq_a1_via_a2)
+                        (bool(codigo_a1_no_a2) and not bloq_a1_via_a2) or
+                        # Exceção 3.3.1 emergiu: outro relotado foi aprovado na mesma unidade
+                        (bool(escolha_a1) and relotado_got_a1.get(escolha_a1, False)) or
+                        (bool(escolha_a2) and relotado_got_a2.get(escolha_a2, False)) or
+                        (bool(codigo_a1_no_a2) and relotado_got_a2.get(codigo_a1_no_a2, False))
                     )
 
                     if not teve_excecao:
